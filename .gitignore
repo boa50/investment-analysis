@@ -2,3 +2,6 @@
 
 data/raw/*.csv
 data/processed/*.csv
+
+data/etl/driver/*
+!data/etl/driver/README.md
