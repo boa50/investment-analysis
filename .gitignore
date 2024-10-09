@@ -5,3 +5,5 @@ data/processed/*.csv
 
 data/etl/driver/*
 !data/etl/driver/README.md
+
+data/etl/__pycache__
