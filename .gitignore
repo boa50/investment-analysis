@@ -1,5 +1,6 @@
 .venv
 
+data/raw/zips/*.zip
 data/raw/*.csv
 data/raw/*.csv#
 data/processed/*.csv
