@@ -2,8 +2,8 @@ import type { MetaFunction } from "@remix-run/node";
 
 export const meta: MetaFunction = () => {
     return [
-        { title: "Investment Analysis" },
-        { name: "description", content: "Index page" },
+        { title: "Investment Analysis - Stocks List" },
+        { name: "description", content: "List of the stocks" },
     ];
 };
 
@@ -18,7 +18,7 @@ export default function Index() {
                 </nav>
                 <header className="flex flex-col items-center gap-9">
                     <h1 className="leading text-2xl font-bold text-gray-800 dark:text-gray-100">
-                        Investment Analysis
+                        Lista das ações
                     </h1>
                 </header>
             </div>
