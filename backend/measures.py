@@ -71,13 +71,11 @@ def get_latest_values_by_tickers(tickers=None):
 
 
 def get_companies():
-    df_basic = utils.get_data("stocks-basic-info")[
-        ["CD_CVM", "DENOM_COMERC", "SEGMENTO"]
-    ]
+    df_basic = utils.get_data("stocks-basic-info")[["CD_CVM", "NOME", "SEGMENTO"]]
     df_latest = get_latest_values_by_tickers()
 
     df = df_latest.merge(df_basic, on="CD_CVM")
-    df = df[["TICKER", "DENOM_COMERC", "SEGMENTO", "MARKET_CAP", "PL", "NET_MARGIN"]]
+    df = df[["TICKER", "NOME", "SEGMENTO", "MARKET_CAP", "PL", "NET_MARGIN"]]
     df.columns = ["ticker", "name", "segment", "marketCap", "pl", "netMargin"]
 
     return df.sort_values(by="marketCap", ascending=False)
