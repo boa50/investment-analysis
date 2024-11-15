@@ -1,10 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
     createColumnHelper,
     flexRender,
     getCoreRowModel,
     useReactTable,
 } from '@tanstack/react-table'
+import {
+    QueryClient,
+    QueryClientProvider,
+    useQuery,
+} from '@tanstack/react-query'
 import type { Cell, Header } from '@tanstack/react-table';
 import type { MetaFunction } from "@remix-run/node";
 
@@ -19,29 +24,14 @@ type Stock = {
     ticker: string;
     name: string;
     segment: string;
-    kpi: number;
+    marketCap: number;
+    pl: number;
+    netMargin: number;
 }
 
-const defaultData: Stock[] = [
-    {
-        ticker: "AAAA",
-        name: "Name A",
-        segment: "A",
-        kpi: 0
-    },
-    {
-        ticker: "AAAB",
-        name: "Name B",
-        segment: "A",
-        kpi: 5
-    },
-    {
-        ticker: "AAAC",
-        name: "Some Name C",
-        segment: "B",
-        kpi: 3
-    },
-]
+const formatDecimal = (num: number): string => num.toFixed(2)
+const formatCurrency = (num: number): string => (new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", notation: 'compact' })).format(num)
+const formatPercent = (num: number): string => formatDecimal(num * 100) + '%'
 
 const columnHelper = createColumnHelper<Stock>()
 
@@ -61,12 +51,24 @@ const columns = [
         cell: info => info.getValue(),
         footer: info => info.column.id,
     }),
-    columnHelper.accessor('kpi', {
-        header: 'Kpi',
-        cell: info => info.getValue(),
+    columnHelper.accessor('marketCap', {
+        header: 'Market Cap',
+        cell: info => formatCurrency(info.getValue()),
+        footer: info => info.column.id,
+    }),
+    columnHelper.accessor('pl', {
+        header: 'P/E',
+        cell: info => formatDecimal(info.getValue()),
+        footer: info => info.column.id,
+    }),
+    columnHelper.accessor('netMargin', {
+        header: 'Net Margin',
+        cell: info => formatPercent(info.getValue()),
         footer: info => info.column.id,
     }),
 ]
+
+const queryClient = new QueryClient()
 
 export default function Index() {
     return (
@@ -83,7 +85,9 @@ export default function Index() {
                     </h1>
                 </header>
                 <div className="px-8 py-2 flex w-screen items-center justify-center">
-                    <StockTable />
+                    <QueryClientProvider client={queryClient}>
+                        <StockTable />
+                    </QueryClientProvider>
                 </div>
             </div>
         </div>
@@ -94,7 +98,21 @@ const isLowerVisibilityCol = (cell: Cell<Stock, unknown>): boolean => cell.colum
 const isTextCol = (cell: Cell<Stock, unknown> | Header<Stock, unknown>): boolean => ['ticker', 'name', 'segment'].includes(cell.column.id)
 
 function StockTable() {
-    const [data, _setData] = useState(() => [...defaultData])
+    const [data, setData] = useState<Stock[]>([])
+
+    const query = useQuery({
+        queryKey: ['companiesData'],
+        queryFn: async () => {
+            const response = await fetch(
+                'http://127.0.0.1:8000/api/companies',
+            )
+            return await response.json()
+        },
+    })
+
+    useEffect(() => {
+        setData(query.data)
+    }, [query])
 
     const table = useReactTable({
         data,
@@ -103,6 +121,10 @@ function StockTable() {
     })
 
     const cssDivide = 'divide-y divide-gray-300'
+
+    if (query.isPending) return <div className='font-normal text-gray-500'>Loading Data...</div>
+
+    if (query.error) return <div className='font-normal text-red-500'>An error has occurred while loading data: {query.error.message}</div>
 
     return (
         <div className="overflow-hidden border border-gray-400 md:rounded-lg">
@@ -117,17 +139,17 @@ function StockTable() {
                                 }>
                                     {header.isPlaceholder
                                         ? null
-                                        : flexRender(
+                                        : (flexRender(
                                             header.column.columnDef.header,
                                             header.getContext()
-                                        )}
+                                        ))}
                                 </th>
                             ))}
                         </tr>
                     ))}
                 </thead>
                 <tbody className={cssDivide + ' bg-white'}>
-                    {table.getRowModel().rows.map(row => (
+                    {table.getRowModel() !== undefined ? table.getRowModel().rows.map(row => (
                         <tr key={row.id} className='hover:bg-gray-100'>
                             {row.getVisibleCells().map(cell => (
                                 <td key={cell.id} className={
@@ -139,7 +161,7 @@ function StockTable() {
                             )
                             )}
                         </tr>
-                    ))}
+                    )) : null}
                 </tbody>
             </table>
         </div>

@@ -80,4 +80,4 @@ def get_companies():
     df = df[["TICKER", "DENOM_COMERC", "SEGMENTO", "MARKET_CAP", "PL", "NET_MARGIN"]]
     df.columns = ["ticker", "name", "segment", "marketCap", "pl", "netMargin"]
 
-    return df
+    return df.sort_values(by="marketCap", ascending=False)
