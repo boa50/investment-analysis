@@ -1,0 +1,1 @@
+To run the server execute the command: python main.py
