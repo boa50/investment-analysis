@@ -68,20 +68,7 @@ const columns = [
     }),
 ]
 
-const isLowerVisibilityCol = (cell: Cell<Stock, unknown>): boolean => cell.column.id === 'segment'
-const isTextCol = (cell: Cell<Stock, unknown> | Header<Stock, unknown>): boolean => ['ticker', 'name', 'segment'].includes(cell.column.id)
-
 export default function Index() {
-    const [data, _setData] = useState(() => [...defaultData])
-
-    const table = useReactTable({
-        data,
-        columns,
-        getCoreRowModel: getCoreRowModel(),
-    })
-
-    const cssDivide = 'divide-y divide-gray-300'
-
     return (
         <div className="flex h-screen">
             <div className="flex flex-col gap-8">
@@ -96,46 +83,65 @@ export default function Index() {
                     </h1>
                 </header>
                 <div className="px-8 py-2 flex w-screen items-center justify-center">
-                    <div className="overflow-hidden border border-gray-400 md:rounded-lg">
-                        <table className={cssDivide}>
-                            <thead>
-                                {table.getHeaderGroups().map(headerGroup => (
-                                    <tr key={headerGroup.id}>
-                                        {headerGroup.headers.map(header => (
-                                            <th key={header.id} className={
-                                                'px-4 py-3.5 text-xs font-normal text-gray-500' +
-                                                (isTextCol(header) ? ' text-left' : ' text-right')
-                                            }>
-                                                {header.isPlaceholder
-                                                    ? null
-                                                    : flexRender(
-                                                        header.column.columnDef.header,
-                                                        header.getContext()
-                                                    )}
-                                            </th>
-                                        ))}
-                                    </tr>
-                                ))}
-                            </thead>
-                            <tbody className={cssDivide + ' bg-white'}>
-                                {table.getRowModel().rows.map(row => (
-                                    <tr key={row.id} className='hover:bg-gray-100'>
-                                        {row.getVisibleCells().map(cell => (
-                                            <td key={cell.id} className={
-                                                'px-4 py-3 text-sm font-medium' +
-                                                (isLowerVisibilityCol(cell) ? ' text-gray-400' : ' text-gray-700') +
-                                                (isTextCol(cell) ? ' text-left' : ' text-right')}>
-                                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                            </td>
-                                        )
-                                        )}
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+                    <StockTable />
                 </div>
             </div>
         </div>
     );
+}
+
+const isLowerVisibilityCol = (cell: Cell<Stock, unknown>): boolean => cell.column.id === 'segment'
+const isTextCol = (cell: Cell<Stock, unknown> | Header<Stock, unknown>): boolean => ['ticker', 'name', 'segment'].includes(cell.column.id)
+
+function StockTable() {
+    const [data, _setData] = useState(() => [...defaultData])
+
+    const table = useReactTable({
+        data,
+        columns,
+        getCoreRowModel: getCoreRowModel(),
+    })
+
+    const cssDivide = 'divide-y divide-gray-300'
+
+    return (
+        <div className="overflow-hidden border border-gray-400 md:rounded-lg">
+            <table className={cssDivide}>
+                <thead>
+                    {table.getHeaderGroups().map(headerGroup => (
+                        <tr key={headerGroup.id}>
+                            {headerGroup.headers.map(header => (
+                                <th key={header.id} className={
+                                    'px-4 py-3.5 text-xs font-normal text-gray-500' +
+                                    (isTextCol(header) ? ' text-left' : ' text-right')
+                                }>
+                                    {header.isPlaceholder
+                                        ? null
+                                        : flexRender(
+                                            header.column.columnDef.header,
+                                            header.getContext()
+                                        )}
+                                </th>
+                            ))}
+                        </tr>
+                    ))}
+                </thead>
+                <tbody className={cssDivide + ' bg-white'}>
+                    {table.getRowModel().rows.map(row => (
+                        <tr key={row.id} className='hover:bg-gray-100'>
+                            {row.getVisibleCells().map(cell => (
+                                <td key={cell.id} className={
+                                    'px-4 py-3 text-sm font-medium' +
+                                    (isLowerVisibilityCol(cell) ? ' text-gray-400' : ' text-gray-700') +
+                                    (isTextCol(cell) ? ' text-left' : ' text-right')}>
+                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                </td>
+                            )
+                            )}
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+    )
 }
