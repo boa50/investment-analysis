@@ -70,7 +70,7 @@ const columns = [
 
 const queryClient = new QueryClient()
 
-export default function Index() {
+export default function StocksList() {
     return (
         <div className="flex flex-wrap">
             <div className="flex flex-col gap-8">

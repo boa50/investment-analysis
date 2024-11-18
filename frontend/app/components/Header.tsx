@@ -1,30 +1,48 @@
+import React from "react";
+import { Link, useLocation, Location } from "@remix-run/react";
+
+const navLinkDefaultClass = "flex transition-colors duration-300"
+
+const isCurrentLocation = (pathname: string, location: Location): boolean => pathname === location.pathname
+const getNavLinkClass = (pathname: string, location: Location): string => navLinkDefaultClass +
+    (isCurrentLocation(pathname, location) ?
+        " font-semibold text-blue-500 cursor-default" :
+        " text-gray-600 hover:text-blue-500 cursor-pointer")
+const getNavLinkOnClick = (e: React.MouseEvent, pathname: string, location: Location): React.MouseEvent | void =>
+    isCurrentLocation(pathname, location) ? e.preventDefault() : e
+
 export default function Header() {
+    const location = useLocation();
+
     return (
         <div className="bg-gray-50 w-full sticky top-0 left-0 right-0 z-10 shadow-md">
             <div className="relative container mx-auto flex justify-between py-2">
 
                 <div className="flex items-center">
-                    <a className="cursor-pointer" href="/">
+                    <Link className="cursor-pointer" to="/">
                         <h3 className="text-2xl font-medium text-blue-500">
                             <img className="h-10 object-cover"
                                 src="../public/favicon.ico" alt="App Logo" />
                         </h3>
-                    </a>
+                    </Link>
                 </div>
 
 
                 <div className="absolute inset-y-0 left-1/2 transform -translate-x-1/2 flex items-center">
                     <nav className="items-center hidden space-x-8 lg:flex">
-                        <a className="flex text-gray-600 hover:text-blue-500
-                    cursor-pointer transition-colors duration-300" href="/">
+                        <Link to="/"
+                            onClick={e => getNavLinkOnClick(e, "/", location)}
+                            className={getNavLinkClass("/", location)}
+                        >
                             Home
-                        </a>
+                        </Link>
 
-                        <a className="flex text-gray-600 
-                    cursor-pointer transition-colors duration-300
-                    font-semibold text-blue-600" href="stocks_list">
+                        <Link to="/stocks_list"
+                            onClick={e => getNavLinkOnClick(e, "/stocks_list", location)}
+                            className={getNavLinkClass("/stocks_list", location)}
+                        >
                             Stocks List
-                        </a>
+                        </Link>
                     </nav>
                 </div>
 
