@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Links,
   Meta,
@@ -5,6 +6,7 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type { LinksFunction } from "@remix-run/node";
 import Header from "./components/Header";
 
@@ -43,5 +45,21 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  const [queryClient] = React.useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            // With SSR, we usually want to set some default staleTime
+            // above 0 to avoid refetching immediately on the client
+            staleTime: 60 * 1000,
+          },
+        },
+      }),
+  )
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Outlet />
+    </QueryClientProvider>
+  )
 }

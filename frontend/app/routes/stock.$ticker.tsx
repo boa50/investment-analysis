@@ -28,7 +28,9 @@ const queryClient = new QueryClient()
 export async function loader({
     params,
 }: LoaderFunctionArgs) {
-    return { ticker: params.ticker };
+    const ticker = params.ticker
+
+    return { ticker: ticker };
 }
 
 export default function StockInfo() {

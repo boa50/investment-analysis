@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import {
     createColumnHelper,
     flexRender,
@@ -6,13 +5,16 @@ import {
     useReactTable,
 } from '@tanstack/react-table'
 import {
+    dehydrate,
+    HydrationBoundary,
     QueryClient,
-    QueryClientProvider,
     useQuery,
 } from '@tanstack/react-query'
-import { Link } from "@remix-run/react";
+import { Link, useLoaderData } from "@remix-run/react";
+import { json } from '@remix-run/node'
 import type { Cell, Header } from '@tanstack/react-table';
 import type { MetaFunction } from "@remix-run/node";
+import { getStocks } from '../api/stocks';
 
 export const meta: MetaFunction = () => {
     return [
@@ -69,9 +71,19 @@ const columns = [
     }),
 ]
 
-const queryClient = new QueryClient()
+export async function loader() {
+    const queryClient = new QueryClient()
+
+    await queryClient.prefetchQuery({
+        queryKey: ['stocks'],
+        queryFn: getStocks,
+    })
+
+    return json({ dehydratedState: dehydrate(queryClient) })
+}
 
 export default function StocksList() {
+    const { dehydratedState } = useLoaderData<typeof loader>()
     return (
         <div className="flex flex-wrap">
             <div className="flex flex-col gap-8">
@@ -81,9 +93,9 @@ export default function StocksList() {
                     </h1>
                 </header>
                 <div className="px-8 py-2 flex w-screen items-center justify-center">
-                    <QueryClientProvider client={queryClient}>
+                    <HydrationBoundary state={dehydratedState}>
                         <StockTable />
-                    </QueryClientProvider>
+                    </HydrationBoundary>
                 </div>
             </div>
         </div>
@@ -93,7 +105,7 @@ export default function StocksList() {
 const isLowerVisibilityCol = (cell: Cell<Stock, unknown>): boolean => cell.column.id === 'segment'
 const isTextCol = (cell: Cell<Stock, unknown> | Header<Stock, unknown>): boolean => ['ticker', 'name', 'segment'].includes(cell.column.id)
 
-function StockTableCell({ key, cell }: { key: string, cell: Cell<Stock, unknown> }) {
+function StockTableCell({ cell }: { cell: Cell<Stock, unknown> }) {
     const className = 'px-4 py-3 text-sm font-medium' +
         (isLowerVisibilityCol(cell) ? ' text-gray-400' : ' text-gray-700') +
         (cell.column.id === 'ticker' ? ' hover:text-blue-500' : '') +
@@ -101,31 +113,17 @@ function StockTableCell({ key, cell }: { key: string, cell: Cell<Stock, unknown>
     const cellText = flexRender(cell.column.columnDef.cell, cell.getContext())
 
     return (
-        <td key={key} className={className}>
+        <td className={className}>
             {cell.column.id === 'ticker' ? <Link to={'/stock/' + cell.getValue()}>{cellText}</Link> : cellText}
         </td>
     )
 }
 
 function StockTable() {
-    const [data, setData] = useState<Stock[]>([])
-
-    const query = useQuery({
-        queryKey: ['companiesData'],
-        queryFn: async () => {
-            const response = await fetch(
-                'http://127.0.0.1:8000/api/companies',
-            )
-            return await response.json()
-        },
-    })
-
-    useEffect(() => {
-        setData(query.data)
-    }, [query])
+    const query = useQuery({ queryKey: ['stocks'], queryFn: getStocks })
 
     const table = useReactTable({
-        data,
+        data: query.data,
         columns,
         getCoreRowModel: getCoreRowModel(),
     })
