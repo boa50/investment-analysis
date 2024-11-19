@@ -1,11 +1,14 @@
-import { useState, useEffect } from 'react';
 import {
+    dehydrate,
+    HydrationBoundary,
     QueryClient,
-    QueryClientProvider,
     useQuery,
 } from '@tanstack/react-query'
+import { json } from '@remix-run/node'
 import { useLoaderData } from "@remix-run/react";
+import { getStocks } from '../api/stocks';
 import type { MetaFunction, LoaderFunctionArgs } from "@remix-run/node";
+import type { Stock } from '../types/stocks';
 
 export const meta: MetaFunction = () => {
     return [
@@ -14,70 +17,60 @@ export const meta: MetaFunction = () => {
     ];
 };
 
-type Stock = {
-    ticker: string;
-    name: string;
-    segment: string;
-    marketCap: number;
-    pl: number;
-    netMargin: number;
-}
-
-const queryClient = new QueryClient()
 
 export async function loader({
     params,
 }: LoaderFunctionArgs) {
     const ticker = params.ticker
+    const queryClient = new QueryClient()
 
-    return { ticker: ticker };
+    await queryClient.prefetchQuery({
+        queryKey: ['stocks'],
+        queryFn: getStocks,
+    })
+
+    return json({ dehydratedState: dehydrate(queryClient), ticker: ticker })
 }
 
 export default function StockInfo() {
-    const data = useLoaderData<typeof loader>();
+    const { dehydratedState, ticker } = useLoaderData<typeof loader>()
 
     return (
         <div className="flex flex-wrap">
             <div className="flex flex-col gap-8">
                 <header className="flex flex-col items-center gap-9">
                     <h1 className="leading text-2xl font-bold text-gray-800">
-                        {"Dados de " + data.ticker}
+                        {"Dados de " + ticker}
                     </h1>
                 </header>
                 <div className="px-8 py-2 flex w-screen items-center justify-center">
-                    <QueryClientProvider client={queryClient}>
-                        <StockKpis />
-                    </QueryClientProvider>
+                    <HydrationBoundary state={dehydratedState}>
+                        <StockKpis ticker={ticker} />
+                    </HydrationBoundary>
                 </div>
             </div>
         </div>
     )
 }
 
-function StockKpis() {
-    const [data, setData] = useState<Stock[]>([])
+function StockKpis({ ticker }: { ticker: string | undefined }) {
+    const query = useQuery({ queryKey: ['stocks'], queryFn: getStocks })
 
-    const query = useQuery({
-        queryKey: ['companiesData'],
-        queryFn: async () => {
-            const response = await fetch(
-                'http://127.0.0.1:8000/api/companies',
-            )
-            return await response.json()
-        },
-    })
+    if (query.isPending) return <div className='font-normal text-gray-500'>Loading Data...</div>
 
-    useEffect(() => {
-        if (query.data !== undefined) {
-            setData(query.data)
-        }
+    if (query.error) return <div className='font-normal text-red-500'>An error has occurred while loading data: {query.error.message}</div>
 
-    }, [query])
+    const tickerData = query.data.filter((d: Stock) => d.ticker === ticker)[0]
 
 
     return (
         <div>
-            <p>{data[0] !== undefined ? data[0].ticker : null}</p>
+            <p>{'Ticker: ' + tickerData.ticker}</p>
+            <p>{'Name: ' + tickerData.name}</p>
+            <p>{'Segment: ' + tickerData.segment}</p>
+            <p>{'Market Cap: ' + tickerData.marketCap}</p>
+            <p>{'P/L: ' + tickerData.pl}</p>
+            <p>{'Net Margin: ' + tickerData.netMargin}</p>
         </div>
     )
 }

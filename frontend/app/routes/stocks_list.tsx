@@ -10,11 +10,12 @@ import {
     QueryClient,
     useQuery,
 } from '@tanstack/react-query'
-import { Link, useLoaderData } from "@remix-run/react";
 import { json } from '@remix-run/node'
+import { Link, useLoaderData } from "@remix-run/react";
+import { getStocks } from '../api/stocks';
 import type { Cell, Header } from '@tanstack/react-table';
 import type { MetaFunction } from "@remix-run/node";
-import { getStocks } from '../api/stocks';
+import type { Stock } from '../types/stocks';
 
 export const meta: MetaFunction = () => {
     return [
@@ -22,15 +23,6 @@ export const meta: MetaFunction = () => {
         { name: "description", content: "List of the stocks" },
     ];
 };
-
-type Stock = {
-    ticker: string;
-    name: string;
-    segment: string;
-    marketCap: number;
-    pl: number;
-    netMargin: number;
-}
 
 const formatDecimal = (num: number): string => num.toFixed(2)
 const formatCurrency = (num: number): string => (new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", notation: 'compact' })).format(num)
