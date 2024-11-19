@@ -10,6 +10,7 @@ import {
     QueryClientProvider,
     useQuery,
 } from '@tanstack/react-query'
+import { Link } from "@remix-run/react";
 import type { Cell, Header } from '@tanstack/react-table';
 import type { MetaFunction } from "@remix-run/node";
 
@@ -92,6 +93,20 @@ export default function StocksList() {
 const isLowerVisibilityCol = (cell: Cell<Stock, unknown>): boolean => cell.column.id === 'segment'
 const isTextCol = (cell: Cell<Stock, unknown> | Header<Stock, unknown>): boolean => ['ticker', 'name', 'segment'].includes(cell.column.id)
 
+function StockTableCell({ key, cell }: { key: string, cell: Cell<Stock, unknown> }) {
+    const className = 'px-4 py-3 text-sm font-medium' +
+        (isLowerVisibilityCol(cell) ? ' text-gray-400' : ' text-gray-700') +
+        (cell.column.id === 'ticker' ? ' hover:text-blue-500' : '') +
+        (isTextCol(cell) ? ' text-left' : ' text-right')
+    const cellText = flexRender(cell.column.columnDef.cell, cell.getContext())
+
+    return (
+        <td key={key} className={className}>
+            {cell.column.id === 'ticker' ? <Link to={'/stock/' + cell.getValue()}>{cellText}</Link> : cellText}
+        </td>
+    )
+}
+
 function StockTable() {
     const [data, setData] = useState<Stock[]>([])
 
@@ -146,15 +161,7 @@ function StockTable() {
                 <tbody className={cssDivide + ' bg-white'}>
                     {table.getRowModel() !== undefined ? table.getRowModel().rows.map(row => (
                         <tr key={row.id} className='hover:bg-gray-100'>
-                            {row.getVisibleCells().map(cell => (
-                                <td key={cell.id} className={
-                                    'px-4 py-3 text-sm font-medium' +
-                                    (isLowerVisibilityCol(cell) ? ' text-gray-400' : ' text-gray-700') +
-                                    (isTextCol(cell) ? ' text-left' : ' text-right')}>
-                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                </td>
-                            )
-                            )}
+                            {row.getVisibleCells().map(cell => <StockTableCell key={cell.id} cell={cell} />)}
                         </tr>
                     )) : null}
                 </tbody>
