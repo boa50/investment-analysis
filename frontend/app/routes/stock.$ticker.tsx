@@ -34,23 +34,69 @@ export default function StockInfo() {
 
     return (
         <div className="flex flex-wrap">
-            <div className="flex flex-col gap-8">
-                <header className="flex flex-col items-center gap-9">
-                    <h1 className="leading text-2xl font-bold text-gray-800">
-                        {'Dados de ' + ticker}
-                    </h1>
-                </header>
-                <div className="px-8 py-2 flex w-screen items-center justify-center">
-                    <HydrationBoundary state={dehydratedState}>
-                        <StockKpis ticker={ticker} />
-                    </HydrationBoundary>
-                </div>
-            </div>
+            <HydrationBoundary state={dehydratedState}>
+                <StockData ticker={ticker} />
+            </HydrationBoundary>
         </div>
     )
 }
 
-function StockKpis({ ticker }: { ticker: string | undefined }) {
+function StockHeader({
+    ticker,
+    name,
+    segment,
+    price,
+    pl,
+    dividendYield,
+}: {
+    ticker: string | undefined
+    name: string
+    segment: string
+    price: number
+    pl: number
+    dividendYield: number
+}) {
+    return (
+        <header className="flex flex-col items-center">
+            <div className="bg-gray-800 w-full border border-gray-800 shadow-md p-4">
+                <div className="container mx-auto grid grid-cols-3">
+                    <div className="flex items-center">
+                        <img
+                            src="https://randomuser.me/api/portraits/women/11.jpg"
+                            alt=""
+                            className="rounded-full h-16 object-cover"
+                        />
+                    </div>
+                    <div>
+                        <h1 className="leading text-2xl font-bold text-gray-100">
+                            {ticker}
+                        </h1>
+                        <p className="text-lg font-semibold text-gray-600">
+                            {name}
+                        </p>
+                        <p className="text-lg font-semibold text-gray-600">
+                            {segment}
+                        </p>
+                    </div>
+                    <div>
+                        <p className="text-lg font-semibold text-gray-600">
+                            {'Preço: ' + formatNum(price, 'currencyDecimal')}
+                        </p>
+                        <p className="text-lg font-semibold text-gray-600">
+                            {'P/L: ' + formatNum(pl, 'decimal')}
+                        </p>
+                        <p className="text-lg font-semibold text-gray-600">
+                            {'Dividend Yield: ' +
+                                formatNum(dividendYield, 'percent')}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </header>
+    )
+}
+
+function StockData({ ticker }: { ticker: string | undefined }) {
     const query = useQuery({
         queryKey: ['company'],
         queryFn: () => getCompany(ticker !== undefined ? ticker : ''),
@@ -70,53 +116,66 @@ function StockKpis({ ticker }: { ticker: string | undefined }) {
 
     return (
         <div>
-            <p>{'Ticker: ' + ticker}</p>
-            <p>{'Name: ' + tickerData.name}</p>
-            <p>{'Segment: ' + tickerData.segment}</p>
-            <p>
-                {'Market Cap: ' + formatNum(tickerData.marketCap, 'currency')}
-            </p>
-            <p>{'Price: ' + formatNum(tickerData.price, 'currencyDecimal')}</p>
-            <p>
-                {'Price Bazin: ' +
-                    formatNum(tickerData.bazinPrice, 'currencyDecimal')}
-            </p>
-            <p>{'P/L: ' + formatNum(tickerData.pl, 'decimal')}</p>
-            <p>{'P/VP: ' + formatNum(tickerData.pvp, 'decimal')}</p>
-            <p>
-                {'Dividend Yield: ' +
-                    formatNum(tickerData.dividendYield, 'percent')}
-            </p>
-            <p>
-                {'Dividend Payout: ' +
-                    formatNum(tickerData.dividendPayout, 'percent')}
-            </p>
-            <p>{'Equity: ' + formatNum(tickerData.equity, 'currency')}</p>
-            <p>
-                {'Net Revenue: ' + formatNum(tickerData.netRevenue, 'currency')}
-            </p>
-            <p>{'Profit: ' + formatNum(tickerData.profit, 'currency')}</p>
-            <p>{'EBIT: ' + formatNum(tickerData.ebit, 'currency')}</p>
-            <p>{'Debt: ' + formatNum(tickerData.debt, 'currency')}</p>
-            <p>{'Net Debt: ' + formatNum(tickerData.netDebt, 'currency')}</p>
-            <p>{'Net Margin: ' + formatNum(tickerData.netMargin, 'percent')}</p>
-            <p>{'RoE: ' + formatNum(tickerData.roe, 'percent')}</p>
-            <p>
-                {'Net Debt by EBIT: ' +
-                    formatNum(tickerData.netDebtByEbit, 'decimal')}
-            </p>
-            <p>
-                {'Net Debt by Equity: ' +
-                    formatNum(tickerData.netDebtByEquity, 'decimal')}
-            </p>
-            <p>
-                {'CAGR 5 Years Profit: ' +
-                    formatNum(tickerData.cagr5YearsProfit, 'percent')}
-            </p>
-            <p>
-                {'CAGR 5 Years Revenue: ' +
-                    formatNum(tickerData.cagr5YearsRevenue, 'percent')}
-            </p>
+            <StockHeader
+                ticker={ticker}
+                name={tickerData.name}
+                segment={tickerData.segment}
+                price={tickerData.price}
+                pl={tickerData.pl}
+                dividendYield={tickerData.dividendYield}
+            />
+            <div className="px-8 py-2 flex flex-col w-screen items-center justify-center">
+                <p>
+                    {'Market Cap: ' +
+                        formatNum(tickerData.marketCap, 'currency')}
+                </p>
+                <p>
+                    {'Price Bazin: ' +
+                        formatNum(tickerData.bazinPrice, 'currencyDecimal')}
+                </p>
+                <p>{'P/L: ' + formatNum(tickerData.pl, 'decimal')}</p>
+                <p>{'P/VP: ' + formatNum(tickerData.pvp, 'decimal')}</p>
+                <p>
+                    {'Dividend Yield: ' +
+                        formatNum(tickerData.dividendYield, 'percent')}
+                </p>
+                <p>
+                    {'Dividend Payout: ' +
+                        formatNum(tickerData.dividendPayout, 'percent')}
+                </p>
+                <p>{'Equity: ' + formatNum(tickerData.equity, 'currency')}</p>
+                <p>
+                    {'Net Revenue: ' +
+                        formatNum(tickerData.netRevenue, 'currency')}
+                </p>
+                <p>{'Profit: ' + formatNum(tickerData.profit, 'currency')}</p>
+                <p>{'EBIT: ' + formatNum(tickerData.ebit, 'currency')}</p>
+                <p>{'Debt: ' + formatNum(tickerData.debt, 'currency')}</p>
+                <p>
+                    {'Net Debt: ' + formatNum(tickerData.netDebt, 'currency')}
+                </p>
+                <p>
+                    {'Net Margin: ' +
+                        formatNum(tickerData.netMargin, 'percent')}
+                </p>
+                <p>{'RoE: ' + formatNum(tickerData.roe, 'percent')}</p>
+                <p>
+                    {'Net Debt by EBIT: ' +
+                        formatNum(tickerData.netDebtByEbit, 'decimal')}
+                </p>
+                <p>
+                    {'Net Debt by Equity: ' +
+                        formatNum(tickerData.netDebtByEquity, 'decimal')}
+                </p>
+                <p>
+                    {'CAGR 5 Years Profit: ' +
+                        formatNum(tickerData.cagr5YearsProfit, 'percent')}
+                </p>
+                <p>
+                    {'CAGR 5 Years Revenue: ' +
+                        formatNum(tickerData.cagr5YearsRevenue, 'percent')}
+                </p>
+            </div>
         </div>
     )
 }
