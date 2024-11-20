@@ -49,7 +49,20 @@ def columns_rename(df):
             "ROE": "roe",
             "NET_DEBT_BY_EBIT": "netDebtByEbit",
             "NET_DEBT_BY_EQUITY": "netDebtByEquity",
-            "CGAR_5_YEARS_PROFIT": "cgar5YearsProfit",
-            "CGAR_5_YEARS_REVENUE": "cgar5YearsRevenue",
+            "CGAR_5_YEARS_PROFIT": "cagr5YearsProfit",
+            "CGAR_5_YEARS_REVENUE": "cagr5YearsRevenue",
         }
     )
+
+
+def get_df_stocks_cleaned(df, return_cols):
+    useful_return_cols = return_cols.copy()
+
+    for col in return_cols:
+        if col not in df.columns:
+            useful_return_cols.remove(col)
+
+    df = df[useful_return_cols]
+    df = columns_rename(df)
+
+    return df

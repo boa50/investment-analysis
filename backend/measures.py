@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 import utils
 
 
@@ -74,16 +73,16 @@ def get_latest_values_by_tickers(tickers=None):
 def get_companies():
     df = get_latest_values_by_tickers()
 
-    df = df[["TICKER", "NOME", "SEGMENTO", "MARKET_CAP", "PL", "NET_MARGIN"]]
-    df = utils.columns_rename(df)
+    return_cols = ["TICKER", "NOME", "SEGMENTO", "MARKET_CAP", "PL", "NET_MARGIN"]
 
-    return df.sort_values(by="marketCap", ascending=False)
+    df = utils.get_df_stocks_cleaned(df, return_cols)
+    df = df.sort_values(by="marketCap", ascending=False)
+
+    return df
 
 
 def get_company(ticker):
     df = get_latest_values_by_tickers([ticker])
-
-    df = df.drop(["CD_CVM", "TICKER"], axis=1)
 
     return_cols = [
         "NOME",
@@ -109,11 +108,6 @@ def get_company(ticker):
         "CGAR_5_YEARS_REVENUE",
     ]
 
-    for col in return_cols:
-        if col not in df.columns:
-            df[col] = np.nan
-
-    df = df[return_cols]
-    df = utils.columns_rename(df)
+    df = utils.get_df_stocks_cleaned(df, return_cols)
 
     return df
