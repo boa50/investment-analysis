@@ -37,9 +37,9 @@ export default function Header() {
                             Home
                         </Link>
 
-                        <Link to="/stocks_list"
-                            onClick={e => getNavLinkOnClick(e, "/stocks_list", location)}
-                            className={getNavLinkClass("/stocks_list", location)}
+                        <Link to="/stocks"
+                            onClick={e => getNavLinkOnClick(e, "/stocks", location)}
+                            className={getNavLinkClass("/stocks", location)}
                         >
                             Stocks List
                         </Link>

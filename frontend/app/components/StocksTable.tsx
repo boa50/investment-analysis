@@ -4,29 +4,16 @@ import {
     getCoreRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import {
-    dehydrate,
-    HydrationBoundary,
-    QueryClient,
-    useQuery,
-} from '@tanstack/react-query'
-import { json } from '@remix-run/node'
-import { Link, useLoaderData } from "@remix-run/react";
-import { getStocks } from '../api/stocks';
-import type { Cell, Header } from '@tanstack/react-table';
-import type { MetaFunction } from "@remix-run/node";
-import type { Stock } from '../types/stocks';
+import { useQuery } from '@tanstack/react-query'
+import { Link } from "@remix-run/react"
+import { getStocks } from '../api/stocks'
+import { formatDecimal, formatCurrency, formatPercent } from './utils'
 
-export const meta: MetaFunction = () => {
-    return [
-        { title: "Investment Analysis - Stocks List" },
-        { name: "description", content: "List of the stocks" },
-    ];
-};
+import type { Cell, Header } from '@tanstack/react-table'
+import type { Stock } from '../types/stocks'
 
-const formatDecimal = (num: number): string => num.toFixed(2)
-const formatCurrency = (num: number): string => (new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", notation: 'compact' })).format(num)
-const formatPercent = (num: number): string => formatDecimal(num * 100) + '%'
+const isLowerVisibilityCol = (cell: Cell<Stock, unknown>): boolean => cell.column.id === 'segment'
+const isTextCol = (cell: Cell<Stock, unknown> | Header<Stock, unknown>): boolean => ['ticker', 'name', 'segment'].includes(cell.column.id)
 
 const columnHelper = createColumnHelper<Stock>()
 
@@ -63,40 +50,6 @@ const columns = [
     }),
 ]
 
-export async function loader() {
-    const queryClient = new QueryClient()
-
-    await queryClient.prefetchQuery({
-        queryKey: ['stocks'],
-        queryFn: getStocks,
-    })
-
-    return json({ dehydratedState: dehydrate(queryClient) })
-}
-
-export default function StocksList() {
-    const { dehydratedState } = useLoaderData<typeof loader>()
-    return (
-        <div className="flex flex-wrap">
-            <div className="flex flex-col gap-8">
-                <header className="flex flex-col items-center gap-9">
-                    <h1 className="leading text-2xl font-bold text-gray-800">
-                        Lista das ações
-                    </h1>
-                </header>
-                <div className="px-8 py-2 flex w-screen items-center justify-center">
-                    <HydrationBoundary state={dehydratedState}>
-                        <StockTable />
-                    </HydrationBoundary>
-                </div>
-            </div>
-        </div>
-    );
-}
-
-const isLowerVisibilityCol = (cell: Cell<Stock, unknown>): boolean => cell.column.id === 'segment'
-const isTextCol = (cell: Cell<Stock, unknown> | Header<Stock, unknown>): boolean => ['ticker', 'name', 'segment'].includes(cell.column.id)
-
 function StockTableCell({ cell }: { cell: Cell<Stock, unknown> }) {
     const className = 'px-4 py-3 text-sm font-medium' +
         (isLowerVisibilityCol(cell) ? ' text-gray-400' : ' text-gray-700') +
@@ -111,7 +64,7 @@ function StockTableCell({ cell }: { cell: Cell<Stock, unknown> }) {
     )
 }
 
-function StockTable() {
+export default function StockTable() {
     const query = useQuery({ queryKey: ['stocks'], queryFn: getStocks })
 
     const table = useReactTable({
