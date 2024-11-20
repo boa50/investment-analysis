@@ -1,6 +1,9 @@
 {
-    "scss.lint.unknownAtRules": "ignore",
-    "css.customData": [
-        ".vscode/tailwind.json"
-    ]
+  "scss.lint.unknownAtRules": "ignore",
+  "css.customData": [".vscode/tailwind.json"],
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }

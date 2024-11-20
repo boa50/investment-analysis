@@ -1,21 +1,21 @@
 import {
     dehydrate,
     HydrationBoundary,
-    QueryClient
+    QueryClient,
 } from '@tanstack/react-query'
 import { json } from '@remix-run/node'
-import { useLoaderData } from "@remix-run/react"
+import { useLoaderData } from '@remix-run/react'
 import { getStocks } from '../api/stocks'
 import StockTable from '../components/StocksTable'
 
-import type { MetaFunction } from "@remix-run/node"
+import type { MetaFunction } from '@remix-run/node'
 
 export const meta: MetaFunction = () => {
     return [
-        { title: "Investment Analysis - Stocks List" },
-        { name: "description", content: "List of the stocks" },
-    ];
-};
+        { title: 'Investment Analysis - Stocks List' },
+        { name: 'description', content: 'List of the stocks' },
+    ]
+}
 
 export async function loader() {
     const queryClient = new QueryClient()

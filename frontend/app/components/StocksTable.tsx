@@ -5,53 +5,57 @@ import {
     useReactTable,
 } from '@tanstack/react-table'
 import { useQuery } from '@tanstack/react-query'
-import { Link } from "@remix-run/react"
+import { Link } from '@remix-run/react'
 import { getStocks } from '../api/stocks'
 import { formatDecimal, formatCurrency, formatPercent } from './utils'
 
 import type { Cell, Header } from '@tanstack/react-table'
 import type { Stock } from '../types/stocks'
 
-const isLowerVisibilityCol = (cell: Cell<Stock, unknown>): boolean => cell.column.id === 'segment'
-const isTextCol = (cell: Cell<Stock, unknown> | Header<Stock, unknown>): boolean => ['ticker', 'name', 'segment'].includes(cell.column.id)
+const isLowerVisibilityCol = (cell: Cell<Stock, unknown>): boolean =>
+    cell.column.id === 'segment'
+const isTextCol = (
+    cell: Cell<Stock, unknown> | Header<Stock, unknown>
+): boolean => ['ticker', 'name', 'segment'].includes(cell.column.id)
 
 const columnHelper = createColumnHelper<Stock>()
 
 const columns = [
     columnHelper.accessor('ticker', {
         header: 'Ticker',
-        cell: info => info.getValue(),
-        footer: info => info.column.id,
+        cell: (info) => info.getValue(),
+        footer: (info) => info.column.id,
     }),
     columnHelper.accessor('name', {
         header: 'Name',
-        cell: info => info.getValue(),
-        footer: info => info.column.id,
+        cell: (info) => info.getValue(),
+        footer: (info) => info.column.id,
     }),
     columnHelper.accessor('segment', {
         header: 'Segment',
-        cell: info => info.getValue(),
-        footer: info => info.column.id,
+        cell: (info) => info.getValue(),
+        footer: (info) => info.column.id,
     }),
     columnHelper.accessor('marketCap', {
         header: 'Market Cap',
-        cell: info => formatCurrency(info.getValue()),
-        footer: info => info.column.id,
+        cell: (info) => formatCurrency(info.getValue()),
+        footer: (info) => info.column.id,
     }),
     columnHelper.accessor('pl', {
         header: 'P/E',
-        cell: info => formatDecimal(info.getValue()),
-        footer: info => info.column.id,
+        cell: (info) => formatDecimal(info.getValue()),
+        footer: (info) => info.column.id,
     }),
     columnHelper.accessor('netMargin', {
         header: 'Net Margin',
-        cell: info => formatPercent(info.getValue()),
-        footer: info => info.column.id,
+        cell: (info) => formatPercent(info.getValue()),
+        footer: (info) => info.column.id,
     }),
 ]
 
 function StockTableCell({ cell }: { cell: Cell<Stock, unknown> }) {
-    const className = 'px-4 py-3 text-sm font-medium' +
+    const className =
+        'px-4 py-3 text-sm font-medium' +
         (isLowerVisibilityCol(cell) ? ' text-gray-400' : ' text-gray-700') +
         (cell.column.id === 'ticker' ? ' hover:text-blue-500' : '') +
         (isTextCol(cell) ? ' text-left' : ' text-right')
@@ -59,7 +63,11 @@ function StockTableCell({ cell }: { cell: Cell<Stock, unknown> }) {
 
     return (
         <td className={className}>
-            {cell.column.id === 'ticker' ? <Link to={'/stock/' + cell.getValue()}>{cellText}</Link> : cellText}
+            {cell.column.id === 'ticker' ? (
+                <Link to={'/stock/' + cell.getValue()}>{cellText}</Link>
+            ) : (
+                cellText
+            )}
         </td>
     )
 }
@@ -75,38 +83,56 @@ export default function StockTable() {
 
     const cssDivide = 'divide-y divide-gray-300'
 
-    if (query.isPending) return <div className='font-normal text-gray-500'>Loading Data...</div>
+    if (query.isPending)
+        return <div className="font-normal text-gray-500">Loading Data...</div>
 
-    if (query.error) return <div className='font-normal text-red-500'>An error has occurred while loading data: {query.error.message}</div>
+    if (query.error)
+        return (
+            <div className="font-normal text-red-500">
+                An error has occurred while loading data: {query.error.message}
+            </div>
+        )
 
     return (
         <div className="overflow-hidden border border-gray-400 md:rounded-lg">
             <table className={cssDivide}>
                 <thead>
-                    {table.getHeaderGroups().map(headerGroup => (
+                    {table.getHeaderGroups().map((headerGroup) => (
                         <tr key={headerGroup.id}>
-                            {headerGroup.headers.map(header => (
-                                <th key={header.id} className={
-                                    'px-4 py-3.5 text-xs font-normal text-gray-500' +
-                                    (isTextCol(header) ? ' text-left' : ' text-right')
-                                }>
+                            {headerGroup.headers.map((header) => (
+                                <th
+                                    key={header.id}
+                                    className={
+                                        'px-4 py-3.5 text-xs font-normal text-gray-500' +
+                                        (isTextCol(header)
+                                            ? ' text-left'
+                                            : ' text-right')
+                                    }
+                                >
                                     {header.isPlaceholder
                                         ? null
-                                        : (flexRender(
-                                            header.column.columnDef.header,
-                                            header.getContext()
-                                        ))}
+                                        : flexRender(
+                                              header.column.columnDef.header,
+                                              header.getContext()
+                                          )}
                                 </th>
                             ))}
                         </tr>
                     ))}
                 </thead>
                 <tbody className={cssDivide + ' bg-white'}>
-                    {table.getRowModel() !== undefined ? table.getRowModel().rows.map(row => (
-                        <tr key={row.id} className='hover:bg-gray-100'>
-                            {row.getVisibleCells().map(cell => <StockTableCell key={cell.id} cell={cell} />)}
-                        </tr>
-                    )) : null}
+                    {table.getRowModel() !== undefined
+                        ? table.getRowModel().rows.map((row) => (
+                              <tr key={row.id} className="hover:bg-gray-100">
+                                  {row.getVisibleCells().map((cell) => (
+                                      <StockTableCell
+                                          key={cell.id}
+                                          cell={cell}
+                                      />
+                                  ))}
+                              </tr>
+                          ))
+                        : null}
                 </tbody>
             </table>
         </div>
