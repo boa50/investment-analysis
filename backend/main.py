@@ -30,6 +30,12 @@ def get_companies():
     return Response(df.to_json(orient="records"), media_type="application/json")
 
 
+@app.get("/api/company")
+def get_company(ticker: str):
+    df = measures.get_company(ticker=ticker)
+    return Response(df.to_json(orient="records"), media_type="application/json")
+
+
 if __name__ == "__main__":
     import uvicorn
 

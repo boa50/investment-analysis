@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import utils
 
 
@@ -58,7 +59,7 @@ def get_latest_values_by_tickers(tickers=None):
     df_latest_values = (
         df_fundaments_tmp.merge(df_history_tmp, on="CD_CVM")
         .merge(_df_right_prices, on=["CD_CVM", "TICKER"])
-        .merge(_df_basic_info[["CD_CVM", "NUM_TOTAL"]], on="CD_CVM")
+        .merge(_df_basic_info[["CD_CVM", "NUM_TOTAL", "NOME", "SEGMENTO"]], on="CD_CVM")
     )
 
     df_latest_values["MARKET_CAP"] = (
@@ -71,11 +72,48 @@ def get_latest_values_by_tickers(tickers=None):
 
 
 def get_companies():
-    df_basic = utils.get_data("stocks-basic-info")[["CD_CVM", "NOME", "SEGMENTO"]]
-    df_latest = get_latest_values_by_tickers()
+    df = get_latest_values_by_tickers()
 
-    df = df_latest.merge(df_basic, on="CD_CVM")
     df = df[["TICKER", "NOME", "SEGMENTO", "MARKET_CAP", "PL", "NET_MARGIN"]]
-    df.columns = ["ticker", "name", "segment", "marketCap", "pl", "netMargin"]
+    df = utils.columns_rename(df)
 
     return df.sort_values(by="marketCap", ascending=False)
+
+
+def get_company(ticker):
+    df = get_latest_values_by_tickers([ticker])
+
+    df = df.drop(["CD_CVM", "TICKER"], axis=1)
+
+    return_cols = [
+        "NOME",
+        "SEGMENTO",
+        "MARKET_CAP",
+        "PRICE",
+        "BAZIN",
+        "PL",
+        "PVP",
+        "DIVIDEND_YIELD",
+        "DIVIDEND_PAYOUT",
+        "EQUITY",
+        "NET_REVENUE",
+        "PROFIT",
+        "EBIT",
+        "DEBT",
+        "DEBT_NET",
+        "NET_MARGIN",
+        "ROE",
+        "NET_DEBT_BY_EBIT",
+        "NET_DEBT_BY_EQUITY",
+        "CGAR_5_YEARS_PROFIT",
+        "CGAR_5_YEARS_REVENUE",
+    ]
+
+    for col in return_cols:
+        if col not in df.columns:
+            df[col] = np.nan
+
+    df = df[return_cols]
+    df = utils.columns_rename(df)
+
+    return df

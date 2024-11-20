@@ -24,3 +24,32 @@ def get_main_ticker(tickers):
             return ticker
 
     return tickers[0]
+
+
+def columns_rename(df):
+    return df.rename(
+        columns={
+            "TICKER": "ticker",
+            "NOME": "name",
+            "SEGMENTO": "segment",
+            "MARKET_CAP": "marketCap",
+            "PRICE": "price",
+            "BAZIN": "bazinPrice",
+            "PL": "pl",
+            "PVP": "pvp",
+            "DIVIDEND_YIELD": "dividendYield",
+            "DIVIDEND_PAYOUT": "dividendPayout",
+            "EQUITY": "equity",
+            "NET_REVENUE": "netRevenue",
+            "PROFIT": "profit",
+            "EBIT": "ebit",
+            "DEBT": "debt",
+            "DEBT_NET": "netDebt",
+            "NET_MARGIN": "netMargin",
+            "ROE": "roe",
+            "NET_DEBT_BY_EBIT": "netDebtByEbit",
+            "NET_DEBT_BY_EQUITY": "netDebtByEquity",
+            "CGAR_5_YEARS_PROFIT": "cgar5YearsProfit",
+            "CGAR_5_YEARS_REVENUE": "cgar5YearsRevenue",
+        }
+    )
