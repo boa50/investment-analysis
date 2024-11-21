@@ -1,5 +1,5 @@
 import { formatNum } from './utils'
-import StockHeaderKpi from './StockHeaderKpi'
+import KpiCard from './KpiCard'
 import RatingStars from './RatingStars'
 
 interface Props {
@@ -22,7 +22,7 @@ export default function StockHeader({
     return (
         <header className="flex flex-col items-center">
             <div className="bg-gray-800 w-full border border-gray-800 shadow-md p-4">
-                <div className="container grid grid-cols-2">
+                <div className="container grid grid-cols-2 gap-24">
                     <div className="flex flex-row space-x-8">
                         <div className="flex items-center">
                             <img
@@ -41,7 +41,7 @@ export default function StockHeader({
                             <span className="text-lg font-semibold text-gray-100">
                                 {name}
                             </span>
-                            <span className="text-md font-semibold text-gray-400">
+                            <span className="text-base font-semibold text-gray-400">
                                 {segment}
                             </span>
                         </div>
@@ -63,5 +63,22 @@ export default function StockHeader({
                 </div>
             </div>
         </header>
+    )
+}
+
+interface KpiProps {
+    title: string
+    value: string
+}
+
+function StockHeaderKpi({ title, value }: KpiProps) {
+    return (
+        <KpiCard
+            title={title}
+            value={value}
+            bgTheme="dark"
+            size="big"
+            valueFirst={true}
+        />
     )
 }
