@@ -7,7 +7,7 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import { Link } from '@remix-run/react'
 import { getStocks } from '../api/stocks'
-import { formatNum } from './utils'
+import { formatNum } from '../components/utils'
 
 import type { Cell, Header } from '@tanstack/react-table'
 import type { Stock } from '../types/stocks'
@@ -94,47 +94,60 @@ export default function StockTable() {
         )
 
     return (
-        <div className="overflow-hidden border border-gray-400 md:rounded-lg">
-            <table className={cssDivide}>
-                <thead>
-                    {table.getHeaderGroups().map((headerGroup) => (
-                        <tr key={headerGroup.id}>
-                            {headerGroup.headers.map((header) => (
-                                <th
-                                    key={header.id}
-                                    className={
-                                        'px-4 py-3.5 text-xs font-normal text-gray-500' +
-                                        (isTextCol(header)
-                                            ? ' text-left'
-                                            : ' text-right')
-                                    }
-                                >
-                                    {header.isPlaceholder
-                                        ? null
-                                        : flexRender(
-                                              header.column.columnDef.header,
-                                              header.getContext()
-                                          )}
-                                </th>
+        <div className="flex flex-col gap-8">
+            <header className="flex flex-col items-center gap-9">
+                <h1 className="leading text-2xl font-bold text-gray-800">
+                    Lista das ações
+                </h1>
+            </header>
+            <div className="px-8 py-2 flex w-screen items-center justify-center">
+                <div className="overflow-hidden border border-gray-400 md:rounded-lg">
+                    <table className={cssDivide}>
+                        <thead>
+                            {table.getHeaderGroups().map((headerGroup) => (
+                                <tr key={headerGroup.id}>
+                                    {headerGroup.headers.map((header) => (
+                                        <th
+                                            key={header.id}
+                                            className={
+                                                'px-4 py-3.5 text-xs font-normal text-gray-500' +
+                                                (isTextCol(header)
+                                                    ? ' text-left'
+                                                    : ' text-right')
+                                            }
+                                        >
+                                            {header.isPlaceholder
+                                                ? null
+                                                : flexRender(
+                                                      header.column.columnDef
+                                                          .header,
+                                                      header.getContext()
+                                                  )}
+                                        </th>
+                                    ))}
+                                </tr>
                             ))}
-                        </tr>
-                    ))}
-                </thead>
-                <tbody className={cssDivide + ' bg-white'}>
-                    {table.getRowModel() !== undefined
-                        ? table.getRowModel().rows.map((row) => (
-                              <tr key={row.id} className="hover:bg-gray-100">
-                                  {row.getVisibleCells().map((cell) => (
-                                      <StockTableCell
-                                          key={cell.id}
-                                          cell={cell}
-                                      />
-                                  ))}
-                              </tr>
-                          ))
-                        : null}
-                </tbody>
-            </table>
+                        </thead>
+                        <tbody className={cssDivide + ' bg-white'}>
+                            {table.getRowModel() !== undefined
+                                ? table.getRowModel().rows.map((row) => (
+                                      <tr
+                                          key={row.id}
+                                          className="hover:bg-gray-100"
+                                      >
+                                          {row.getVisibleCells().map((cell) => (
+                                              <StockTableCell
+                                                  key={cell.id}
+                                                  cell={cell}
+                                              />
+                                          ))}
+                                      </tr>
+                                  ))
+                                : null}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     )
 }
