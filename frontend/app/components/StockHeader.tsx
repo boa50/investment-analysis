@@ -1,6 +1,7 @@
 import { formatNum } from './utils'
 import KpiCard from './KpiCard'
 import RatingStars from './RatingStars'
+import PageHeaderContainer from './PageHeaderContainer'
 
 interface Props {
     ticker: string | undefined
@@ -20,49 +21,42 @@ export default function StockHeader({
     dividendYield,
 }: Props) {
     return (
-        <header className="flex flex-col items-center">
-            <div className="bg-gray-800 w-full border border-gray-800 shadow-md p-4">
-                <div className="container grid grid-cols-2 gap-24">
-                    <div className="flex flex-row space-x-8">
-                        <div className="flex items-center">
-                            <img
-                                src="https://picsum.photos/seed/picsum/200"
-                                alt=""
-                                className="rounded-full h-20 object-cover"
-                            />
-                        </div>
-                        <div className="flex flex-col">
-                            <div className="flex flex-row space-x-2 items-center">
-                                <h1 className="tracking-wide text-2xl font-bold text-gray-100">
-                                    {ticker}
-                                </h1>
-                                <RatingStars rating={3} />
-                            </div>
-                            <span className="text-lg font-semibold text-gray-100">
-                                {name}
-                            </span>
-                            <span className="text-base font-semibold text-gray-400">
-                                {segment}
-                            </span>
-                        </div>
+        <PageHeaderContainer extraClasses="grid grid-cols-2 gap-24">
+            <div className="flex flex-row space-x-8">
+                <div className="flex items-center">
+                    <img
+                        src="https://picsum.photos/seed/picsum/200"
+                        alt=""
+                        className="rounded-full h-20 object-cover"
+                    />
+                </div>
+                <div className="flex flex-col">
+                    <div className="flex flex-row space-x-2 items-center">
+                        <h1 className="tracking-wide text-2xl font-bold text-gray-100">
+                            {ticker}
+                        </h1>
+                        <RatingStars rating={3} />
                     </div>
-                    <div className="grid grid-cols-3 gap-4 flex items-center">
-                        <StockHeaderKpi
-                            title="Preço"
-                            value={formatNum(price, 'currencyDecimal')}
-                        />
-                        <StockHeaderKpi
-                            title="P/L"
-                            value={formatNum(pl, 'decimal')}
-                        />
-                        <StockHeaderKpi
-                            title="Dividend Yield"
-                            value={formatNum(dividendYield, 'percent')}
-                        />
-                    </div>
+                    <span className="text-lg font-semibold text-gray-100">
+                        {name}
+                    </span>
+                    <span className="text-base font-semibold text-gray-400">
+                        {segment}
+                    </span>
                 </div>
             </div>
-        </header>
+            <div className="grid grid-cols-3 gap-4 flex items-center">
+                <StockHeaderKpi
+                    title="Preço"
+                    value={formatNum(price, 'currencyDecimal')}
+                />
+                <StockHeaderKpi title="P/L" value={formatNum(pl, 'decimal')} />
+                <StockHeaderKpi
+                    title="Dividend Yield"
+                    value={formatNum(dividendYield, 'percent')}
+                />
+            </div>
+        </PageHeaderContainer>
     )
 }
 

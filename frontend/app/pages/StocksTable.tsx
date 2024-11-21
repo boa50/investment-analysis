@@ -8,6 +8,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Link } from '@remix-run/react'
 import { getStocks } from '../api/stocks'
 import { formatNum } from '../components/utils'
+import PageHeaderContainer from '../components/PageHeaderContainer'
 
 import type { Cell, Header } from '@tanstack/react-table'
 import type { Stock } from '../types/stocks'
@@ -94,14 +95,14 @@ export default function StockTable() {
         )
 
     return (
-        <div className="flex flex-col gap-8">
-            <header className="flex flex-col items-center gap-9">
-                <h1 className="leading text-2xl font-bold text-gray-800">
-                    Lista das ações
+        <div className="w-screen pb-4">
+            <PageHeaderContainer>
+                <h1 className="text-4xl font-bold text-gray-100">
+                    Lista de Empresas
                 </h1>
-            </header>
-            <div className="px-8 py-2 flex w-screen items-center justify-center">
-                <div className="overflow-hidden border border-gray-400 md:rounded-lg">
+            </PageHeaderContainer>
+            <div className="px-8 flex w-screen items-center justify-center">
+                <div className="overflow-hidden border border-gray-300 md:rounded-lg">
                     <table className={cssDivide}>
                         <thead>
                             {table.getHeaderGroups().map((headerGroup) => (

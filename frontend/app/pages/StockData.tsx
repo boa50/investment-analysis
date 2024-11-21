@@ -3,6 +3,7 @@ import { formatNum } from '../components/utils'
 import StockHeader from '../components/StockHeader'
 import KpiCard from '../components/KpiCard'
 import { getCompany } from '../api/stocks'
+
 import type { Company } from '../types/stocks'
 
 interface Props {
@@ -28,7 +29,7 @@ export default function StockData({ ticker }: Props) {
     const tickerData = query.data[0]
 
     return (
-        <div className="w-screen">
+        <div className="w-screen pb-4">
             <StockHeader
                 ticker={ticker}
                 name={tickerData.name}
@@ -37,7 +38,7 @@ export default function StockData({ ticker }: Props) {
                 pl={tickerData.pl}
                 dividendYield={tickerData.dividendYield}
             />
-            <div className="h-fit container mt-4">
+            <div className="h-fit container">
                 <div className="relative flex flex-col h-full p-6 rounded-2xl bg-white shadow shadow-grey-950/5">
                     <div className="text-gray-900 font-semibold mb-4 text-xl">
                         Indicadores
