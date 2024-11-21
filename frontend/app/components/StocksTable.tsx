@@ -7,7 +7,7 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import { Link } from '@remix-run/react'
 import { getStocks } from '../api/stocks'
-import { formatDecimal, formatCurrency, formatPercent } from './utils'
+import { formatNum } from './utils'
 
 import type { Cell, Header } from '@tanstack/react-table'
 import type { Stock } from '../types/stocks'
@@ -38,17 +38,17 @@ const columns = [
     }),
     columnHelper.accessor('marketCap', {
         header: 'Market Cap',
-        cell: (info) => formatCurrency(info.getValue()),
+        cell: (info) => formatNum(info.getValue(), 'currency'),
         footer: (info) => info.column.id,
     }),
     columnHelper.accessor('pl', {
         header: 'P/E',
-        cell: (info) => formatDecimal(info.getValue()),
+        cell: (info) => formatNum(info.getValue(), 'decimal'),
         footer: (info) => info.column.id,
     }),
     columnHelper.accessor('netMargin', {
         header: 'Net Margin',
-        cell: (info) => formatPercent(info.getValue()),
+        cell: (info) => formatNum(info.getValue(), 'percent'),
         footer: (info) => info.column.id,
     }),
 ]
@@ -76,7 +76,7 @@ export default function StockTable() {
     const query = useQuery({ queryKey: ['stocks'], queryFn: getStocks })
 
     const table = useReactTable({
-        data: query.data,
+        data: query.data !== undefined ? query.data : [],
         columns,
         getCoreRowModel: getCoreRowModel(),
     })
