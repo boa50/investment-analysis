@@ -1,5 +1,6 @@
 import { formatNum } from './utils'
 import StockHeaderKpi from './StockHeaderKpi'
+import RatingStars from './RatingStars'
 
 interface Props {
     ticker: string | undefined
@@ -31,9 +32,12 @@ export default function StockHeader({
                             />
                         </div>
                         <div className="flex flex-col">
-                            <h1 className="tracking-wide text-2xl font-bold text-gray-100">
-                                {ticker}
-                            </h1>
+                            <div className="flex flex-row space-x-2 items-center">
+                                <h1 className="tracking-wide text-2xl font-bold text-gray-100">
+                                    {ticker}
+                                </h1>
+                                <RatingStars rating={3} />
+                            </div>
                             <span className="text-lg font-semibold text-gray-100">
                                 {name}
                             </span>
