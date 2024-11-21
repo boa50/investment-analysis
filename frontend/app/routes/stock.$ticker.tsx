@@ -8,6 +8,7 @@ import { json } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import { getCompany } from '../api/stocks'
 import { formatNum } from '../components/utils'
+import StockHeader from '../components/StockHeader'
 import type { MetaFunction, LoaderFunctionArgs } from '@remix-run/node'
 
 export const meta: MetaFunction = () => {
@@ -38,61 +39,6 @@ export default function StockInfo() {
                 <StockData ticker={ticker} />
             </HydrationBoundary>
         </div>
-    )
-}
-
-function StockHeader({
-    ticker,
-    name,
-    segment,
-    price,
-    pl,
-    dividendYield,
-}: {
-    ticker: string | undefined
-    name: string
-    segment: string
-    price: number
-    pl: number
-    dividendYield: number
-}) {
-    return (
-        <header className="flex flex-col items-center">
-            <div className="bg-gray-800 w-full border border-gray-800 shadow-md p-4">
-                <div className="container mx-auto grid grid-cols-3">
-                    <div className="flex items-center">
-                        <img
-                            src="https://randomuser.me/api/portraits/women/11.jpg"
-                            alt=""
-                            className="rounded-full h-16 object-cover"
-                        />
-                    </div>
-                    <div>
-                        <h1 className="leading text-2xl font-bold text-gray-100">
-                            {ticker}
-                        </h1>
-                        <p className="text-lg font-semibold text-gray-600">
-                            {name}
-                        </p>
-                        <p className="text-lg font-semibold text-gray-600">
-                            {segment}
-                        </p>
-                    </div>
-                    <div>
-                        <p className="text-lg font-semibold text-gray-600">
-                            {'Preço: ' + formatNum(price, 'currencyDecimal')}
-                        </p>
-                        <p className="text-lg font-semibold text-gray-600">
-                            {'P/L: ' + formatNum(pl, 'decimal')}
-                        </p>
-                        <p className="text-lg font-semibold text-gray-600">
-                            {'Dividend Yield: ' +
-                                formatNum(dividendYield, 'percent')}
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </header>
     )
 }
 

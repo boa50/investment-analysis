@@ -22,7 +22,7 @@ export default function Header() {
 
     return (
         <div className="bg-gray-50 w-full sticky top-0 left-0 right-0 z-10 shadow-md">
-            <div className="relative container mx-auto flex justify-between py-2">
+            <div className="relative container flex justify-between py-2">
                 <div className="flex items-center">
                     <Link className="cursor-pointer" to="/">
                         <h3 className="text-2xl font-medium text-blue-500">
