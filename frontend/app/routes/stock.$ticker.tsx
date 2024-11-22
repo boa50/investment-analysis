@@ -17,11 +17,11 @@ export const meta: MetaFunction = () => {
 }
 
 export async function loader({ params }: LoaderFunctionArgs) {
-    const ticker = params.ticker
+    const ticker = params.ticker?.toUpperCase()
     const queryClient = new QueryClient()
 
     await queryClient.prefetchQuery({
-        queryKey: ['company'],
+        queryKey: ['company', { ticker }],
         queryFn: () => getCompany(ticker !== undefined ? ticker : ''),
     })
 

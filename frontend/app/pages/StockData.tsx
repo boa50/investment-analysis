@@ -11,8 +11,9 @@ interface Props {
 }
 
 export default function StockData({ ticker }: Props) {
+    ticker = ticker?.toUpperCase()
     const query = useQuery({
-        queryKey: ['company'],
+        queryKey: ['company', { ticker }],
         queryFn: () => getCompany(ticker !== undefined ? ticker : ''),
     })
 
