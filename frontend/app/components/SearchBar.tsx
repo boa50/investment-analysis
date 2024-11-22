@@ -3,6 +3,7 @@ import { searchCompanies } from '../api/stocks'
 import { useState, useEffect } from 'react'
 import { Link } from '@remix-run/react'
 import RatingStars from './RatingStars'
+import Spinner from './Spinner'
 
 import type { ChangeEvent, MouseEvent } from 'react'
 import type { CompanySearch } from '../types/stocks'
@@ -160,7 +161,20 @@ function Stocks({ searchText, listClickHandler }: StocksProps) {
     }, [query.data])
 
     if (query.isPending)
-        return <div className="font-normal text-gray-500">Loading Data...</div>
+        return (
+            <div className="flex justify-center py-6 w-[23rem]">
+                <Spinner />
+            </div>
+        )
+
+    if (!query.isPending && stocks.length == 0)
+        return (
+            <div className="flex justify-center items-center py-6 w-[23rem] h-24">
+                <span className="text-gray-600 text-sm">
+                    Não foram encontrados resultados pra a busca
+                </span>
+            </div>
+        )
 
     return (
         <ul className="divide-y divide-gray-300 max-h-[21rem] overflow-y-hidden overflow-y-scroll">
