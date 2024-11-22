@@ -49,8 +49,8 @@ def columns_rename(df):
             "ROE": "roe",
             "NET_DEBT_BY_EBIT": "netDebtByEbit",
             "NET_DEBT_BY_EQUITY": "netDebtByEquity",
-            "CGAR_5_YEARS_PROFIT": "cagr5YearsProfit",
-            "CGAR_5_YEARS_REVENUE": "cagr5YearsRevenue",
+            "CAGR_5_YEARS_PROFIT": "cagr5YearsProfit",
+            "CAGR_5_YEARS_REVENUE": "cagr5YearsRevenue",
         }
     )
 

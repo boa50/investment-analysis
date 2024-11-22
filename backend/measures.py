@@ -104,8 +104,8 @@ def get_company(ticker):
         "ROE",
         "NET_DEBT_BY_EBIT",
         "NET_DEBT_BY_EQUITY",
-        "CGAR_5_YEARS_PROFIT",
-        "CGAR_5_YEARS_REVENUE",
+        "CAGR_5_YEARS_PROFIT",
+        "CAGR_5_YEARS_REVENUE",
     ]
 
     df = utils.get_df_stocks_cleaned(df, return_cols)
