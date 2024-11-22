@@ -38,7 +38,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 <Links />
             </head>
             <body>
-                <Header />
                 {children}
                 <ScrollRestoration />
                 <Scripts />
@@ -62,6 +61,7 @@ export default function App() {
     )
     return (
         <QueryClientProvider client={queryClient}>
+            <Header />
             <Outlet />
         </QueryClientProvider>
     )

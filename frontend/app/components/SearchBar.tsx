@@ -1,8 +1,4 @@
-import {
-    QueryClient,
-    QueryClientProvider,
-    useQuery,
-} from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { searchCompanies } from '../api/stocks'
 import { useState, useEffect } from 'react'
 import { Link } from '@remix-run/react'
@@ -10,8 +6,6 @@ import RatingStars from './RatingStars'
 
 import type { ChangeEvent, MouseEvent } from 'react'
 import type { CompanySearch } from '../types/stocks'
-
-const queryClient = new QueryClient()
 
 export default function SearchBar() {
     const [showPopover, setShowPopover] = useState(false)
@@ -90,12 +84,10 @@ export default function SearchBar() {
                     (showPopover ? 'block' : 'hidden')
                 }
             >
-                <QueryClientProvider client={queryClient}>
-                    <Stocks
-                        searchText={searchText}
-                        listClickHandler={listClickHandler}
-                    />
-                </QueryClientProvider>
+                <Stocks
+                    searchText={searchText}
+                    listClickHandler={listClickHandler}
+                />
             </div>
         </div>
     )
