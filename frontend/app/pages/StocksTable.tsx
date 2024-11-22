@@ -98,7 +98,7 @@ export default function StockTable() {
         <div className="w-screen pb-4">
             <PageHeaderContainer>
                 <h1 className="text-4xl font-bold text-gray-100">
-                    Lista de Empresas
+                    Lista de Ações
                 </h1>
             </PageHeaderContainer>
             <div className="px-8 flex w-screen items-center justify-center">
