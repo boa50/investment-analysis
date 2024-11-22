@@ -30,6 +30,8 @@ def columns_rename(df):
     return df.rename(
         columns={
             "TICKER": "ticker",
+            "MAIN_TICKER": "ticker",
+            "TICKERS": "tickers",
             "NOME": "name",
             "SEGMENTO": "segment",
             "MARKET_CAP": "marketCap",

@@ -3,24 +3,24 @@ import utils
 
 
 def get_latest_values_by_tickers(tickers=None):
-    _df_basic_info = utils.get_data("stocks-basic-info")
-    _df_history = utils.get_data("stocks-history", dates_to_parse=["DATE"])
-    _df_fundaments = utils.get_data(
+    df_basic_info = utils.get_data("stocks-basic-info")
+    df_history = utils.get_data("stocks-history", dates_to_parse=["DATE"])
+    df_fundaments = utils.get_data(
         "stocks-fundaments", dates_to_parse=["DT_INI_EXERC", "DT_FIM_EXERC"]
     )
-    _df_right_prices = utils.get_data("stocks-right-prices")
+    df_right_prices = utils.get_data("stocks-right-prices")
 
     if tickers is not None:
-        _df_basic_info["MAIN_TICKER"] = _df_basic_info["TICKERS"].apply(
+        df_basic_info["MAIN_TICKER"] = df_basic_info["TICKERS"].apply(
             lambda x: utils.get_main_ticker(x)
         )
-        _df_basic_info = _df_basic_info[_df_basic_info["MAIN_TICKER"].isin(tickers)]
+        df_basic_info = df_basic_info[df_basic_info["MAIN_TICKER"].isin(tickers)]
 
-        _df_right_prices = _df_right_prices[_df_right_prices["TICKER"].isin(tickers)]
+        df_right_prices = df_right_prices[df_right_prices["TICKER"].isin(tickers)]
 
-    cds_cvm = _df_basic_info["CD_CVM"].values
+    cds_cvm = df_basic_info["CD_CVM"].values
 
-    df_fundaments_tmp = _df_fundaments[_df_fundaments["CD_CVM"].isin(cds_cvm)]
+    df_fundaments_tmp = df_fundaments[df_fundaments["CD_CVM"].isin(cds_cvm)]
     last_fundament_date = (
         df_fundaments_tmp.groupby("CD_CVM")["DT_FIM_EXERC"].max().reset_index()
     )
@@ -49,7 +49,7 @@ def get_latest_values_by_tickers(tickers=None):
     df_fundaments_tmp = pd.concat([df_fundaments_tmp, df_fundaments_tmp_2], axis=1)
     df_fundaments_tmp = df_fundaments_tmp.drop("DT_FIM_EXERC", axis=1)
 
-    df_history_tmp = _df_history[_df_history["CD_CVM"].isin(cds_cvm)]
+    df_history_tmp = df_history[df_history["CD_CVM"].isin(cds_cvm)]
     last_history_date = df_history_tmp.groupby("CD_CVM")["DATE"].max().reset_index()
     df_history_tmp = df_history_tmp.merge(
         last_history_date, how="inner", on=["CD_CVM", "DATE"]
@@ -57,8 +57,8 @@ def get_latest_values_by_tickers(tickers=None):
 
     df_latest_values = (
         df_fundaments_tmp.merge(df_history_tmp, on="CD_CVM")
-        .merge(_df_right_prices, on=["CD_CVM", "TICKER"])
-        .merge(_df_basic_info[["CD_CVM", "NUM_TOTAL", "NOME", "SEGMENTO"]], on="CD_CVM")
+        .merge(df_right_prices, on=["CD_CVM", "TICKER"])
+        .merge(df_basic_info[["CD_CVM", "NUM_TOTAL", "NOME", "SEGMENTO"]], on="CD_CVM")
     )
 
     df_latest_values["MARKET_CAP"] = (

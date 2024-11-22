@@ -1,44 +1,21 @@
+import {
+    QueryClient,
+    QueryClientProvider,
+    useQuery,
+} from '@tanstack/react-query'
+import { searchCompanies } from '../api/stocks'
 import { useState, useEffect } from 'react'
 import { Link } from '@remix-run/react'
 import RatingStars from './RatingStars'
 
 import type { ChangeEvent, MouseEvent } from 'react'
-import type { StockSearch } from '../types/stocks'
+import type { CompanySearch } from '../types/stocks'
 
-function searchStocks(text: string): StockSearch[] {
-    return [
-        {
-            ticker: 'BBAS3',
-            name: 'Banco do Brasil S.A.',
-            segment: 'Bancos',
-        },
-        {
-            ticker: 'ITUB4',
-            name: 'Banco Itaú S.A.',
-            segment: 'Bancos',
-        },
-        {
-            ticker: 'CMIG4',
-            name: 'CEMIG',
-            segment: 'Energia Elétrica',
-        },
-        {
-            ticker: 'AMBP3',
-            name: 'AMBIPAR PARTICIPAÇÕES E EMPREENDIMENTOS S.A.',
-            segment: 'Água e Saneamento',
-        },
-        {
-            ticker: 'AGRO3',
-            name: 'BRASILAGRO CIA BRAS DE PROP AGRICOLAS',
-            segment: 'Agricultura',
-        },
-    ]
-}
+const queryClient = new QueryClient()
 
 export default function SearchBar() {
     const [showPopover, setShowPopover] = useState(false)
     const [searchText, setSearchText] = useState('')
-    const [stocks, setStocks] = useState<StockSearch[]>([])
 
     const searchHandler = (e: ChangeEvent<HTMLInputElement>) => {
         setSearchText(e.target.value)
@@ -63,8 +40,6 @@ export default function SearchBar() {
 
     useEffect(() => {
         if (searchText.length >= 2) {
-            const searchReturn = searchStocks(searchText.toLowerCase())
-            setStocks(searchReturn)
             setShowPopover(true)
         } else {
             setShowPopover(false)
@@ -115,21 +90,12 @@ export default function SearchBar() {
                     (showPopover ? 'block' : 'hidden')
                 }
             >
-                <ul className="divide-y divide-gray-300 max-h-[21rem] overflow-y-hidden overflow-y-scroll">
-                    {stocks.map((d, i) => (
-                        <li
-                            key={i}
-                            className="hover:bg-gray-100 px-6 first:pt-4 last:pb-4 py-2"
-                        >
-                            <StockBasicInfo
-                                ticker={d.ticker}
-                                name={d.name}
-                                segment={d.segment}
-                                onClick={listClickHandler}
-                            />
-                        </li>
-                    ))}
-                </ul>
+                <QueryClientProvider client={queryClient}>
+                    <Stocks
+                        searchText={searchText}
+                        listClickHandler={listClickHandler}
+                    />
+                </QueryClientProvider>
             </div>
         </div>
     )
@@ -178,5 +144,47 @@ function StockBasicInfo({
                 </div>
             </div>
         </Link>
+    )
+}
+
+interface StocksProps {
+    searchText: string
+    listClickHandler: (e: MouseEvent<HTMLAnchorElement>) => void
+}
+
+function Stocks({ searchText, listClickHandler }: StocksProps) {
+    const [stocks, setStocks] = useState<CompanySearch[]>([])
+
+    const query = useQuery({
+        queryKey: ['searchCompany', { searchText }],
+        queryFn: () =>
+            searchText.length >= 2 ? searchCompanies(searchText) : null,
+    })
+
+    useEffect(() => {
+        if (query.data !== null && query.data !== undefined) {
+            setStocks(query.data)
+        }
+    }, [query.data])
+
+    if (query.isPending)
+        return <div className="font-normal text-gray-500">Loading Data...</div>
+
+    return (
+        <ul className="divide-y divide-gray-300 max-h-[21rem] overflow-y-hidden overflow-y-scroll">
+            {stocks.map((d, i) => (
+                <li
+                    key={i}
+                    className="hover:bg-gray-100 px-6 first:pt-4 last:pb-4 py-2"
+                >
+                    <StockBasicInfo
+                        ticker={d.ticker}
+                        name={d.name}
+                        segment={d.segment}
+                        onClick={listClickHandler}
+                    />
+                </li>
+            ))}
+        </ul>
     )
 }

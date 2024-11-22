@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 import measures
+import info
 
 ### Configuring CORS
 origins = [
@@ -33,6 +34,12 @@ def get_companies():
 @app.get("/api/company")
 def get_company(ticker: str):
     df = measures.get_company(ticker=ticker)
+    return Response(df.to_json(orient="records"), media_type="application/json")
+
+
+@app.get("/api/searchCompanies")
+def search_companies(text: str):
+    df = info.search_companies(text=text)
     return Response(df.to_json(orient="records"), media_type="application/json")
 
 

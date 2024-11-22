@@ -1,4 +1,4 @@
-export type StockSearch = {
+export type CompanySearch = {
     ticker: string
     name: string
     segment: string
