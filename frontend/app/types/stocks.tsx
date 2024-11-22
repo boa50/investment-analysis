@@ -1,3 +1,9 @@
+export type StockSearch = {
+    ticker: string
+    name: string
+    segment: string
+}
+
 export type Stock = {
     ticker: string
     name: string

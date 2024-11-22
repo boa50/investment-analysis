@@ -1,7 +1,61 @@
+import { useState, useEffect } from 'react'
 import { Link } from '@remix-run/react'
 import RatingStars from './RatingStars'
 
+import type { ChangeEvent } from 'react'
+import type { StockSearch } from '../types/stocks'
+
+function searchStocks(text: string): StockSearch[] {
+    console.log('Triggered search: ' + text)
+
+    return [
+        {
+            ticker: 'BBAS3',
+            name: 'Banco do Brasil S.A.',
+            segment: 'Bancos',
+        },
+        {
+            ticker: 'ITSA4',
+            name: 'Banco Itaú S.A.',
+            segment: 'Bancos',
+        },
+        {
+            ticker: 'CMIG4',
+            name: 'CEMIG',
+            segment: 'Energia Elétrica',
+        },
+        {
+            ticker: 'AMBP3',
+            name: 'AMBIPAR PARTICIPAÇÕES E EMPREENDIMENTOS S.A.',
+            segment: 'Água e Saneamento',
+        },
+        {
+            ticker: 'AGRO3',
+            name: 'BRASILAGRO CIA BRAS DE PROP AGRICOLAS',
+            segment: 'Agricultura',
+        },
+    ]
+}
+
 export default function SearchBar() {
+    const [showPopover, setShowPopover] = useState(false)
+    const [searchText, setSearchText] = useState('')
+    const [stocks, setStocks] = useState<StockSearch[]>([])
+
+    const searchHandler = (e: ChangeEvent<HTMLInputElement>) => {
+        setSearchText(e.target.value)
+    }
+
+    useEffect(() => {
+        if (searchText.length >= 2) {
+            const searchReturn = searchStocks(searchText.toLowerCase())
+            setStocks(searchReturn)
+            setShowPopover(true)
+        } else {
+            setShowPopover(false)
+        }
+    }, [searchText])
+
     return (
         <div className="flex flex-col items-center">
             <div
@@ -25,33 +79,38 @@ export default function SearchBar() {
                     className="block appearance-none bg-transparent text-base 
                                 text-gray-700 placeholder:text-gray-400 focus:outline-none 
                                 sm:text-sm sm:leading-6"
-                    placeholder="Busque um ativo.."
+                    placeholder="Busque um ativo..."
                     aria-label="Search components"
-                    id="headlessui-combobox-input-:r5n:"
+                    id="search-box"
                     role="combobox"
                     type="text"
                     aria-controls=""
                     aria-expanded="false"
                     aria-autocomplete="list"
+                    onChange={searchHandler}
+                    value={searchText}
                     style={{ caretColor: 'rgb(107, 114, 128)' }}
                 />
             </div>
-            <div className="absolute top-full bg-gray-50 border rounded-md">
+            <div
+                className={
+                    'absolute top-full bg-gray-50 border rounded-md ' +
+                    (showPopover ? 'block' : 'hidden')
+                }
+            >
                 <ul className="divide-y divide-gray-300">
-                    <li className="hover:bg-gray-100 px-6 first:pt-4 last:pb-4 py-2">
-                        <StockBasicInfo
-                            ticker="BBAS3"
-                            name="Banco do Brasil S.A."
-                            segment="Bancos"
-                        />
-                    </li>
-                    <li className="hover:bg-gray-100 px-6 first:pt-4 last:pb-4 py-2">
-                        <StockBasicInfo
-                            ticker="BBAS3"
-                            name="Banco do Brasil S.A."
-                            segment="Bancos"
-                        />
-                    </li>
+                    {stocks.map((d, i) => (
+                        <li
+                            key={i}
+                            className="hover:bg-gray-100 px-6 first:pt-4 last:pb-4 py-2"
+                        >
+                            <StockBasicInfo
+                                ticker={d.ticker}
+                                name={d.name}
+                                segment={d.segment}
+                            />
+                        </li>
+                    ))}
                 </ul>
             </div>
         </div>
@@ -72,17 +131,17 @@ function StockBasicInfo({ ticker, name, segment }: StockBasicInfoProps) {
                     <img
                         src="https://picsum.photos/seed/picsum/200"
                         alt=""
-                        className="rounded-full h-12 object-cover"
+                        className="rounded-full w-12 object-cover"
                     />
                 </div>
-                <div className="flex flex-col">
+                <div className="flex flex-col w-64">
                     <div className="flex flex-row space-x-1 items-center">
                         <h1 className="tracking-wide text-base font-semibold text-gray-800">
                             {ticker}
                         </h1>
                         <RatingStars rating={3} size="small" />
                     </div>
-                    <span className="text-sm font-normal text-gray-800">
+                    <span className="text-sm font-normal text-gray-800 truncate">
                         {name}
                     </span>
                     <span className="text-sm font-normal text-gray-400">
