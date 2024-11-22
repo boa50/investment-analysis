@@ -57,7 +57,7 @@ def get_latest_values_by_tickers(tickers=None):
 
     df_latest_values = (
         df_fundaments_tmp.merge(df_history_tmp, on="CD_CVM")
-        .merge(df_right_prices, on=["CD_CVM", "TICKER"])
+        .merge(df_right_prices, how="left", on=["CD_CVM", "TICKER"])
         .merge(df_basic_info[["CD_CVM", "NUM_TOTAL", "NOME", "SEGMENTO"]], on="CD_CVM")
     )
 
@@ -83,6 +83,7 @@ def get_companies():
 
 def get_company(ticker):
     df = get_latest_values_by_tickers([ticker])
+    df = df.dropna(axis=1)
 
     return_cols = [
         "NOME",
