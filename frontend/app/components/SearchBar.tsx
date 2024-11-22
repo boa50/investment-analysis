@@ -2,12 +2,10 @@ import { useState, useEffect } from 'react'
 import { Link } from '@remix-run/react'
 import RatingStars from './RatingStars'
 
-import type { ChangeEvent } from 'react'
+import type { ChangeEvent, MouseEvent } from 'react'
 import type { StockSearch } from '../types/stocks'
 
 function searchStocks(text: string): StockSearch[] {
-    console.log('Triggered search: ' + text)
-
     return [
         {
             ticker: 'BBAS3',
@@ -15,7 +13,7 @@ function searchStocks(text: string): StockSearch[] {
             segment: 'Bancos',
         },
         {
-            ticker: 'ITSA4',
+            ticker: 'ITUB4',
             name: 'Banco Itaú S.A.',
             segment: 'Bancos',
         },
@@ -44,6 +42,23 @@ export default function SearchBar() {
 
     const searchHandler = (e: ChangeEvent<HTMLInputElement>) => {
         setSearchText(e.target.value)
+    }
+
+    const focusHandler = () => {
+        if (searchText.length >= 2) {
+            setShowPopover(true)
+        }
+    }
+
+    const blurHandler = () => {
+        setShowPopover(false)
+    }
+
+    const listClickHandler = (e: MouseEvent<HTMLAnchorElement>) => {
+        setShowPopover(false)
+        e.currentTarget.focus()
+        e.currentTarget.blur()
+        setSearchText('')
     }
 
     useEffect(() => {
@@ -89,6 +104,8 @@ export default function SearchBar() {
                     aria-autocomplete="list"
                     onChange={searchHandler}
                     value={searchText}
+                    onFocus={focusHandler}
+                    onBlur={blurHandler}
                     style={{ caretColor: 'rgb(107, 114, 128)' }}
                 />
             </div>
@@ -98,7 +115,7 @@ export default function SearchBar() {
                     (showPopover ? 'block' : 'hidden')
                 }
             >
-                <ul className="divide-y divide-gray-300">
+                <ul className="divide-y divide-gray-300 max-h-[21rem] overflow-y-hidden overflow-y-scroll">
                     {stocks.map((d, i) => (
                         <li
                             key={i}
@@ -108,6 +125,7 @@ export default function SearchBar() {
                                 ticker={d.ticker}
                                 name={d.name}
                                 segment={d.segment}
+                                onClick={listClickHandler}
                             />
                         </li>
                     ))}
@@ -121,11 +139,21 @@ interface StockBasicInfoProps {
     ticker: string
     name: string
     segment: string
+    onClick?: (e: MouseEvent<HTMLAnchorElement>) => void
 }
 
-function StockBasicInfo({ ticker, name, segment }: StockBasicInfoProps) {
+function StockBasicInfo({
+    ticker,
+    name,
+    segment,
+    onClick,
+}: StockBasicInfoProps) {
     return (
-        <Link to={'/stock/' + ticker}>
+        <Link
+            to={'/stock/' + ticker}
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={onClick}
+        >
             <div className="flex flex-row space-x-4">
                 <div className="flex items-center">
                     <img
