@@ -5,6 +5,9 @@ import {
     Outlet,
     Scripts,
     ScrollRestoration,
+    isRouteErrorResponse,
+    useRouteError,
+    Link,
 } from '@remix-run/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type { LinksFunction } from '@remix-run/node'
@@ -64,5 +67,35 @@ export default function App() {
             <Header />
             <Outlet />
         </QueryClientProvider>
+    )
+}
+
+export function ErrorBoundary() {
+    const error = useRouteError()
+
+    return (
+        <html lang="en">
+            <head>
+                <title>Oops!</title>
+                <Meta />
+                <Links />
+            </head>
+            <body className="p-4">
+                <h1>
+                    {isRouteErrorResponse(error)
+                        ? `Erro: ${error.status} -  ${error.statusText}`
+                        : error instanceof Error
+                          ? error.message
+                          : 'Erro Desconhecido'}
+                </h1>
+                <Link
+                    to="/"
+                    className="underline hover:text-blue-500 cursor-pointer"
+                >
+                    Voltar à Página Inicial
+                </Link>
+                <Scripts />
+            </body>
+        </html>
     )
 }
