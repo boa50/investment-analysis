@@ -4,6 +4,7 @@ interface Props {
     size?: 'big' | 'small'
     bgTheme?: 'dark' | 'light'
     valueFirst?: boolean
+    description?: string
 }
 
 export default function KpiCard({
@@ -12,6 +13,7 @@ export default function KpiCard({
     size = 'small',
     bgTheme = 'light',
     valueFirst = false,
+    description = '',
 }: Props) {
     const delimiterColour =
         bgTheme === 'light' ? 'bg-appTextWeak' : 'bg-appTextWeakDark'
@@ -20,10 +22,22 @@ export default function KpiCard({
         'flex flex-col justify-center ml-3 ' + delimiterPadding
 
     const Title = () => (
-        <Text size={size} bgTheme={bgTheme} value={title} type={'title'} />
+        <Text
+            size={size}
+            bgTheme={bgTheme}
+            value={title}
+            type={'title'}
+            description={description}
+        />
     )
     const Value = () => (
-        <Text size={size} bgTheme={bgTheme} value={value} type={'value'} />
+        <Text
+            size={size}
+            bgTheme={bgTheme}
+            value={value}
+            type={'value'}
+            description={description}
+        />
     )
 
     return (
@@ -49,9 +63,10 @@ interface TextProps {
     bgTheme: 'dark' | 'light'
     value: string
     type: 'title' | 'value'
+    description: string
 }
 
-function Text({ size, bgTheme, value, type }: TextProps) {
+function Text({ size, bgTheme, value, type, description }: TextProps) {
     let textSize, textColour, fontWeight
 
     if (type === 'title') {
@@ -69,8 +84,13 @@ function Text({ size, bgTheme, value, type }: TextProps) {
     }
 
     return (
-        <span className={`${textColour} ${textSize} ${fontWeight}`}>
-            {value}
-        </span>
+        <div>
+            <span className={`${textColour} ${textSize} ${fontWeight}`}>
+                {value}
+            </span>
+            {type === 'title' && description.length > 0 ? (
+                <sup className={`pl-1 ${textColour}`}>&#x1F6C8;</sup>
+            ) : null}
+        </div>
     )
 }

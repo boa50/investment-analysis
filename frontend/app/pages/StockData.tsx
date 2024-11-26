@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
-import { formatNum } from '../components/utils'
 import StockHeader from '../components/StockHeader'
 import KpiCard from '../components/KpiCard'
 import { getCompany } from '../api/stocks'
+import { getKpiInfo } from '../data/kpi'
 
 import type { Company } from '../types/stocks'
 
@@ -73,7 +73,7 @@ export default function StockData({ ticker }: Props) {
 
 interface KpiGroupProps {
     groupName?: string
-    kpis: { title: string; value: string }[]
+    kpis: { title: string; value: string; description: string }[]
 }
 
 function KpiGroup({ groupName, kpis }: KpiGroupProps) {
@@ -86,7 +86,12 @@ function KpiGroup({ groupName, kpis }: KpiGroupProps) {
             ) : null}
             <div className="grid grid-cols-4 mb-2 gap-4">
                 {kpis.map((d, i) => (
-                    <KpiCard key={i} title={d.title} value={d.value} />
+                    <KpiCard
+                        key={i}
+                        title={d.title}
+                        value={d.value}
+                        description={d.description}
+                    />
                 ))}
             </div>
         </div>
@@ -98,30 +103,12 @@ function ValueKpis({ tickerData }: { tickerData: Company }) {
         <KpiGroup
             groupName="Valor"
             kpis={[
-                {
-                    title: 'P/L',
-                    value: formatNum(tickerData.pl, 'decimal'),
-                },
-                {
-                    title: 'P/VP',
-                    value: formatNum(tickerData.pvp, 'decimal'),
-                },
-                {
-                    title: 'Dividend Yield',
-                    value: formatNum(tickerData.dividendYield, 'percent'),
-                },
-                {
-                    title: 'Dividend Payout',
-                    value: formatNum(tickerData.dividendPayout, 'percent'),
-                },
-                {
-                    title: 'Valor de Mercado',
-                    value: formatNum(tickerData.marketCap, 'currency'),
-                },
-                {
-                    title: 'Preço Bazin',
-                    value: formatNum(tickerData.bazinPrice, 'currencyDecimal'),
-                },
+                getKpiInfo(tickerData, 'pl'),
+                getKpiInfo(tickerData, 'pvp'),
+                getKpiInfo(tickerData, 'dividendYield'),
+                getKpiInfo(tickerData, 'dividendPayout'),
+                getKpiInfo(tickerData, 'marketCap'),
+                getKpiInfo(tickerData, 'bazinPrice'),
             ]}
         />
     )
@@ -132,14 +119,8 @@ function DebtKpis({ tickerData }: { tickerData: Company }) {
         <KpiGroup
             groupName="Endividamento"
             kpis={[
-                {
-                    title: 'Dívida Líquida / EBIT',
-                    value: formatNum(tickerData.netDebtByEbit, 'decimal'),
-                },
-                {
-                    title: 'Dívida Líquida / Patrimônio',
-                    value: formatNum(tickerData.netDebtByEquity, 'decimal'),
-                },
+                getKpiInfo(tickerData, 'netDebtByEbit'),
+                getKpiInfo(tickerData, 'netDebtByEquity'),
             ]}
         />
     )
@@ -150,14 +131,8 @@ function EfficiencyKpis({ tickerData }: { tickerData: Company }) {
         <KpiGroup
             groupName="Eficiência"
             kpis={[
-                {
-                    title: 'Margem Líquida',
-                    value: formatNum(tickerData.netMargin, 'percent'),
-                },
-                {
-                    title: 'RoE',
-                    value: formatNum(tickerData.roe, 'percent'),
-                },
+                getKpiInfo(tickerData, 'netMargin'),
+                getKpiInfo(tickerData, 'roe'),
             ]}
         />
     )
@@ -168,14 +143,8 @@ function GrowthKpis({ tickerData }: { tickerData: Company }) {
         <KpiGroup
             groupName="Crescimento"
             kpis={[
-                {
-                    title: 'CAGR Lucros - 5 anos',
-                    value: formatNum(tickerData.cagr5YearsProfit, 'percent'),
-                },
-                {
-                    title: 'CAGR Receitas - 5 anos',
-                    value: formatNum(tickerData.cagr5YearsRevenue, 'percent'),
-                },
+                getKpiInfo(tickerData, 'cagr5YearsProfit'),
+                getKpiInfo(tickerData, 'cagr5YearsRevenue'),
             ]}
         />
     )
@@ -185,30 +154,12 @@ function ResultsGroup({ tickerData }: { tickerData: Company }) {
     return (
         <KpiGroup
             kpis={[
-                {
-                    title: 'Patrimônio',
-                    value: formatNum(tickerData.equity, 'currency'),
-                },
-                {
-                    title: 'Receitas',
-                    value: formatNum(tickerData.netRevenue, 'currency'),
-                },
-                {
-                    title: 'Lucro',
-                    value: formatNum(tickerData.profit, 'currency'),
-                },
-                {
-                    title: 'EBIT',
-                    value: formatNum(tickerData.ebit, 'currency'),
-                },
-                {
-                    title: 'Dívida Bruta',
-                    value: formatNum(tickerData.debt, 'currency'),
-                },
-                {
-                    title: 'Dívida Líquida',
-                    value: formatNum(tickerData.netDebt, 'currency'),
-                },
+                getKpiInfo(tickerData, 'equity'),
+                getKpiInfo(tickerData, 'netRevenue'),
+                getKpiInfo(tickerData, 'profit'),
+                getKpiInfo(tickerData, 'ebit'),
+                getKpiInfo(tickerData, 'debt'),
+                getKpiInfo(tickerData, 'netDebt'),
             ]}
         />
     )
