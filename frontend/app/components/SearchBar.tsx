@@ -45,7 +45,7 @@ export default function SearchBar() {
         <div className="flex flex-col items-center">
             <div
                 className="flex items-center px-3.5 py-2 text-gray-400 group hover:ring-1 
-                            hover:ring-gray-300 focus-within:!ring-2 ring-inset focus-within:!ring-blue-500 
+                            hover:ring-gray-300 focus-within:!ring-2 ring-inset focus-within:!ring-appAccent 
                             rounded-md"
             >
                 <svg
@@ -81,7 +81,7 @@ export default function SearchBar() {
             </div>
             <div
                 className={
-                    'absolute top-full bg-gray-50 border rounded-md ' +
+                    'absolute top-full bg-appBackground border rounded-md ' +
                     (showPopover ? 'block' : 'hidden')
                 }
             >
@@ -123,15 +123,15 @@ function StockBasicInfo({
                 </div>
                 <div className="flex flex-col w-64">
                     <div className="flex flex-row space-x-1 items-center">
-                        <h1 className="tracking-wide text-base font-semibold text-gray-800">
+                        <h1 className="tracking-wide text-base font-semibold text-appTextStrong">
                             {ticker}
                         </h1>
                         <RatingStars rating={3} size="small" />
                     </div>
-                    <span className="text-sm font-normal text-gray-800 truncate">
+                    <span className="text-sm font-normal text-appTextStrong truncate">
                         {name}
                     </span>
-                    <span className="text-sm font-normal text-gray-400">
+                    <span className="text-sm font-normal text-appTextWeak">
                         {segment}
                     </span>
                 </div>
@@ -170,18 +170,18 @@ function Stocks({ searchText, listClickHandler }: StocksProps) {
     if (!query.isPending && stocks.length == 0)
         return (
             <div className="flex justify-center items-center py-6 w-[23rem] h-24">
-                <span className="text-gray-600 text-sm">
+                <span className="text-appTextWeak text-sm">
                     Não foram encontrados resultados pra a busca
                 </span>
             </div>
         )
 
     return (
-        <ul className="divide-y divide-gray-300 max-h-[21rem] overflow-y-hidden overflow-y-scroll">
+        <ul className="divide-y divide-appRowDivider max-h-[21rem] overflow-y-hidden overflow-y-scroll">
             {stocks.map((d, i) => (
                 <li
                     key={i}
-                    className="hover:bg-gray-100 px-6 first:pt-4 last:pb-4 py-2"
+                    className="hover:bg-gray-200 px-6 first:pt-4 last:pb-4 py-2"
                 >
                     <StockBasicInfo
                         ticker={d.ticker}

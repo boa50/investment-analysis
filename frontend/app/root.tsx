@@ -90,7 +90,7 @@ export function ErrorBoundary() {
                 </h1>
                 <Link
                     to="/"
-                    className="underline hover:text-blue-500 cursor-pointer"
+                    className="underline hover:text-appAccent cursor-pointer"
                 >
                     Voltar à Página Inicial
                 </Link>

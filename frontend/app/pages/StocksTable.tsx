@@ -57,8 +57,10 @@ const columns = [
 function StockTableCell({ cell }: { cell: Cell<Stock, unknown> }) {
     const className =
         'px-4 py-3 text-sm font-medium' +
-        (isLowerVisibilityCol(cell) ? ' text-gray-400' : ' text-gray-700') +
-        (cell.column.id === 'ticker' ? ' hover:text-blue-500' : '') +
+        (isLowerVisibilityCol(cell)
+            ? ' text-appTextWeak'
+            : ' text-appTextNormal') +
+        (cell.column.id === 'ticker' ? ' hover:text-appAccent' : '') +
         (isTextCol(cell) ? ' text-left' : ' text-right')
     const cellText = flexRender(cell.column.columnDef.cell, cell.getContext())
 
@@ -82,10 +84,12 @@ export default function StockTable() {
         getCoreRowModel: getCoreRowModel(),
     })
 
-    const cssDivide = 'divide-y divide-gray-300'
+    const cssDivide = 'divide-y divide-appRowDivider'
 
     if (query.isPending)
-        return <div className="font-normal text-gray-500">Loading Data...</div>
+        return (
+            <div className="font-normal text-appTextWeak">Loading Data...</div>
+        )
 
     if (query.error)
         return (
@@ -97,7 +101,7 @@ export default function StockTable() {
     return (
         <div className="w-screen pb-4">
             <PageHeaderContainer>
-                <h1 className="text-4xl font-bold text-gray-100">
+                <h1 className="text-4xl font-bold text-appTextStrongDark">
                     Lista de Ações
                 </h1>
             </PageHeaderContainer>
@@ -111,7 +115,7 @@ export default function StockTable() {
                                         <th
                                             key={header.id}
                                             className={
-                                                'px-4 py-3.5 text-xs font-normal text-gray-500' +
+                                                'px-4 py-3.5 text-xs font-normal text-appTextWeak' +
                                                 (isTextCol(header)
                                                     ? ' text-left'
                                                     : ' text-right')

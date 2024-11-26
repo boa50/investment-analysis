@@ -9,8 +9,8 @@ const isCurrentLocation = (pathname: string, location: Location): boolean =>
 const getNavLinkClass = (pathname: string, location: Location): string =>
     navLinkDefaultClass +
     (isCurrentLocation(pathname, location)
-        ? ' font-semibold text-blue-500 cursor-default'
-        : ' text-gray-600 hover:text-blue-500 cursor-pointer')
+        ? ' font-semibold text-appAccent cursor-default'
+        : ' text-appTextNormal hover:text-appAccent cursor-pointer')
 const getNavLinkOnClick = (
     e: React.MouseEvent,
     pathname: string,
@@ -22,11 +22,11 @@ export default function Header() {
     const location = useLocation()
 
     return (
-        <div className="bg-gray-50 w-full sticky top-0 left-0 right-0 z-10 shadow-md">
+        <div className="bg-appBackground w-full sticky top-0 left-0 right-0 z-10 shadow-md">
             <div className="relative container flex justify-between py-2">
                 <div className="flex items-center">
                     <Link className="cursor-pointer" to="/">
-                        <h3 className="text-2xl font-medium text-blue-500">
+                        <h3 className="text-2xl font-medium text-appAccent">
                             <img
                                 className="h-10 object-cover"
                                 src="../public/favicon.ico"

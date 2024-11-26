@@ -32,15 +32,15 @@ export default function StockHeader({
                 </div>
                 <div className="flex flex-col">
                     <div className="flex flex-row space-x-2 items-center">
-                        <h1 className="tracking-wide text-2xl font-bold text-gray-100">
+                        <h1 className="tracking-wide text-2xl font-bold text-appTextStrongDark">
                             {ticker}
                         </h1>
                         <RatingStars rating={3} />
                     </div>
-                    <span className="text-lg font-semibold text-gray-100">
+                    <span className="text-lg font-semibold text-appTextNormalDark">
                         {name}
                     </span>
-                    <span className="text-base font-semibold text-gray-400">
+                    <span className="text-base font-semibold text-appTextWeakDark">
                         {segment}
                     </span>
                 </div>

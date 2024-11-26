@@ -18,7 +18,11 @@ export default function StockData({ ticker }: Props) {
     })
 
     if (query.isPending)
-        return <div className="font-normal text-gray-500">Loading Data...</div>
+        return (
+            <div className="font-normal text-appTextNormal">
+                Loading Data...
+            </div>
+        )
 
     if (query.error)
         return (
@@ -41,7 +45,7 @@ export default function StockData({ ticker }: Props) {
             />
             <div className="h-fit container">
                 <div className="relative flex flex-col h-full p-6 rounded-2xl bg-white shadow shadow-grey-950/5">
-                    <div className="text-gray-900 font-semibold mb-4 text-xl">
+                    <div className="text-appTextStrong font-semibold mb-4 text-xl">
                         Indicadores
                     </div>
                     <div className="mb-0 space-y-6">
@@ -54,7 +58,7 @@ export default function StockData({ ticker }: Props) {
             </div>
             <div className="h-fit container mt-4">
                 <div className="relative flex flex-col h-full p-6 rounded-2xl bg-white shadow shadow-grey-950/5">
-                    <div className="text-gray-900 font-semibold mb-4 text-xl">
+                    <div className="text-appTextStrong font-semibold mb-4 text-xl">
                         Resultados
                     </div>
                     <div className="mb-0 space-y-6">
@@ -75,7 +79,7 @@ function KpiGroup({ groupName, kpis }: KpiGroupProps) {
     return (
         <div>
             {groupName !== undefined ? (
-                <div className="text-gray-700 font-semibold mb-2 text-base">
+                <div className="text-appTextNormal font-semibold mb-2 text-base">
                     {groupName}
                 </div>
             ) : null}
