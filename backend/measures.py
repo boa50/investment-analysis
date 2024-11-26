@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import utils
 
 
@@ -110,5 +111,6 @@ def get_company(ticker):
     ]
 
     df = utils.get_df_stocks_cleaned(df, return_cols)
+    df["rating"] = np.random.random(size=df.shape[0]) * 5
 
     return df

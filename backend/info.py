@@ -24,5 +24,6 @@ def search_companies(text):
 
     return_cols = ["NOME", "MAIN_TICKER", "SEGMENTO"]
     df = utils.get_df_stocks_cleaned(df, return_cols)
+    df["rating"] = np.random.random(size=df.shape[0]) * 5
 
     return df

@@ -2,6 +2,7 @@ export type CompanySearch = {
     ticker: string
     name: string
     segment: string
+    rating: number
 }
 
 export type Stock = {
@@ -36,4 +37,5 @@ export type Company = {
     netDebtByEquity?: number
     cagr5YearsProfit: number
     cagr5YearsRevenue: number
+    rating: number
 }

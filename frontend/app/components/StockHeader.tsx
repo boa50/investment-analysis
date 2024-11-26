@@ -10,6 +10,7 @@ interface Props {
     price: number
     pl: number
     dividendYield: number
+    rating: number
 }
 
 export default function StockHeader({
@@ -19,6 +20,7 @@ export default function StockHeader({
     price,
     pl,
     dividendYield,
+    rating,
 }: Props) {
     return (
         <PageHeaderContainer extraClasses="grid grid-cols-2 gap-24">
@@ -35,7 +37,7 @@ export default function StockHeader({
                         <h1 className="tracking-wide text-2xl font-bold text-appTextStrongDark">
                             {ticker}
                         </h1>
-                        <RatingStars rating={3} />
+                        <RatingStars rating={rating} />
                     </div>
                     <span className="text-lg font-semibold text-appTextNormalDark">
                         {name}

@@ -42,6 +42,7 @@ export default function StockData({ ticker }: Props) {
                 price={tickerData.price}
                 pl={tickerData.pl}
                 dividendYield={tickerData.dividendYield}
+                rating={tickerData.rating}
             />
             <div className="h-fit container">
                 <div className="relative flex flex-col h-full p-6 rounded-2xl bg-white shadow shadow-grey-950/5">

@@ -98,6 +98,7 @@ interface StockBasicInfoProps {
     ticker: string
     name: string
     segment: string
+    rating: number
     onClick?: (e: MouseEvent<HTMLAnchorElement>) => void
 }
 
@@ -105,6 +106,7 @@ function StockBasicInfo({
     ticker,
     name,
     segment,
+    rating,
     onClick,
 }: StockBasicInfoProps) {
     return (
@@ -126,7 +128,7 @@ function StockBasicInfo({
                         <h1 className="tracking-wide text-base font-semibold text-appTextStrong">
                             {ticker}
                         </h1>
-                        <RatingStars rating={3} size="small" />
+                        <RatingStars rating={rating} size="small" />
                     </div>
                     <span className="text-sm font-normal text-appTextStrong truncate">
                         {name}
@@ -187,6 +189,7 @@ function Stocks({ searchText, listClickHandler }: StocksProps) {
                         ticker={d.ticker}
                         name={d.name}
                         segment={d.segment}
+                        rating={d.rating}
                         onClick={listClickHandler}
                     />
                 </li>
