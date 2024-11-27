@@ -3,7 +3,6 @@ import { searchCompanies } from '../api/stocks'
 import { useState, useEffect } from 'react'
 import { Link } from '@remix-run/react'
 import RatingStars from './RatingStars'
-import Spinner from './Spinner'
 
 import type { ChangeEvent, MouseEvent } from 'react'
 import type { CompanySearch } from '../types/stocks'
@@ -165,7 +164,7 @@ function Stocks({ searchText, listClickHandler }: StocksProps) {
     if (query.isPending)
         return (
             <div className="flex justify-center py-6 w-[23rem]">
-                <Spinner />
+                <StockPlaceholder />
             </div>
         )
 
@@ -195,5 +194,28 @@ function Stocks({ searchText, listClickHandler }: StocksProps) {
                 </li>
             ))}
         </ul>
+    )
+}
+
+function StockPlaceholder() {
+    return <div className="h-12"></div>
+
+    // When the app start to contain more stocks it might be needed to add a pulse animation
+    return (
+        <div className="animate-pulse flex space-x-4 mb-2">
+            <div className="flex items-center">
+                <div className="rounded-full bg-slate-700 h-12 w-12"></div>
+            </div>
+            <div className="flex flex-col w-64 space-y-2">
+                <div className="grid grid-cols-8 gap-2 items-center">
+                    <div className="h-3 bg-slate-700 rounded col-span-2"></div>
+                    <div className="h-2 bg-slate-700 rounded col-span-2"></div>
+                </div>
+                <div className="h-3 bg-slate-700 rounded"></div>
+                <div className="grid grid-cols-2 gap-2 items-center">
+                    <div className="h-3 bg-slate-700 rounded"></div>
+                </div>
+            </div>
+        </div>
     )
 }
