@@ -1,4 +1,5 @@
-import { formatNum } from './utils'
+import { getMockCompany } from './utils'
+import { getKpiInfo } from '../data/kpi'
 import KpiCard from './KpiCard'
 import RatingStars from './RatingStars'
 import PageHeaderContainer from './PageHeaderContainer'
@@ -22,6 +23,22 @@ export default function StockHeader({
     dividendYield,
     rating,
 }: Props) {
+    const tickerData = getMockCompany({ price, pl, dividendYield })
+
+    const Kpis = () => {
+        const kpiPrice = getKpiInfo(tickerData, 'price')
+        const kpiPl = getKpiInfo(tickerData, 'pl')
+        const kpiDy = getKpiInfo(tickerData, 'dividendYield')
+
+        return (
+            <div className="grid grid-cols-3 gap-4 flex items-center">
+                <StockHeaderKpi title={kpiPrice.title} value={kpiPrice.value} />
+                <StockHeaderKpi title={kpiPl.title} value={kpiPl.value} />
+                <StockHeaderKpi title={kpiDy.title} value={kpiDy.value} />
+            </div>
+        )
+    }
+
     return (
         <PageHeaderContainer extraClasses="grid grid-cols-2 gap-24">
             <div className="flex flex-row space-x-8">
@@ -47,17 +64,7 @@ export default function StockHeader({
                     </span>
                 </div>
             </div>
-            <div className="grid grid-cols-3 gap-4 flex items-center">
-                <StockHeaderKpi
-                    title="Preço"
-                    value={formatNum(price, 'currencyDecimal')}
-                />
-                <StockHeaderKpi title="P/L" value={formatNum(pl, 'decimal')} />
-                <StockHeaderKpi
-                    title="Dividend Yield"
-                    value={formatNum(dividendYield, 'percent')}
-                />
-            </div>
+            <Kpis />
         </PageHeaderContainer>
     )
 }
