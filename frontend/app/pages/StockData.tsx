@@ -3,6 +3,7 @@ import StockHeader from '../components/StockHeader'
 import KpiCard from '../components/KpiCard'
 import { getCompany } from '../api/stocks'
 import { getKpiInfo } from '../data/kpi'
+import DataContainer from '../components/DataContainer'
 
 import type { Company } from '../types/stocks'
 
@@ -44,28 +45,21 @@ export default function StockData({ ticker }: Props) {
                 dividendYield={tickerData.dividendYield}
                 rating={tickerData.rating}
             />
-            <div className="h-fit container">
-                <div className="relative flex flex-col h-full p-6 rounded-2xl bg-white shadow shadow-grey-950/5">
-                    <div className="text-appTextStrong font-semibold mb-4 text-xl">
-                        Indicadores
-                    </div>
+            <div className="space-y-4">
+                <DataContainer title="Indicadores" childrenHeight="30">
                     <div className="mb-0 space-y-6">
                         <ValueKpis tickerData={tickerData} />
                         <DebtKpis tickerData={tickerData} />
                         <EfficiencyKpis tickerData={tickerData} />
                         <GrowthKpis tickerData={tickerData} />
                     </div>
-                </div>
-            </div>
-            <div className="h-fit container mt-4">
-                <div className="relative flex flex-col h-full p-6 rounded-2xl bg-white shadow shadow-grey-950/5">
-                    <div className="text-appTextStrong font-semibold mb-4 text-xl">
-                        Resultados
-                    </div>
+                </DataContainer>
+
+                <DataContainer title="Resultados" childrenHeight="9">
                     <div className="mb-0 space-y-6">
                         <ResultsGroup tickerData={tickerData} />
                     </div>
-                </div>
+                </DataContainer>
             </div>
         </div>
     )
