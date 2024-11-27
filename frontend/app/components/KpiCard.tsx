@@ -1,3 +1,5 @@
+import Tooltip from './Tooltip'
+
 interface Props {
     title: string
     value: string
@@ -84,12 +86,18 @@ function Text({ size, bgTheme, value, type, description }: TextProps) {
     }
 
     return (
-        <div>
+        <div className="flex flex-row">
             <span className={`${textColour} ${textSize} ${fontWeight}`}>
                 {value}
             </span>
             {type === 'title' && description.length > 0 ? (
-                <sup className={`pl-1 ${textColour}`}>&#x1F6C8;</sup>
+                <Tooltip content={description}>
+                    <span
+                        className={`pl-1 cursor-pointer text-xs ${textColour}`}
+                    >
+                        &#x1F6C8;
+                    </span>
+                </Tooltip>
             ) : null}
         </div>
     )
