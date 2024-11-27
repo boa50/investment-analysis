@@ -73,7 +73,13 @@ export default function StockData({ ticker }: Props) {
 
 interface KpiGroupProps {
     groupName?: string
-    kpis: { title: string; value: string; description: string }[]
+    kpis: {
+        title: string
+        value: string
+        titleExplained?: string
+        description?: string
+        calculation?: string
+    }[]
 }
 
 function KpiGroup({ groupName, kpis }: KpiGroupProps) {
@@ -90,7 +96,9 @@ function KpiGroup({ groupName, kpis }: KpiGroupProps) {
                         key={i}
                         title={d.title}
                         value={d.value}
+                        titleExplained={d.titleExplained}
                         description={d.description}
+                        calculation={d.calculation}
                     />
                 ))}
             </div>

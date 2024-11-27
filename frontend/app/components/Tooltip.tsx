@@ -30,7 +30,7 @@ export default function Tooltip({
             >
                 {children}
                 <div
-                    className={`z-20 w-64 absolute transition duration-150 ease-in-out left-0 ml-8 shadow-lg bg-appBackgroundDark p-4 rounded ${show ? 'block' : 'hidden'}`}
+                    className={`z-20 w-72 absolute transition duration-150 ease-in-out left-0 ml-8 shadow-lg bg-appBackgroundDark p-4 rounded ${show ? 'block' : 'hidden'}`}
                 >
                     <TootlipPointer />
                     {hasTitle ? (

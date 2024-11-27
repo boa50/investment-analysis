@@ -6,7 +6,9 @@ interface Props {
     size?: 'big' | 'small'
     bgTheme?: 'dark' | 'light'
     valueFirst?: boolean
+    titleExplained?: string
     description?: string
+    calculation?: string
 }
 
 export default function KpiCard({
@@ -15,7 +17,9 @@ export default function KpiCard({
     size = 'small',
     bgTheme = 'light',
     valueFirst = false,
-    description = '',
+    titleExplained,
+    description,
+    calculation,
 }: Props) {
     const delimiterColour =
         bgTheme === 'light' ? 'bg-appTextWeak' : 'bg-appTextWeakDark'
@@ -29,17 +33,13 @@ export default function KpiCard({
             bgTheme={bgTheme}
             value={title}
             type={'title'}
+            titleExplained={titleExplained}
             description={description}
+            calculation={calculation}
         />
     )
     const Value = () => (
-        <Text
-            size={size}
-            bgTheme={bgTheme}
-            value={value}
-            type={'value'}
-            description={description}
-        />
+        <Text size={size} bgTheme={bgTheme} value={value} type={'value'} />
     )
 
     return (
@@ -65,10 +65,20 @@ interface TextProps {
     bgTheme: 'dark' | 'light'
     value: string
     type: 'title' | 'value'
-    description: string
+    titleExplained?: string
+    description?: string
+    calculation?: string
 }
 
-function Text({ size, bgTheme, value, type, description }: TextProps) {
+function Text({
+    size,
+    bgTheme,
+    value,
+    type,
+    titleExplained,
+    description,
+    calculation,
+}: TextProps) {
     let textSize, textColour, fontWeight
 
     if (type === 'title') {
@@ -90,8 +100,12 @@ function Text({ size, bgTheme, value, type, description }: TextProps) {
             <span className={`${textColour} ${textSize} ${fontWeight}`}>
                 {value}
             </span>
-            {type === 'title' && description.length > 0 ? (
-                <Tooltip content={description}>
+            {description !== undefined ? (
+                <Tooltip
+                    title={titleExplained}
+                    content={description}
+                    footer={`Cálculo: ${calculation}`}
+                >
                     <span
                         className={`pl-1 cursor-pointer text-xs ${textColour}`}
                     >

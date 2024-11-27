@@ -29,7 +29,7 @@ export default function Header() {
                         <h3 className="text-2xl font-medium text-appAccent">
                             <img
                                 className="h-10 object-cover"
-                                src="../public/favicon.ico"
+                                src="../public/logo.webp"
                                 alt="App Logo"
                             />
                         </h3>
