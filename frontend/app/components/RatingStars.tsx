@@ -43,12 +43,15 @@ function Star({ size, filled }: StarProps) {
         </defs>
     )
 
+    const svgHeight = 'h-' + size
+    const svgWidth = 'w-' + size
+
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             stroke="currentColor"
-            className={`h-${size} w-${size} text-yellow-500`}
+            className={`${svgHeight} ${svgWidth} text-yellow-500`}
         >
             {filled === 'half' ? <GradientFilling /> : null}
             <path
