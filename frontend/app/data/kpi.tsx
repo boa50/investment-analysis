@@ -94,16 +94,25 @@ export const getKpiInfo = (tickerData: Company, key: Kpis): ReturnProps => {
             return {
                 title: 'Patrimônio',
                 value: formatNum(tickerData.equity, 'currency'),
+                description:
+                    'Representa a diferença entre os ativos e os passivos da empresa. Ele reflete o valor contábil que pertence aos acionistas após o pagamento de todas as obrigações. É um indicador importante para avaliar a saúde financeira e o valor intrínseco de uma empresa',
+                calculation: 'Ativos Totais - Passivos Totais',
             }
         case 'netRevenue':
             return {
                 title: 'Receitas',
                 value: formatNum(tickerData.netRevenue, 'currency'),
+                description:
+                    'Representa o valor total obtido com as vendas de seus produtos ou serviços em um determinado período, geralmente um trimestre ou ano. Esse é um dos principais indicadores financeiros que mostram o desempenho da empresa, sendo uma métrica básica para avaliar sua capacidade de gerar dinheiro com suas operações principais',
             }
         case 'profit':
             return {
-                title: 'Lucro',
+                title: 'Lucro Líquido',
                 value: formatNum(tickerData.profit, 'currency'),
+                description:
+                    'Representa o ganho financeiro que a empresa obteve em um determinado período, geralmente trimestral ou anual, após subtrair todas as despesas (custos de operação, impostos, juros, etc.) de sua receita total',
+                calculation:
+                    'Receita Total - Custos de Venda - Despesas Operacionais - Impostos',
             }
         case 'ebit':
             return {
