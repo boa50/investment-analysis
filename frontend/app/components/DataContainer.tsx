@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 interface Props {
     title: string
@@ -12,15 +12,26 @@ export default function DataContainer({
     children,
 }: Props) {
     const [isOpened, setIsOpened] = useState(true)
-    const containerMaxHeight = `max-h-[${childrenHeight}rem]`
+    const [overflow, setOverflow] = useState('overflow-hidden')
+
+    useEffect(() => {
+        let changeOverflow = setTimeout(() => {}, 700)
+        isOpened
+            ? (changeOverflow = setTimeout(() => {
+                  setOverflow('overflow-hidden hover:overflow-visible')
+              }, 700))
+            : setOverflow('overflow-hidden')
+
+        return () => clearTimeout(changeOverflow)
+    }, [isOpened])
 
     const handleToggle = () => {
         setIsOpened(!isOpened)
     }
 
     return (
-        <div className="h-fit container">
-            <div className="relative flex flex-col h-full p-6 rounded-2xl bg-white shadow shadow-grey-950/5">
+        <div className="container">
+            <div className="flex flex-col h-full p-6 rounded-2xl bg-white shadow shadow-grey-950/5">
                 <div
                     role="button"
                     tabIndex={0}
@@ -47,7 +58,10 @@ export default function DataContainer({
                 </div>
 
                 <div
-                    className={`relative overflow-hidden transition-all ease-in-out duration-700 ${isOpened ? containerMaxHeight : 'max-h-0'}`}
+                    className={`relative ${overflow} transition-all ease-in-out duration-700`}
+                    style={{
+                        maxHeight: isOpened ? `${childrenHeight}rem` : '0',
+                    }}
                 >
                     <div className="mt-4"></div>
                     {children}
