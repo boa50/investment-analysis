@@ -148,11 +148,20 @@ interface StocksProps {
 
 function Stocks({ searchText, listClickHandler }: StocksProps) {
     const [stocks, setStocks] = useState<CompanySearch[]>([])
+    const [queryKey, setQueryKey] = useState('')
+
+    useEffect(() => {
+        const changeQueryKey = setTimeout(() => {
+            setQueryKey(searchText)
+        }, 500)
+
+        return () => clearTimeout(changeQueryKey)
+    }, [searchText])
 
     const query = useQuery({
-        queryKey: ['searchCompany', { searchText }],
+        queryKey: ['searchCompany', queryKey],
         queryFn: () =>
-            searchText.length >= 2 ? searchCompanies(searchText) : null,
+            queryKey.length >= 2 ? searchCompanies(queryKey) : null,
     })
 
     useEffect(() => {
@@ -161,14 +170,19 @@ function Stocks({ searchText, listClickHandler }: StocksProps) {
         }
     }, [query.data])
 
-    if (query.isPending)
+    if (query.isPending || searchText !== queryKey)
         return (
             <div className="flex justify-center py-6 w-[23rem]">
                 <StockPlaceholder />
             </div>
         )
 
-    if (!query.isPending && stocks.length == 0)
+    if (
+        !query.isPending &&
+        stocks.length == 0 &&
+        queryKey.length >= 2 &&
+        searchText === queryKey
+    )
         return (
             <div className="flex justify-center items-center py-6 w-[23rem] h-24">
                 <span className="text-appTextWeak text-sm">
@@ -198,9 +212,6 @@ function Stocks({ searchText, listClickHandler }: StocksProps) {
 }
 
 function StockPlaceholder() {
-    return <div className="h-12"></div>
-
-    // When the app start to contain more stocks it might be needed to add a pulse animation
     return (
         <div className="animate-pulse flex space-x-4 mb-2">
             <div className="flex items-center">
