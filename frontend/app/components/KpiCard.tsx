@@ -9,6 +9,7 @@ interface Props {
     titleExplained?: string
     description?: string
     calculation?: string
+    showChartIcon?: boolean
 }
 
 export default function KpiCard({
@@ -20,6 +21,7 @@ export default function KpiCard({
     titleExplained,
     description,
     calculation,
+    showChartIcon = true,
 }: Props) {
     const delimiterColour =
         bgTheme === 'light' ? 'bg-appTextWeak' : 'bg-appTextWeakDark'
@@ -57,7 +59,7 @@ export default function KpiCard({
                 </div>
             )}
             <div className="grow"></div>
-            <ChartIcon />
+            {showChartIcon && value !== '-' ? <ChartIcon /> : null}
         </div>
     )
 }

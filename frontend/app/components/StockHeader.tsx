@@ -82,6 +82,7 @@ function StockHeaderKpi({ title, value }: KpiProps) {
             bgTheme="dark"
             size="big"
             valueFirst={true}
+            showChartIcon={false}
         />
     )
 }
