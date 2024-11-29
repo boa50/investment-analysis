@@ -4,6 +4,7 @@ import KpiCard from '../components/KpiCard'
 import { getCompany } from '../api/stocks'
 import { getKpiInfo } from '../data/kpi'
 import DataContainer from '../components/DataContainer'
+import ChartContainer from '../components/ChartContainer'
 
 import type { Company } from '../types/stocks'
 
@@ -61,6 +62,7 @@ export default function StockData({ ticker }: Props) {
                     </div>
                 </DataContainer>
             </div>
+            <ChartContainer />
         </div>
     )
 }
