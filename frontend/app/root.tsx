@@ -12,6 +12,7 @@ import {
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type { LinksFunction } from '@remix-run/node'
 import Header from './components/Header'
+import Footer from './components/Footer'
 
 import './tailwind.css'
 
@@ -66,6 +67,7 @@ export default function App() {
         <QueryClientProvider client={queryClient}>
             <Header />
             <Outlet />
+            <Footer />
         </QueryClientProvider>
     )
 }
