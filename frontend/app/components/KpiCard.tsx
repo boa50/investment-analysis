@@ -104,7 +104,11 @@ function Text({
                 <Tooltip
                     title={titleExplained}
                     content={description}
-                    footer={`Cálculo: ${calculation}`}
+                    footer={
+                        calculation !== undefined
+                            ? `Cálculo: ${calculation}`
+                            : undefined
+                    }
                 >
                     <span
                         className={`pl-1 cursor-pointer text-xs ${textColour}`}

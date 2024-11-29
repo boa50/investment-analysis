@@ -118,46 +118,80 @@ export const getKpiInfo = (tickerData: Company, key: Kpis): ReturnProps => {
             return {
                 title: 'EBIT',
                 value: formatNum(tickerData.ebit, 'currency'),
+                titleExplained: 'Lucros Antes de Juros e Impostos',
+                description:
+                    'Medida financeira usada para avaliar a rentabilidade operacional de uma empresa, ou seja, o lucro que a empresa gera apenas com suas operações principais, sem levar em conta os efeitos de financiamentos (juros) e impostos',
+                calculation:
+                    'Receita Total - Custos de Venda - Despesas Operacionais',
             }
         case 'debt':
             return {
                 title: 'Dívida Bruta',
                 value: formatNum(tickerData.debt, 'currency'),
+                description:
+                    'Representa o total de obrigações financeiras que a empresa possui, ou seja, o montante que ela deve a credores em empréstimos e financiamentos, sem considerar os descontos de caixa ou outros ativos líquidos que podem ser usados para abater essa dívida. É uma métrica importante para avaliar a estrutura de capital da empresa e seu nível de endividamento',
+                calculation:
+                    'Passivos Financeiros de Curto Prazo + Passivos Financeiros de Longo Prazo',
             }
         case 'netDebt':
             return {
                 title: 'Dívida Líquida',
                 value: formatNum(tickerData.netDebt, 'currency'),
+                description:
+                    'representa o quanto a empresa deve, considerando suas obrigações financeiras e o caixa disponível',
+                calculation: 'Dívida Bruta - Caixa e Equivalentes de Caixa',
             }
         case 'netMargin':
             return {
                 title: 'Margem Líquida',
                 value: formatNum(tickerData.netMargin, 'percent'),
+                description:
+                    'Mede a eficiência de uma empresa em transformar sua receita total em lucro líquido. Em outras palavras, mostra qual é a porcentagem do faturamento que sobra como lucro após a dedução de todos os custos, despesas, impostos e outros encargos',
+                calculation: '(Lucro Líquido / Receita Líquida) x 100',
             }
         case 'roe':
             return {
                 title: 'RoE',
                 value: formatNum(tickerData.roe, 'percent'),
+                titleExplained: 'Retorno sobre o Patrimônio Líquido',
+                description:
+                    'É um indicador utilizado para medir a rentabilidade de uma empresa em relação ao capital investido pelos seus acionistas. Ele mostra o quanto a empresa está gerando de lucro para cada real investido pelos acionistas',
+                calculation: '(Lucro Líquido / Patrimônio Líquido) x 100',
             }
         case 'netDebtByEbit':
             return {
                 title: 'Dívida Líquida / EBIT',
                 value: formatNum(tickerData.netDebtByEbit, 'decimal'),
+                description:
+                    'Métrica usada para avaliar a capacidade de uma empresa de pagar suas dívidas com os lucros operacionais gerados antes de impostos e juros. Ele é muito usado por analistas e investidores para medir o risco financeiro de uma empresa e sua alavancagem',
             }
         case 'netDebtByEquity':
             return {
                 title: 'Dívida Líquida / Patrimônio',
                 value: formatNum(tickerData.netDebtByEquity, 'decimal'),
+                description:
+                    'Mede o nível de endividamento de uma empresa em relação ao seu patrimônio líquido, indicando o grau de alavancagem financeira da companhia. É um importante parâmetro de análise para investidores, pois permite avaliar a saúde financeira da empresa e sua capacidade de sustentar dívidas com os recursos próprios',
             }
         case 'cagr5YearsProfit':
             return {
                 title: 'CAGR Lucros - 5 anos',
                 value: formatNum(tickerData.cagr5YearsProfit, 'percent'),
+                titleExplained: 'Taxa Composta de Crescimento Anual dos Lucros',
+                description:
+                    'Indicador que mede a taxa média de crescimento anual dos lucros de uma empresa ao longo de um período específico, considerando o efeito da composição. Ele fornece uma visão mais precisa do crescimento médio, mesmo quando os lucros variam de ano para ano',
+                calculation:
+                    '(Lucro Final / Lucro Inicial) ^ (1 / número_de_anos) - 1',
             }
         case 'cagr5YearsRevenue':
             return {
                 title: 'CAGR Receitas - 5 anos',
                 value: formatNum(tickerData.cagr5YearsRevenue, 'percent'),
+                titleExplained:
+                    'Taxa Composta de Crescimento Anual das Receitas',
+                description:
+                    'Indicador que mede a taxa média de crescimento anual das receitas de uma empresa ao longo de um período específico, considerando o efeito da composição. Ele fornece uma visão mais precisa do crescimento médio, mesmo quando as receitas variam de ano para ano',
+                calculation:
+                    '(Receita Final / Receita Inicial) ^ (1 / número_de_anos) - 1',
             }
         default:
             return {
