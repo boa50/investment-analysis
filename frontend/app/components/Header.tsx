@@ -26,13 +26,11 @@ export default function Header() {
             <div className="relative container flex justify-between py-2">
                 <div className="flex items-center">
                     <Link className="cursor-pointer" to="/">
-                        <h3 className="text-2xl font-medium text-appAccent">
-                            <img
-                                className="h-10 object-cover"
-                                src="logo.webp"
-                                alt="App Logo"
-                            />
-                        </h3>
+                        <img
+                            className="h-10 object-cover"
+                            src="/logo.webp"
+                            alt="App Logo"
+                        />
                     </Link>
                 </div>
 
