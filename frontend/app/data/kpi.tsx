@@ -167,8 +167,9 @@ export const getKpiInfo = (tickerData: Company, key: Kpis): ReturnProps => {
             }
         case 'netDebtByEquity':
             return {
-                title: 'Dívida Líquida / Patrimônio',
+                title: 'Dívida Líquida / PL',
                 value: formatNum(tickerData.netDebtByEquity, 'decimal'),
+                titleExplained: 'Dívida Líquida / Patrimônio Líquido',
                 description:
                     'Mede o nível de endividamento de uma empresa em relação ao seu patrimônio líquido, indicando o grau de alavancagem financeira da companhia. É um importante parâmetro de análise para investidores, pois permite avaliar a saúde financeira da empresa e sua capacidade de sustentar dívidas com os recursos próprios',
             }

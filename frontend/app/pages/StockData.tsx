@@ -46,7 +46,7 @@ export default function StockData({ ticker }: Props) {
                 rating={tickerData.rating}
             />
             <div className="space-y-4">
-                <DataContainer title="Indicadores" childrenHeight="30">
+                <DataContainer title="Indicadores" childrenHeight="31">
                     <div className="mb-0 space-y-6">
                         <ValueKpis tickerData={tickerData} />
                         <DebtKpis tickerData={tickerData} />
@@ -55,7 +55,7 @@ export default function StockData({ ticker }: Props) {
                     </div>
                 </DataContainer>
 
-                <DataContainer title="Resultados" childrenHeight="9">
+                <DataContainer title="Resultados" childrenHeight="10">
                     <div className="mb-0 space-y-6">
                         <ResultsGroup tickerData={tickerData} />
                     </div>
