@@ -10,6 +10,7 @@ interface Props {
     description?: string
     calculation?: string
     showChartIcon?: boolean
+    openChartContainer?: () => void
 }
 
 export default function KpiCard({
@@ -22,6 +23,7 @@ export default function KpiCard({
     description,
     calculation,
     showChartIcon = true,
+    openChartContainer = () => {},
 }: Props) {
     const delimiterColour =
         bgTheme === 'light' ? 'bg-appTextWeak' : 'bg-appTextWeakDark'
@@ -59,7 +61,9 @@ export default function KpiCard({
                 </div>
             )}
             <div className="grow"></div>
-            {showChartIcon && value !== '-' ? <ChartIcon /> : null}
+            {showChartIcon && value !== '-' ? (
+                <ChartIcon openChartContainer={openChartContainer} />
+            ) : null}
         </div>
     )
 }
@@ -125,9 +129,12 @@ function Text({
     )
 }
 
-function ChartIcon() {
+function ChartIcon({ openChartContainer }: { openChartContainer: () => void }) {
     return (
-        <button className="self-end justify-self-end mb-1.5 mr-2">
+        <button
+            className="self-end justify-self-end mb-1.5 mr-2"
+            onClick={openChartContainer}
+        >
             <svg
                 className="w-4 h-4 text-appTextNormal"
                 viewBox="0 0 24 24"

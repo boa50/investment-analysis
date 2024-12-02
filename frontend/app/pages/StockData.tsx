@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import StockHeader from '../components/StockHeader'
 import KpiCard from '../components/KpiCard'
@@ -13,6 +14,12 @@ interface Props {
 }
 
 export default function StockData({ ticker }: Props) {
+    const [isChartContainerOpened, setIsChartContainerOpened] = useState(false)
+
+    const openChartContainer = () => {
+        setIsChartContainerOpened(true)
+    }
+
     ticker = ticker?.toUpperCase()
     const query = useQuery({
         queryKey: ['company', { ticker }],
@@ -49,20 +56,35 @@ export default function StockData({ ticker }: Props) {
             <div className="space-y-4">
                 <DataContainer title="Indicadores" childrenHeight="31">
                     <div className="mb-0 space-y-6">
-                        <ValueKpis tickerData={tickerData} />
-                        <DebtKpis tickerData={tickerData} />
-                        <EfficiencyKpis tickerData={tickerData} />
-                        <GrowthKpis tickerData={tickerData} />
+                        <ValueKpis
+                            tickerData={tickerData}
+                            openChartContainer={openChartContainer}
+                        />
+                        <DebtKpis
+                            tickerData={tickerData}
+                            openChartContainer={openChartContainer}
+                        />
+                        <EfficiencyKpis
+                            tickerData={tickerData}
+                            openChartContainer={openChartContainer}
+                        />
+                        <GrowthKpis
+                            tickerData={tickerData}
+                            openChartContainer={openChartContainer}
+                        />
                     </div>
                 </DataContainer>
 
                 <DataContainer title="Resultados" childrenHeight="10">
                     <div className="mb-0 space-y-6">
-                        <ResultsGroup tickerData={tickerData} />
+                        <ResultsGroup
+                            tickerData={tickerData}
+                            openChartContainer={openChartContainer}
+                        />
                     </div>
                 </DataContainer>
             </div>
-            <ChartContainer />
+            <ChartContainer isOpened={isChartContainerOpened} />
         </div>
     )
 }
@@ -76,9 +98,10 @@ interface KpiGroupProps {
         description?: string
         calculation?: string
     }[]
+    openChartContainer: () => void
 }
 
-function KpiGroup({ groupName, kpis }: KpiGroupProps) {
+function KpiGroup({ groupName, kpis, openChartContainer }: KpiGroupProps) {
     return (
         <div>
             {groupName !== undefined ? (
@@ -95,6 +118,7 @@ function KpiGroup({ groupName, kpis }: KpiGroupProps) {
                         titleExplained={d.titleExplained}
                         description={d.description}
                         calculation={d.calculation}
+                        openChartContainer={openChartContainer}
                     />
                 ))}
             </div>
@@ -102,7 +126,12 @@ function KpiGroup({ groupName, kpis }: KpiGroupProps) {
     )
 }
 
-function ValueKpis({ tickerData }: { tickerData: Company }) {
+interface IndividualGroupProps {
+    tickerData: Company
+    openChartContainer: () => void
+}
+
+function ValueKpis({ tickerData, openChartContainer }: IndividualGroupProps) {
     return (
         <KpiGroup
             groupName="Valor"
@@ -114,11 +143,12 @@ function ValueKpis({ tickerData }: { tickerData: Company }) {
                 getKpiInfo(tickerData, 'marketCap'),
                 getKpiInfo(tickerData, 'bazinPrice'),
             ]}
+            openChartContainer={openChartContainer}
         />
     )
 }
 
-function DebtKpis({ tickerData }: { tickerData: Company }) {
+function DebtKpis({ tickerData, openChartContainer }: IndividualGroupProps) {
     return (
         <KpiGroup
             groupName="Endividamento"
@@ -126,11 +156,15 @@ function DebtKpis({ tickerData }: { tickerData: Company }) {
                 getKpiInfo(tickerData, 'netDebtByEbit'),
                 getKpiInfo(tickerData, 'netDebtByEquity'),
             ]}
+            openChartContainer={openChartContainer}
         />
     )
 }
 
-function EfficiencyKpis({ tickerData }: { tickerData: Company }) {
+function EfficiencyKpis({
+    tickerData,
+    openChartContainer,
+}: IndividualGroupProps) {
     return (
         <KpiGroup
             groupName="Eficiência"
@@ -138,11 +172,12 @@ function EfficiencyKpis({ tickerData }: { tickerData: Company }) {
                 getKpiInfo(tickerData, 'netMargin'),
                 getKpiInfo(tickerData, 'roe'),
             ]}
+            openChartContainer={openChartContainer}
         />
     )
 }
 
-function GrowthKpis({ tickerData }: { tickerData: Company }) {
+function GrowthKpis({ tickerData, openChartContainer }: IndividualGroupProps) {
     return (
         <KpiGroup
             groupName="Crescimento"
@@ -150,11 +185,15 @@ function GrowthKpis({ tickerData }: { tickerData: Company }) {
                 getKpiInfo(tickerData, 'cagr5YearsProfit'),
                 getKpiInfo(tickerData, 'cagr5YearsRevenue'),
             ]}
+            openChartContainer={openChartContainer}
         />
     )
 }
 
-function ResultsGroup({ tickerData }: { tickerData: Company }) {
+function ResultsGroup({
+    tickerData,
+    openChartContainer,
+}: IndividualGroupProps) {
     return (
         <KpiGroup
             kpis={[
@@ -165,6 +204,7 @@ function ResultsGroup({ tickerData }: { tickerData: Company }) {
                 getKpiInfo(tickerData, 'debt'),
                 getKpiInfo(tickerData, 'netDebt'),
             ]}
+            openChartContainer={openChartContainer}
         />
     )
 }

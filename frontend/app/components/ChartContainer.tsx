@@ -1,7 +1,12 @@
-export default function ChartContainer() {
+interface Props {
+    isOpened: boolean
+}
+
+export default function ChartContainer({ isOpened }: Props) {
     const commonClasses = 'fixed w-screen h-screen inset-0 z-50'
+
     return (
-        <div>
+        <div className={isOpened ? 'block' : 'hidden'}>
             <div className={`${commonClasses} bg-gray-900 opacity-45`}></div>
             <div className={commonClasses}>
                 <div className="flex h-full w-full items-center justify-center">
