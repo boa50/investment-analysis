@@ -21,6 +21,10 @@ export default function StockData({ ticker }: Props) {
         setChartKpi(kpi)
     }
 
+    const closeChartContainer = () => {
+        setIsChartContainerOpened(false)
+    }
+
     ticker = ticker?.toUpperCase()
     const query = useQuery({
         queryKey: ['company', { ticker }],
@@ -104,6 +108,7 @@ export default function StockData({ ticker }: Props) {
                 isOpened={isChartContainerOpened}
                 kpi={chartKpi}
                 tickerData={tickerData}
+                closeChartContainer={closeChartContainer}
             />
         </div>
     )

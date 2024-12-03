@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { ArrowDown } from './svgIcons'
 
 interface Props {
     title: string
@@ -46,13 +47,7 @@ export default function DataContainer({
                         <span
                             className={`transition-transform duration-500 transform fill-current ${isOpened ? '-rotate-180' : 'rotate-0'}`}
                         >
-                            <svg
-                                className="w-5 h-5 fill-current"
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 20 20"
-                            >
-                                <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                            </svg>
+                            <ArrowDown />
                         </span>
                     </div>
                 </div>
