@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { ArrowDown } from './svgIcons'
+import Icon from './Icon'
 
 interface Props {
     title: string
@@ -47,7 +47,7 @@ export default function DataContainer({
                         <span
                             className={`transition-transform duration-500 transform fill-current ${isOpened ? '-rotate-180' : 'rotate-0'}`}
                         >
-                            <ArrowDown />
+                            <Icon type="arrowDown" />
                         </span>
                     </div>
                 </div>

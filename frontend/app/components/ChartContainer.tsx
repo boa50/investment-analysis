@@ -1,5 +1,5 @@
 import { getKpiInfo } from '../data/kpi'
-import { Cross } from './svgIcons'
+import Icon from './Icon'
 
 import type { Company, Kpi } from '../types'
 
@@ -35,7 +35,7 @@ export default function ChartContainer({
                             <div className="flex space-x-2">
                                 <div>Chart Options</div>
                                 <button onClick={closeChartContainer}>
-                                    <Cross />
+                                    <Icon type="cross" size={6} />
                                 </button>
                             </div>
                         </div>
