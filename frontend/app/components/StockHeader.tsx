@@ -1,40 +1,21 @@
-import { getMockCompany } from './utils'
-import { getKpiInfo } from '../data/kpi'
 import KpiCard from './KpiCard'
 import RatingStars from './RatingStars'
 import PageHeaderContainer from './PageHeaderContainer'
 
+import type { Company, Kpi } from '../types'
+
 interface Props {
     ticker: string | undefined
-    name: string
-    segment: string
-    price: number
-    pl: number
-    dividendYield: number
-    rating: number
+    tickerData: Company
 }
 
-export default function StockHeader({
-    ticker,
-    name,
-    segment,
-    price,
-    pl,
-    dividendYield,
-    rating,
-}: Props) {
-    const tickerData = getMockCompany({ price, pl, dividendYield })
-
+export default function StockHeader({ ticker, tickerData }: Props) {
     const Kpis = () => {
-        const kpiPrice = getKpiInfo(tickerData, 'price')
-        const kpiPl = getKpiInfo(tickerData, 'pl')
-        const kpiDy = getKpiInfo(tickerData, 'dividendYield')
-
         return (
             <div className="grid grid-cols-3 gap-4 flex items-center">
-                <StockHeaderKpi title={kpiPrice.title} value={kpiPrice.value} />
-                <StockHeaderKpi title={kpiPl.title} value={kpiPl.value} />
-                <StockHeaderKpi title={kpiDy.title} value={kpiDy.value} />
+                <StockHeaderKpi kpi="price" tickerData={tickerData} />
+                <StockHeaderKpi kpi="pl" tickerData={tickerData} />
+                <StockHeaderKpi kpi="dividendYield" tickerData={tickerData} />
             </div>
         )
     }
@@ -54,13 +35,13 @@ export default function StockHeader({
                         <h1 className="tracking-wide text-2xl font-bold text-appTextStrongDark">
                             {ticker}
                         </h1>
-                        <RatingStars rating={rating} />
+                        <RatingStars rating={tickerData.rating} />
                     </div>
                     <span className="text-lg font-semibold text-appTextNormalDark">
-                        {name}
+                        {tickerData.name}
                     </span>
                     <span className="text-base font-semibold text-appTextWeakDark">
-                        {segment}
+                        {tickerData.segment}
                     </span>
                 </div>
             </div>
@@ -70,19 +51,20 @@ export default function StockHeader({
 }
 
 interface KpiProps {
-    title: string
-    value: string
+    kpi: Kpi
+    tickerData: Company
 }
 
-function StockHeaderKpi({ title, value }: KpiProps) {
+function StockHeaderKpi({ kpi, tickerData }: KpiProps) {
     return (
         <KpiCard
-            title={title}
-            value={value}
+            kpi={kpi}
+            tickerData={tickerData}
             bgTheme="dark"
             size="big"
             valueFirst={true}
             showChartIcon={false}
+            showKpiDescription={false}
         />
     )
 }

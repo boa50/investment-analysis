@@ -1,28 +1,27 @@
+import { getKpiInfo } from '../data/kpi'
 import Tooltip from './Tooltip'
 
+import type { Kpi, Company } from '../types'
+
 interface Props {
-    title: string
-    value: string
+    kpi: Kpi
+    tickerData: Company
     size?: 'big' | 'small'
     bgTheme?: 'dark' | 'light'
     valueFirst?: boolean
-    titleExplained?: string
-    description?: string
-    calculation?: string
     showChartIcon?: boolean
+    showKpiDescription?: boolean
     openChartContainer?: () => void
 }
 
 export default function KpiCard({
-    title,
-    value,
+    kpi,
+    tickerData,
     size = 'small',
     bgTheme = 'light',
     valueFirst = false,
-    titleExplained,
-    description,
-    calculation,
     showChartIcon = true,
+    showKpiDescription = true,
     openChartContainer = () => {},
 }: Props) {
     const delimiterColour =
@@ -31,6 +30,9 @@ export default function KpiCard({
     const textContainerClass =
         'flex flex-col justify-center ml-3 ' + delimiterPadding
 
+    const { title, value, titleExplained, description, calculation } =
+        getKpiInfo(tickerData, kpi)
+
     const Title = () => (
         <Text
             size={size}
@@ -38,7 +40,7 @@ export default function KpiCard({
             value={title}
             type={'title'}
             titleExplained={titleExplained}
-            description={description}
+            description={showKpiDescription ? description : undefined}
             calculation={calculation}
         />
     )

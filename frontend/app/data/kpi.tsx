@@ -1,26 +1,6 @@
 import { formatNum } from '../components/utils'
-import type { Company } from '../types/stocks'
 
-type Kpis =
-    | 'marketCap'
-    | 'price'
-    | 'bazinPrice'
-    | 'pl'
-    | 'pvp'
-    | 'dividendYield'
-    | 'dividendPayout'
-    | 'equity'
-    | 'netRevenue'
-    | 'profit'
-    | 'ebit'
-    | 'debt'
-    | 'netDebt'
-    | 'netMargin'
-    | 'roe'
-    | 'netDebtByEbit'
-    | 'netDebtByEquity'
-    | 'cagr5YearsProfit'
-    | 'cagr5YearsRevenue'
+import type { Kpi, Company } from '../types'
 
 interface ReturnProps {
     title: string
@@ -30,7 +10,7 @@ interface ReturnProps {
     calculation?: string
 }
 
-export const getKpiInfo = (tickerData: Company, key: Kpis): ReturnProps => {
+export const getKpiInfo = (tickerData: Company, key: Kpi): ReturnProps => {
     switch (key) {
         case 'marketCap':
             return {

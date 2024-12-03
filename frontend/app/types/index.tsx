@@ -1,3 +1,24 @@
+export type Kpi =
+    | 'marketCap'
+    | 'price'
+    | 'bazinPrice'
+    | 'pl'
+    | 'pvp'
+    | 'dividendYield'
+    | 'dividendPayout'
+    | 'equity'
+    | 'netRevenue'
+    | 'profit'
+    | 'ebit'
+    | 'debt'
+    | 'netDebt'
+    | 'netMargin'
+    | 'roe'
+    | 'netDebtByEbit'
+    | 'netDebtByEquity'
+    | 'cagr5YearsProfit'
+    | 'cagr5YearsRevenue'
+
 export type CompanySearch = {
     ticker: string
     name: string
