@@ -26,35 +26,42 @@ def get_main_ticker(tickers):
     return tickers[0]
 
 
+kpi_mapping = {
+    "TICKER": "ticker",
+    "MAIN_TICKER": "ticker",
+    "TICKERS": "tickers",
+    "NOME": "name",
+    "SEGMENTO": "segment",
+    "MARKET_CAP": "marketCap",
+    "PRICE": "price",
+    "BAZIN": "bazinPrice",
+    "PL": "pl",
+    "PVP": "pvp",
+    "DIVIDEND_YIELD": "dividendYield",
+    "DIVIDEND_PAYOUT": "dividendPayout",
+    "EQUITY": "equity",
+    "NET_REVENUE": "netRevenue",
+    "PROFIT": "profit",
+    "EBIT": "ebit",
+    "DEBT": "debt",
+    "DEBT_NET": "netDebt",
+    "NET_MARGIN": "netMargin",
+    "ROE": "roe",
+    "NET_DEBT_BY_EBIT": "netDebtByEbit",
+    "NET_DEBT_BY_EQUITY": "netDebtByEquity",
+    "CAGR_5_YEARS_PROFIT": "cagr5YearsProfit",
+    "CAGR_5_YEARS_REVENUE": "cagr5YearsRevenue",
+}
+
+
 def columns_rename(df):
-    return df.rename(
-        columns={
-            "TICKER": "ticker",
-            "MAIN_TICKER": "ticker",
-            "TICKERS": "tickers",
-            "NOME": "name",
-            "SEGMENTO": "segment",
-            "MARKET_CAP": "marketCap",
-            "PRICE": "price",
-            "BAZIN": "bazinPrice",
-            "PL": "pl",
-            "PVP": "pvp",
-            "DIVIDEND_YIELD": "dividendYield",
-            "DIVIDEND_PAYOUT": "dividendPayout",
-            "EQUITY": "equity",
-            "NET_REVENUE": "netRevenue",
-            "PROFIT": "profit",
-            "EBIT": "ebit",
-            "DEBT": "debt",
-            "DEBT_NET": "netDebt",
-            "NET_MARGIN": "netMargin",
-            "ROE": "roe",
-            "NET_DEBT_BY_EBIT": "netDebtByEbit",
-            "NET_DEBT_BY_EQUITY": "netDebtByEquity",
-            "CAGR_5_YEARS_PROFIT": "cagr5YearsProfit",
-            "CAGR_5_YEARS_REVENUE": "cagr5YearsRevenue",
-        }
-    )
+    return df.rename(columns=kpi_mapping)
+
+
+def get_kpi_original_name(kpi):
+    kpi_mapping_inverse = {v: k for k, v in kpi_mapping.items()}
+
+    return kpi_mapping_inverse[kpi]
 
 
 def get_df_stocks_cleaned(df, return_cols):
