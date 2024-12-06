@@ -11,6 +11,7 @@ type LineChartProps = {
     yFormatter?: (value: number) => string
     lineColour?: string
     axesColour?: string
+    zeroLineColour?: string
 }
 
 export const LineChart = ({
@@ -21,8 +22,8 @@ export const LineChart = ({
     yFormatter,
     lineColour = 'currentColor',
     axesColour = 'currentColor',
+    zeroLineColour,
 }: LineChartProps) => {
-    console.log(data[0].x instanceof Date)
     let xScale
 
     if (data[0].x instanceof Date) {
@@ -35,14 +36,12 @@ export const LineChart = ({
         .domain(d3.extent(data, (d) => d.x))
         .range([margin.left, width - margin.right])
 
+    const paddingMultiplier = 1.07
     const yScale = d3
         .scaleLinear()
         .domain([
-            Math.min(
-                d3.min(data, (d) => d.y),
-                0
-            ),
-            d3.max(data, (d) => d.y),
+            Math.min(d3.min(data, (d) => d.y) * paddingMultiplier, 0),
+            d3.max(data, (d) => d.y) * paddingMultiplier,
         ])
         .range([height - margin.bottom, margin.top])
 
@@ -58,6 +57,14 @@ export const LineChart = ({
             viewBox={`0 0 ${width} ${height}`}
             preserveAspectRatio="xMinYMid meet"
         >
+            {yScale.domain()[0] < 0 ? (
+                <path
+                    className="zero-line"
+                    d={`M ${margin.left} ${yScale(0)} H ${width - margin.right}`}
+                    stroke={zeroLineColour ? zeroLineColour : axesColour}
+                    fill="none"
+                />
+            ) : null}
             <path
                 d={linePath}
                 stroke={lineColour}

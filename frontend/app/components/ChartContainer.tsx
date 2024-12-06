@@ -77,7 +77,7 @@ export default function ChartContainer({
                                     </button>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-8 pt-4 mt-6 border-t border-gray-200"></div>
+                            <div className="flex items-center gap-8 pt-4 mt-6 border-t border-appRowDividerStrong"></div>
                             {isOpened ? (
                                 <Chart
                                     ticker={ticker}
@@ -126,8 +126,6 @@ function Chart({ ticker, kpi, chartDimensions }: ChartProps) {
         return { x: new Date(d.date), y: d.value }
     })
 
-    console.log(historicalData)
-
     return (
         <div className="flex items-center justify-center w-full h-full">
             <LineChart
@@ -136,6 +134,7 @@ function Chart({ ticker, kpi, chartDimensions }: ChartProps) {
                 yFormatter={getKpiInfo(kpi).valueFormat}
                 lineColour="rgb(var(--color-primary))"
                 axesColour="rgb(var(--color-weak-light))"
+                zeroLineColour="rgb(var(--color-divider-strong-light))"
             />
         </div>
     )

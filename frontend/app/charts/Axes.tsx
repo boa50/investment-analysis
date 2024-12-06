@@ -109,6 +109,7 @@ function AxisBottom({
                     className="axis-text x"
                     y={height - margin.bottom + tickTextSpacing}
                     textAnchor="middle"
+                    fontSize="0.8rem"
                     fill={colour}
                 >
                     {formatter
@@ -171,6 +172,7 @@ function AxisLeft({
                     x={-tickTextSpacing}
                     y={5}
                     textAnchor="end"
+                    fontSize="0.8rem"
                     fill={colour}
                 >
                     {formatter ? formatter(value) : value}

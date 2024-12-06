@@ -5,6 +5,8 @@
 @layer base {
     :root {
         --color-primary: 167 118 74;
+        --color-divider-light: 243 244 246;
+        --color-divider-strong-light: 229 231 235;
         --color-weak-light: 107 114 128;
     }
 }

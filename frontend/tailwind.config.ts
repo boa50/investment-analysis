@@ -25,7 +25,8 @@ export default {
                 appTextStrongDark: colors.gray[50],
                 appTextNormalDark: colors.gray[100],
                 appTextWeakDark: colors.gray[300],
-                appRowDivider: colors.gray[100],
+                appRowDivider: 'rgb(var(--color-divider-light))',
+                appRowDividerStrong: 'rgb(var(--color-divider-strong-light))',
             },
             fontFamily: {
                 sans: [
