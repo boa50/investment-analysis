@@ -1,14 +1,17 @@
 import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { getHistoricalValues } from '../api/stocks'
 import { getKpiInfo } from '../data/kpi'
-import Icon from './Icon'
 import { LineChart } from '../charts/LineChart'
 import { useMediaQueries } from './utils'
+import Icon from './Icon'
 
 import type { Company, Kpi } from '../types'
 
 interface Props {
     isOpened: boolean
     kpi: Kpi
+    ticker: string
     tickerData: Company
     closeChartContainer: () => void
 }
@@ -16,6 +19,7 @@ interface Props {
 export default function ChartContainer({
     isOpened,
     kpi,
+    ticker,
     tickerData,
     closeChartContainer,
 }: Props) {
@@ -75,13 +79,59 @@ export default function ChartContainer({
                                 </div>
                             </div>
                             <div className="flex items-center gap-8 pt-4 mt-6 border-t border-gray-200"></div>
-                            <div className="flex items-center justify-center bg-red-200 w-full h-full">
-                                <LineChart {...chartDimensions} />
-                            </div>
+                            {isOpened ? (
+                                <Chart
+                                    ticker={ticker}
+                                    kpi={kpi}
+                                    chartDimensions={chartDimensions}
+                                />
+                            ) : null}
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+    )
+}
+
+interface ChartProps {
+    ticker: string
+    kpi: Kpi
+    chartDimensions: {
+        width: number
+        height: number
+    }
+}
+
+function Chart({ ticker, kpi, chartDimensions }: ChartProps) {
+    const query = useQuery({
+        queryKey: ['historicalValues', { ticker, kpi }],
+        queryFn: () => getHistoricalValues(ticker, kpi),
+    })
+
+    if (query.isPending)
+        return (
+            <div className="font-normal text-appTextNormal">
+                Loading Data...
+            </div>
+        )
+
+    if (query.error)
+        return (
+            <div className="font-normal text-red-500">
+                An error has occurred while loading data: {query.error.message}
+            </div>
+        )
+
+    const historicalData = query.data.map((d) => {
+        return { x: new Date(d.date), y: d.value }
+    })
+
+    console.log(historicalData)
+
+    return (
+        <div className="flex items-center justify-center bg-red-200 w-full h-full">
+            <LineChart {...chartDimensions} data={historicalData} />
         </div>
     )
 }

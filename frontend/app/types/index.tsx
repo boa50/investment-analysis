@@ -60,3 +60,10 @@ export type Company = {
     cagr5YearsRevenue: number
     rating: number
 }
+
+export type HistoricalValue = {
+    date: number
+    cdCvm: number
+    ticker: string
+    value: number
+}

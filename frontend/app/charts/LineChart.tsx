@@ -6,32 +6,38 @@ import type { Margin } from './types'
 type LineChartProps = {
     width: number
     height: number
-    datas?: { x: number; y: number }[]
+    data: { x: number | Date; y: number }[]
     margin?: Margin
 }
 
 export const LineChart = ({
     width,
     height,
-    datas,
+    data,
     margin = { left: 64, right: 16, top: 16, bottom: 20 },
 }: LineChartProps) => {
-    const data = [
-        { x: 1, y: 90 },
-        { x: 2, y: 12 },
-        { x: 3, y: 34 },
-        { x: 4, y: 53 },
-        { x: 5, y: 98 },
-    ]
+    console.log(data[0].x instanceof Date)
+    let xScale
 
-    const xScale = d3
-        .scaleLinear()
+    if (data[0].x instanceof Date) {
+        xScale = d3.scaleTime()
+    } else {
+        xScale = d3.scaleLinear()
+    }
+
+    xScale = xScale
         .domain(d3.extent(data, (d) => d.x))
         .range([margin.left, width - margin.right])
 
     const yScale = d3
         .scaleLinear()
-        .domain([0, d3.max(data, (d) => d.y)])
+        .domain([
+            Math.min(
+                d3.min(data, (d) => d.y),
+                0
+            ),
+            d3.max(data, (d) => d.y),
+        ])
         .range([height - margin.bottom, margin.top])
 
     const lineBuilder = d3

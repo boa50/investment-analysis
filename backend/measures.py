@@ -148,6 +148,7 @@ def _get_fundaments_historical_values(df_fundaments, tickers, kpi, n_years=10):
 def _get_history_historical_values(df_history, tickers, kpi, n_years=10):
     df_kpi = df_history[df_history["TICKER"].isin(tickers)]
     df_kpi = df_kpi[["DATE", "CD_CVM", "TICKER", kpi]]
+    df_kpi = df_kpi.rename(columns={kpi: "VALUE"})
     first_date = df_kpi["DATE"].max() - pd.DateOffset(years=n_years)
     df_kpi = df_kpi[df_kpi["DATE"] >= first_date]
 

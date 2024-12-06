@@ -1,15 +1,15 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { getCompany } from '../api/stocks'
 import StockHeader from '../components/StockHeader'
 import KpiCard from '../components/KpiCard'
-import { getCompany } from '../api/stocks'
 import DataContainer from '../components/DataContainer'
 import ChartContainer from '../components/ChartContainer'
 
 import type { Kpi, Company } from '../types'
 
 interface Props {
-    ticker: string | undefined
+    ticker: string
 }
 
 export default function StockData({ ticker }: Props) {
@@ -25,10 +25,10 @@ export default function StockData({ ticker }: Props) {
         setIsChartContainerOpened(false)
     }
 
-    ticker = ticker?.toUpperCase()
+    ticker = ticker.toUpperCase()
     const query = useQuery({
         queryKey: ['company', { ticker }],
-        queryFn: () => getCompany(ticker !== undefined ? ticker : ''),
+        queryFn: () => getCompany(ticker),
     })
 
     if (query.isPending)
@@ -107,6 +107,7 @@ export default function StockData({ ticker }: Props) {
             <ChartContainer
                 isOpened={isChartContainerOpened}
                 kpi={chartKpi}
+                ticker={ticker}
                 tickerData={tickerData}
                 closeChartContainer={closeChartContainer}
             />
