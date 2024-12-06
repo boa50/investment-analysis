@@ -30,8 +30,10 @@ export default function KpiCard({
     const textContainerClass =
         'flex flex-col justify-center ml-3 ' + delimiterPadding
 
-    const { title, value, titleExplained, description, calculation } =
-        getKpiInfo(tickerData, kpi)
+    const { title, valueFormat, titleExplained, description, calculation } =
+        getKpiInfo(kpi)
+
+    const value = valueFormat(tickerData[kpi])
 
     const Title = () => (
         <Text

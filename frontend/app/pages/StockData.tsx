@@ -108,7 +108,6 @@ export default function StockData({ ticker }: Props) {
                 isOpened={isChartContainerOpened}
                 kpi={chartKpi}
                 ticker={ticker}
-                tickerData={tickerData}
                 closeChartContainer={closeChartContainer}
             />
         </div>
@@ -128,6 +127,8 @@ function KpiGroup({
     tickerData,
     openChartContainer,
 }: KpiGroupProps) {
+    const hideChartKpis = ['bazinPrice', 'marketCap']
+
     return (
         <div>
             {groupName !== undefined ? (
@@ -136,12 +137,15 @@ function KpiGroup({
                 </div>
             ) : null}
             <div className="grid grid-cols-4 mb-2 gap-4">
-                {kpis.map((d, i) => (
+                {kpis.map((kpi, i) => (
                     <KpiCard
                         key={i}
-                        kpi={d}
+                        kpi={kpi}
                         tickerData={tickerData}
-                        openChartContainer={() => openChartContainer(d)}
+                        openChartContainer={() => openChartContainer(kpi)}
+                        showChartIcon={
+                            hideChartKpis.includes(kpi) ? false : true
+                        }
                     />
                 ))}
             </div>

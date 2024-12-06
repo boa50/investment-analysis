@@ -6,13 +6,12 @@ import { LineChart } from '../charts/LineChart'
 import { useMediaQueries } from './utils'
 import Icon from './Icon'
 
-import type { Company, Kpi } from '../types'
+import type { Kpi } from '../types'
 
 interface Props {
     isOpened: boolean
     kpi: Kpi
     ticker: string
-    tickerData: Company
     closeChartContainer: () => void
 }
 
@@ -20,7 +19,6 @@ export default function ChartContainer({
     isOpened,
     kpi,
     ticker,
-    tickerData,
     closeChartContainer,
 }: Props) {
     const screenSize = useMediaQueries()
@@ -28,7 +26,7 @@ export default function ChartContainer({
         width: 0,
         height: 0,
     })
-    const { title } = getKpiInfo(tickerData, kpi)
+    const { title } = getKpiInfo(kpi)
 
     useEffect(() => {
         let width = 0
