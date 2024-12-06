@@ -54,7 +54,7 @@ export default function ChartContainer({
         })
     }, [screenSize.xl2, screenSize.xl, screenSize.lg, screenSize.md])
 
-    const commonClasses = 'fixed w-screen h-screen inset-0 z-30'
+    const commonClasses = 'fixed w-screen h-screen inset-0 z-40'
 
     return (
         <div className={isOpened ? 'block' : 'hidden'}>

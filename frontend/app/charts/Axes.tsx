@@ -111,7 +111,14 @@ function AxisBottom({
                     textAnchor="middle"
                     fill={colour}
                 >
-                    {formatter ? formatter(value) : value.toString()}
+                    {formatter
+                        ? formatter(value)
+                        : value instanceof Date
+                          ? value.toLocaleDateString(undefined, {
+                                year: 'numeric',
+                                month: 'short',
+                            })
+                          : value.toString()}
                 </text>
             </g>
         )),
