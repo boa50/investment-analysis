@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+    :root {
+        --color-primary: 167 118 74;
+        --color-weak-light: 107 114 128;
+    }
+}
+
 html,
 body {
     @apply flex flex-col h-screen bg-appBackground;

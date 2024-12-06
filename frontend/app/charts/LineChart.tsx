@@ -9,6 +9,8 @@ type LineChartProps = {
     data: { x: number | Date; y: number }[]
     margin?: Margin
     yFormatter?: (value: number) => string
+    lineColour?: string
+    axesColour?: string
 }
 
 export const LineChart = ({
@@ -17,6 +19,8 @@ export const LineChart = ({
     data,
     margin = { left: 64, right: 16, top: 16, bottom: 20 },
     yFormatter,
+    lineColour = 'currentColor',
+    axesColour = 'currentColor',
 }: LineChartProps) => {
     console.log(data[0].x instanceof Date)
     let xScale
@@ -54,13 +58,19 @@ export const LineChart = ({
             viewBox={`0 0 ${width} ${height}`}
             preserveAspectRatio="xMinYMid meet"
         >
-            <path d={linePath} stroke="#9a6fb0" fill="none" strokeWidth={2} />
+            <path
+                d={linePath}
+                stroke={lineColour}
+                fill="none"
+                strokeWidth={2}
+            />
             <Axes
                 xScale={xScale}
                 yScale={yScale}
                 width={width}
                 height={height}
                 margin={margin}
+                colour={axesColour}
                 yFormatter={yFormatter}
             />
         </svg>

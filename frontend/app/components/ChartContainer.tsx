@@ -129,11 +129,13 @@ function Chart({ ticker, kpi, chartDimensions }: ChartProps) {
     console.log(historicalData)
 
     return (
-        <div className="flex items-center justify-center bg-red-200 w-full h-full">
+        <div className="flex items-center justify-center w-full h-full">
             <LineChart
                 {...chartDimensions}
                 data={historicalData}
                 yFormatter={getKpiInfo(kpi).valueFormat}
+                lineColour="rgb(var(--color-primary))"
+                axesColour="rgb(var(--color-weak-light))"
             />
         </div>
     )

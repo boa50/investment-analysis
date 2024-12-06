@@ -18,10 +18,10 @@ export default {
             colors: {
                 appBackground: colors.gray[50],
                 appBackgroundDark: colors.gray[800],
-                appAccent: colors.blue[500],
+                appAccent: 'rgb(var(--color-primary))',
                 appTextStrong: colors.gray[900],
                 appTextNormal: colors.gray[700],
-                appTextWeak: colors.gray[500],
+                appTextWeak: 'rgb(var(--color-weak-light))',
                 appTextStrongDark: colors.gray[50],
                 appTextNormalDark: colors.gray[100],
                 appTextWeakDark: colors.gray[300],
