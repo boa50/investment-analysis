@@ -1,3 +1,5 @@
+import { useState, useEffect } from 'react'
+
 const formatDecimal = (num: number): string =>
     Intl.NumberFormat('pt-BR', {
         maximumFractionDigits: 2,
@@ -33,4 +35,32 @@ export const formatNum = (
         default:
             return num.toString()
     }
+}
+
+const useMediaQuery = (query: string): boolean => {
+    const [matches, setMatches] = useState<boolean>(false)
+
+    useEffect(() => {
+        const media = window.matchMedia(query)
+        if (media.matches !== matches) {
+            setMatches(media.matches)
+        }
+
+        const listener = () => setMatches(media.matches)
+
+        media.addEventListener('change', listener)
+
+        return () => media.removeEventListener('change', listener)
+    }, [matches, query])
+
+    return matches
+}
+
+export const useMediaQueries = () => {
+    const xl2 = useMediaQuery('(min-width: 1536px)')
+    const xl = useMediaQuery('(min-width: 1280px)')
+    const lg = useMediaQuery('(min-width: 1024px)')
+    const md = useMediaQuery('(min-width: 768px)')
+
+    return { xl2, xl, lg, md }
 }
