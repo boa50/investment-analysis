@@ -1,9 +1,10 @@
 import * as d3 from 'd3'
 import Axes from './Axes'
+import { getLeftMargin } from './utils'
 
 import type { Margin } from './types'
 
-type LineChartProps = {
+interface LineChartProps {
     width: number
     height: number
     data: { x: number | Date; y: number }[]
@@ -18,12 +19,30 @@ export const LineChart = ({
     width,
     height,
     data,
-    margin = { left: 64, right: 16, top: 16, bottom: 20 },
+    margin = { left: 16, right: 16, top: 16, bottom: 20 },
     yFormatter,
     lineColour = 'currentColor',
     axesColour = 'currentColor',
     zeroLineColour,
 }: LineChartProps) => {
+    const paddingMultiplier = 1.07
+    const yScale = d3
+        .scaleLinear()
+        .domain([
+            Math.min(d3.min(data, (d) => d.y) * paddingMultiplier, 0),
+            d3.max(data, (d) => d.y) * paddingMultiplier,
+        ])
+        .range([height - margin.bottom, margin.top])
+
+    const axisFontSize = '0.8rem'
+    margin.left = getLeftMargin({
+        value: yScale.ticks().slice(-1)[0],
+        defaultMargin: margin.left,
+        formatter: yFormatter,
+        tickTextSpacing: 8,
+        fontSize: axisFontSize,
+    })
+
     let xScale
 
     if (data[0].x instanceof Date) {
@@ -35,15 +54,6 @@ export const LineChart = ({
     xScale = xScale
         .domain(d3.extent(data, (d) => d.x))
         .range([margin.left, width - margin.right])
-
-    const paddingMultiplier = 1.07
-    const yScale = d3
-        .scaleLinear()
-        .domain([
-            Math.min(d3.min(data, (d) => d.y) * paddingMultiplier, 0),
-            d3.max(data, (d) => d.y) * paddingMultiplier,
-        ])
-        .range([height - margin.bottom, margin.top])
 
     const lineBuilder = d3
         .line()

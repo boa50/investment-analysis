@@ -10,6 +10,7 @@ interface Props {
     height: number
     margin: Margin
     colour?: string
+    fontSize?: string
     xFormatter?: (value: number | Date) => string
     yFormatter?: (value: number) => string
     xTicks?: number
@@ -25,6 +26,7 @@ export default function Axes({
     height,
     margin,
     colour = 'currentColor',
+    fontSize = '0.8rem',
     xFormatter,
     yFormatter,
     xTicks,
@@ -39,6 +41,7 @@ export default function Axes({
                 height={height}
                 margin={margin}
                 colour={colour}
+                fontSize={fontSize}
                 formatter={yFormatter}
                 nTicks={yTicks}
                 ticksHideZero={yTicksHideZero}
@@ -49,6 +52,7 @@ export default function Axes({
                 width={width}
                 margin={margin}
                 colour={colour}
+                fontSize={fontSize}
                 formatter={xFormatter}
                 nTicks={xTicks}
                 ticksHideZero={xTicksHideZero}
@@ -63,6 +67,7 @@ type AxisBottomProps = {
     width: number
     margin: Margin
     colour: string
+    fontSize: string
     formatter?: (value: number | Date) => string
     nTicks?: number
     ticksHideZero?: boolean
@@ -74,6 +79,7 @@ function AxisBottom({
     width,
     margin,
     colour,
+    fontSize,
     formatter,
     nTicks,
     ticksHideZero,
@@ -109,7 +115,7 @@ function AxisBottom({
                     className="axis-text x"
                     y={height - margin.bottom + tickTextSpacing}
                     textAnchor="middle"
-                    fontSize="0.8rem"
+                    fontSize={fontSize}
                     fill={colour}
                 >
                     {formatter
@@ -119,7 +125,7 @@ function AxisBottom({
                                 year: 'numeric',
                                 month: 'short',
                             })
-                          : value.toString()}
+                          : value}
                 </text>
             </g>
         )),
@@ -131,6 +137,7 @@ type AxisLeftProps = {
     height: number
     margin: Margin
     colour: string
+    fontSize: string
     formatter?: (value: number) => string
     nTicks?: number
     ticksHideZero?: boolean
@@ -141,6 +148,7 @@ function AxisLeft({
     height,
     margin,
     colour,
+    fontSize,
     formatter,
     nTicks,
     ticksHideZero,
@@ -172,7 +180,7 @@ function AxisLeft({
                     x={-tickTextSpacing}
                     y={5}
                     textAnchor="end"
-                    fontSize="0.8rem"
+                    fontSize={fontSize}
                     fill={colour}
                 >
                     {formatter ? formatter(value) : value}
