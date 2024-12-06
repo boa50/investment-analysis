@@ -8,6 +8,7 @@ type LineChartProps = {
     height: number
     data: { x: number | Date; y: number }[]
     margin?: Margin
+    yFormatter?: (value: number) => string
 }
 
 export const LineChart = ({
@@ -15,6 +16,7 @@ export const LineChart = ({
     height,
     data,
     margin = { left: 64, right: 16, top: 16, bottom: 20 },
+    yFormatter,
 }: LineChartProps) => {
     console.log(data[0].x instanceof Date)
     let xScale
@@ -59,6 +61,7 @@ export const LineChart = ({
                 width={width}
                 height={height}
                 margin={margin}
+                yFormatter={yFormatter}
             />
         </svg>
     )

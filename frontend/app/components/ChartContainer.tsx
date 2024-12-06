@@ -130,7 +130,11 @@ function Chart({ ticker, kpi, chartDimensions }: ChartProps) {
 
     return (
         <div className="flex items-center justify-center bg-red-200 w-full h-full">
-            <LineChart {...chartDimensions} data={historicalData} />
+            <LineChart
+                {...chartDimensions}
+                data={historicalData}
+                yFormatter={getKpiInfo(kpi).valueFormat}
+            />
         </div>
     )
 }
