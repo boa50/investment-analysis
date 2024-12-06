@@ -54,18 +54,19 @@ export default function ChartContainer({
         })
     }, [screenSize.xl2, screenSize.xl, screenSize.lg, screenSize.md])
 
-    const commonClasses = 'fixed w-screen h-screen inset-0 z-50'
+    const commonClasses = 'fixed w-screen h-screen inset-0 z-30'
 
     return (
         <div className={isOpened ? 'block' : 'hidden'}>
             <div className={`${commonClasses} bg-gray-900 opacity-45`}></div>
             <div className={commonClasses}>
-                {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
-                <div
-                    onClick={closeChartContainer}
-                    className="flex h-full w-full items-center justify-center"
-                >
-                    <div className="relative h-[75%] w-[55%] p-4 rounded-2xl bg-white shadow shadow-grey-950/5">
+                <div className="flex h-full w-full items-center justify-center">
+                    {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+                    <div
+                        onClick={closeChartContainer}
+                        className="absolute h-full w-full z-40"
+                    ></div>
+                    <div className="relative h-[75%] w-[55%] p-4 rounded-2xl bg-white shadow shadow-grey-950/5 z-50">
                         <div className="flex flex-col h-full">
                             <div className="flex items-center justify-between gap-4 mb-2">
                                 <div>{title}</div>
