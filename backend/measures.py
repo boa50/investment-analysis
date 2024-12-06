@@ -116,16 +116,16 @@ def get_company(ticker):
     return df
 
 
-def _get_fundaments_historical_values(df_fundaments, tickers, kpi, n_years=10):
+def _get_fundaments_historical_values(df_fundaments, ticker, kpi, n_years=10):
     df_basic_info = utils.get_data("stocks-basic-info")
     df_basic_info["MAIN_TICKER"] = df_basic_info["TICKERS"].apply(
         lambda x: utils.get_main_ticker(x)
     )
-    df_basic_info = df_basic_info[df_basic_info["MAIN_TICKER"].isin(tickers)]
+    df_basic_info = df_basic_info[df_basic_info["MAIN_TICKER"] == ticker]
 
-    cds_cvm = df_basic_info["CD_CVM"].values
+    cd_cvm = df_basic_info["CD_CVM"].iloc[0]
 
-    df_kpi = df_fundaments[df_fundaments["CD_CVM"].isin(cds_cvm)]
+    df_kpi = df_fundaments[df_fundaments["CD_CVM"] == cd_cvm]
     df_kpi = df_kpi[df_kpi["KPI"] == kpi]
     df_kpi = df_kpi[df_kpi["EXERC_YEAR"] >= df_kpi["EXERC_YEAR"].max() - n_years]
 
@@ -145,8 +145,8 @@ def _get_fundaments_historical_values(df_fundaments, tickers, kpi, n_years=10):
     return df_kpi
 
 
-def _get_history_historical_values(df_history, tickers, kpi, n_years=10):
-    df_kpi = df_history[df_history["TICKER"].isin(tickers)]
+def _get_history_historical_values(df_history, ticker, kpi, n_years=10):
+    df_kpi = df_history[df_history["TICKER"] == ticker]
     df_kpi = df_kpi[["DATE", "CD_CVM", "TICKER", kpi]]
     df_kpi = df_kpi.rename(columns={kpi: "VALUE"})
     first_date = df_kpi["DATE"].max() - pd.DateOffset(years=n_years)
@@ -155,7 +155,7 @@ def _get_history_historical_values(df_history, tickers, kpi, n_years=10):
     return df_kpi
 
 
-def get_historical_values(tickers, kpi, n_years=10):
+def get_historical_values(ticker, kpi, n_years=10):
     try:
         kpi_original = utils.get_kpi_original_name(kpi)
     except Exception:
@@ -167,18 +167,16 @@ def get_historical_values(tickers, kpi, n_years=10):
     )
 
     if kpi_original in df_fundaments["KPI"].unique():
-        print("FUNDAMENTS")
         df_kpi = _get_fundaments_historical_values(
             df_fundaments=df_fundaments,
-            tickers=tickers,
+            ticker=ticker,
             kpi=kpi_original,
             n_years=n_years,
         )
 
     elif kpi_original in df_history.columns:
-        print("HISTORY")
         df_kpi = _get_history_historical_values(
-            df_history=df_history, tickers=tickers, kpi=kpi_original, n_years=n_years
+            df_history=df_history, ticker=ticker, kpi=kpi_original, n_years=n_years
         )
 
     df_kpi = df_kpi.rename(
