@@ -19,7 +19,7 @@ export const LineChart = ({
     width,
     height,
     data,
-    margin = { left: 16, right: 16, top: 16, bottom: 20 },
+    margin = { left: 24, right: 16, top: 16, bottom: 20 },
     yFormatter,
     lineColour = 'currentColor',
     axesColour = 'currentColor',
@@ -29,8 +29,8 @@ export const LineChart = ({
     const yScale = d3
         .scaleLinear()
         .domain([
-            Math.min(d3.min(data, (d) => d.y) * paddingMultiplier, 0),
-            d3.max(data, (d) => d.y) * paddingMultiplier,
+            (Math.min(d3.min(data, (d) => d.y) ?? 0) * paddingMultiplier, 0),
+            (d3.max(data, (d) => d.y) ?? 0) * paddingMultiplier,
         ])
         .range([height - margin.bottom, margin.top])
 
@@ -44,19 +44,23 @@ export const LineChart = ({
     })
 
     let xScale
+    const [xMin = 0, xMax = 0] = d3.extent(data, (d) => d.x)
 
+    // Typescript is giving me some problems when I try to decouple the scale function from the rest of the attributes
     if (data[0].x instanceof Date) {
-        xScale = d3.scaleTime()
+        xScale = d3
+            .scaleTime()
+            .domain([xMin, xMax])
+            .range([margin.left, width - margin.right])
     } else {
-        xScale = d3.scaleLinear()
+        xScale = d3
+            .scaleLinear()
+            .domain([xMin, xMax])
+            .range([margin.left, width - margin.right])
     }
 
-    xScale = xScale
-        .domain(d3.extent(data, (d) => d.x))
-        .range([margin.left, width - margin.right])
-
     const lineBuilder = d3
-        .line()
+        .line<{ x: number | Date; y: number }>()
         .x((d) => xScale(d.x))
         .y((d) => yScale(d.y))
 
@@ -76,7 +80,7 @@ export const LineChart = ({
                 />
             ) : null}
             <path
-                d={linePath}
+                d={linePath ?? ''}
                 stroke={lineColour}
                 fill="none"
                 strokeWidth={2}
