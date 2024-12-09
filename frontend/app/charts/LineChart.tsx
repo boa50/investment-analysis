@@ -1,8 +1,10 @@
+import { useState } from 'react'
 import * as d3 from 'd3'
 import Axes from './Axes'
 import { getLeftMargin } from './utils'
+import Tooltip from './Tooltip'
 
-import type { Margin } from './types'
+import type { Margin, InteractionData } from './types'
 
 interface LineChartProps {
     width: number
@@ -25,11 +27,14 @@ export const LineChart = ({
     axesColour = 'currentColor',
     zeroLineColour,
 }: LineChartProps) => {
+    const [interactionData, setInteractiondata] =
+        useState<InteractionData | null>(null)
+
     const paddingMultiplier = 1.07
     const yScale = d3
         .scaleLinear()
         .domain([
-            (Math.min(d3.min(data, (d) => d.y) ?? 0) * paddingMultiplier, 0),
+            Math.min((d3.min(data, (d) => d.y) ?? 0) * paddingMultiplier, 0),
             (d3.max(data, (d) => d.y) ?? 0) * paddingMultiplier,
         ])
         .range([height - margin.bottom, margin.top])
@@ -66,34 +71,65 @@ export const LineChart = ({
 
     const linePath = lineBuilder(data)
 
-    return (
-        <svg
-            viewBox={`0 0 ${width} ${height}`}
-            preserveAspectRatio="xMinYMid meet"
-        >
-            {yScale.domain()[0] < 0 ? (
-                <path
-                    className="zero-line"
-                    d={`M ${margin.left} ${yScale(0)} H ${width - margin.right}`}
-                    stroke={zeroLineColour ? zeroLineColour : axesColour}
-                    fill="none"
+    const tooltips = data.map((d, i) => {
+        return (
+            <g
+                key={i}
+                onMouseEnter={() =>
+                    setInteractiondata({
+                        xPos: xScale(d.x),
+                        yPos: yScale(d.y),
+                        label: yFormatter !== undefined ? yFormatter(d.y) : '',
+                        content:
+                            d.x instanceof Date
+                                ? d3.timeFormat('Trim %q %Y')(d.x)
+                                : d.x.toLocaleString(),
+                    })
+                }
+                onMouseLeave={() => setInteractiondata(null)}
+            >
+                <circle
+                    cx={xScale(d.x)}
+                    cy={yScale(d.y)}
+                    r={5}
+                    className={'circle primary opacity-0 hover:opacity-100'}
                 />
-            ) : null}
-            <path
-                d={linePath ?? ''}
-                stroke={lineColour}
-                fill="none"
-                strokeWidth={2}
-            />
-            <Axes
-                xScale={xScale}
-                yScale={yScale}
-                width={width}
-                height={height}
-                margin={margin}
-                colour={axesColour}
-                yFormatter={yFormatter}
-            />
-        </svg>
+            </g>
+        )
+    })
+
+    return (
+        <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+            <svg
+                viewBox={`0 0 ${width} ${height}`}
+                preserveAspectRatio="xMinYMid meet"
+            >
+                {yScale.domain()[0] < 0 ? (
+                    <path
+                        className="zero-line"
+                        d={`M ${margin.left} ${yScale(0)} H ${width - margin.right}`}
+                        stroke={zeroLineColour ? zeroLineColour : axesColour}
+                        fill="none"
+                    />
+                ) : null}
+                <path
+                    d={linePath ?? ''}
+                    stroke={lineColour}
+                    fill="none"
+                    strokeWidth={2}
+                />
+                {tooltips}
+                <Axes
+                    xScale={xScale}
+                    yScale={yScale}
+                    width={width}
+                    height={height}
+                    margin={margin}
+                    colour={axesColour}
+                    yFormatter={yFormatter}
+                />
+                <Tooltip interactionData={interactionData} chartWidth={width} />
+            </svg>
+        </div>
     )
 }

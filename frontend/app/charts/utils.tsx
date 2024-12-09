@@ -43,8 +43,8 @@ export const getLeftMargin = ({
         getTextWidth(maxText, fontSize, fontWeight) + tickTextSpacing
 
     if (defaultMargin === undefined) {
-        return textMargin
+        return textMargin + 2
     } else {
-        return textMargin > defaultMargin ? textMargin : defaultMargin
+        return textMargin > defaultMargin ? textMargin + 2 : defaultMargin
     }
 }
