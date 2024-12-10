@@ -69,6 +69,14 @@ export const LineChart = ({
 
     const linePath = lineBuilder(data)
 
+    const pointLength = (width - margin.left - margin.right) / data.length
+    let defaultPath = `M${[margin.left, yScale(0)]}`
+    for (let i = 1; i < data.length; i++) {
+        defaultPath = defaultPath.concat(
+            `L${[margin.left + i * pointLength, yScale(0)]}`
+        )
+    }
+
     return (
         <div style={{ position: 'relative', width: '100%', height: '100%' }}>
             <svg
@@ -83,12 +91,15 @@ export const LineChart = ({
                         fill="none"
                     />
                 ) : null}
-                <path
-                    d={linePath ?? ''}
-                    stroke={lineColour}
-                    fill="none"
-                    strokeWidth={2}
-                />
+                <path stroke={lineColour} fill="none" strokeWidth={2}>
+                    <animate
+                        fill="freeze"
+                        attributeName="d"
+                        dur="0.25s"
+                        values={`${defaultPath}; ${linePath}`}
+                    />
+                </path>
+
                 <Tooltip
                     chartWidth={width}
                     chartHeight={height}
