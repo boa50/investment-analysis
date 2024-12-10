@@ -1,15 +1,14 @@
-import { useState } from 'react'
 import * as d3 from 'd3'
 import Axes from './Axes'
 import { getLeftMargin } from './utils'
 import Tooltip from './Tooltip'
 
-import type { Margin, InteractionData } from './types'
+import type { Margin, Dataset, Datapoint } from './types'
 
 interface LineChartProps {
     width: number
     height: number
-    data: { x: number | Date; y: number }[]
+    data: Dataset
     margin?: Margin
     yFormatter?: (value: number) => string
     lineColour?: string
@@ -27,9 +26,6 @@ export const LineChart = ({
     axesColour = 'currentColor',
     zeroLineColour,
 }: LineChartProps) => {
-    const [interactionData, setInteractiondata] =
-        useState<InteractionData | null>(null)
-
     const paddingMultiplier = 1.07
     const yScale = d3
         .scaleLinear()
@@ -65,38 +61,11 @@ export const LineChart = ({
     }
 
     const lineBuilder = d3
-        .line<{ x: number | Date; y: number }>()
+        .line<Datapoint>()
         .x((d) => xScale(d.x))
         .y((d) => yScale(d.y))
 
     const linePath = lineBuilder(data)
-
-    const tooltips = data.map((d, i) => {
-        return (
-            <g
-                key={i}
-                onMouseEnter={() =>
-                    setInteractiondata({
-                        xPos: xScale(d.x),
-                        yPos: yScale(d.y),
-                        label: yFormatter !== undefined ? yFormatter(d.y) : '',
-                        content:
-                            d.x instanceof Date
-                                ? d3.timeFormat('Trim %q %Y')(d.x)
-                                : d.x.toLocaleString(),
-                    })
-                }
-                onMouseLeave={() => setInteractiondata(null)}
-            >
-                <circle
-                    cx={xScale(d.x)}
-                    cy={yScale(d.y)}
-                    r={5}
-                    className={'circle primary opacity-0 hover:opacity-100'}
-                />
-            </g>
-        )
-    })
 
     return (
         <div style={{ position: 'relative', width: '100%', height: '100%' }}>
@@ -118,7 +87,17 @@ export const LineChart = ({
                     fill="none"
                     strokeWidth={2}
                 />
-                {tooltips}
+                <Tooltip
+                    chartWidth={width}
+                    chartHeight={height}
+                    margin={margin}
+                    data={data}
+                    xScale={xScale}
+                    yScale={yScale}
+                    yFormatter={yFormatter}
+                    lineColour={axesColour}
+                    circleColour={lineColour}
+                />
                 <Axes
                     xScale={xScale}
                     yScale={yScale}
@@ -128,7 +107,6 @@ export const LineChart = ({
                     colour={axesColour}
                     yFormatter={yFormatter}
                 />
-                <Tooltip interactionData={interactionData} chartWidth={width} />
             </svg>
         </div>
     )

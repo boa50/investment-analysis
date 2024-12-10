@@ -1,3 +1,7 @@
+import * as d3 from 'd3'
+
+import type { ScaleLinear, ScaleTime } from 'd3'
+
 export const getTextWidth = (
     txt: string,
     fontSize = '1rem',
@@ -47,4 +51,17 @@ export const getLeftMargin = ({
     } else {
         return textMargin > defaultMargin ? textMargin + 2 : defaultMargin
     }
+}
+
+export const getHoveredDataPoint = (
+    event: React.MouseEvent<SVGRectElement, MouseEvent>,
+    data: { x: number | Date; y: number }[],
+    xScale: ScaleLinear<number, number> | ScaleTime<number, number>
+): [{ x: number | Date; y: number }, number] => {
+    const x_val = xScale.invert(d3.pointer(event)[0])
+    const idx = d3
+        .bisector((d: { x: number | Date; y: number }) => d.x)
+        .center(data, x_val)
+
+    return [data[idx], idx]
 }

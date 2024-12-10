@@ -11,3 +11,7 @@ export type InteractionData = {
     label: string
     content: string
 }
+
+export type Datapoint = { x: number | Date; y: number }
+
+export type Dataset = Datapoint[]

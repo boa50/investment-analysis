@@ -1,22 +1,87 @@
-import type { InteractionData } from './types'
+import * as d3 from 'd3'
+import { useState } from 'react'
+import { getHoveredDataPoint } from './utils'
+
+import type { Dataset, InteractionData, Margin } from './types'
+import type { ScaleLinear, ScaleTime } from 'd3'
 
 interface Props {
-    interactionData: InteractionData | null
     chartWidth: number
+    chartHeight: number
+    margin: Margin
+    data: Dataset
+    xScale: ScaleLinear<number, number> | ScaleTime<number, number>
+    yScale: ScaleLinear<number, number>
+    yFormatter?: (value: number) => string
+    lineColour?: string
+    circleColour?: string
     tooltipWidth?: number
-    margin?: number
+    displayMargin?: number
     labelFontSize?: string
     contentFontSize?: string
 }
 
 export default function Tooltip({
-    interactionData,
     chartWidth,
+    chartHeight,
+    margin,
+    data,
+    xScale,
+    yScale,
+    yFormatter,
+    lineColour = 'currentColor',
+    circleColour = 'currentColor',
     tooltipWidth = 100,
-    margin = 8,
+    displayMargin = 8,
     labelFontSize = '0.9rem',
     contentFontSize = '0.8rem',
 }: Props) {
+    const [interactionData, setInteractiondata] =
+        useState<InteractionData | null>(null)
+
+    return (
+        <>
+            <TooltipHighlight
+                width={chartWidth}
+                height={chartHeight}
+                margin={margin}
+                data={data}
+                xScale={xScale}
+                yScale={yScale}
+                setInteractiondata={setInteractiondata}
+                yFormatter={yFormatter}
+                lineColour={lineColour}
+                circleColour={circleColour}
+            />
+            <TooltipDisplay
+                interactionData={interactionData}
+                chartWidth={chartWidth}
+                tooltipWidth={tooltipWidth}
+                margin={displayMargin}
+                labelFontSize={labelFontSize}
+                contentFontSize={contentFontSize}
+            />
+        </>
+    )
+}
+
+interface TooltipDisplayProps {
+    interactionData: InteractionData | null
+    chartWidth: number
+    tooltipWidth: number
+    margin: number
+    labelFontSize: string
+    contentFontSize: string
+}
+
+function TooltipDisplay({
+    interactionData,
+    chartWidth,
+    tooltipWidth,
+    margin,
+    labelFontSize,
+    contentFontSize,
+}: TooltipDisplayProps) {
     if (!interactionData) return null
 
     return (
@@ -39,6 +104,7 @@ export default function Tooltip({
                     padding: '6px',
                     transform: 'translateY(-50%)',
                     width: tooltipWidth,
+                    transition: 'all 0.1s ease',
                     left:
                         interactionData.xPos <= chartWidth / 2
                             ? interactionData.xPos + margin
@@ -57,5 +123,113 @@ export default function Tooltip({
                 />
             </div>
         </foreignObject>
+    )
+}
+
+interface TooltipHighlightProps {
+    width: number
+    height: number
+    margin: Margin
+    data: Dataset
+    xScale: ScaleLinear<number, number> | ScaleTime<number, number>
+    yScale: ScaleLinear<number, number>
+    setInteractiondata: React.Dispatch<
+        React.SetStateAction<InteractionData | null>
+    >
+    yFormatter: ((value: number) => string) | undefined
+    lineColour: string
+    circleColour: string
+}
+
+function TooltipHighlight({
+    width,
+    height,
+    margin,
+    data,
+    xScale,
+    yScale,
+    setInteractiondata,
+    yFormatter,
+    lineColour,
+    circleColour,
+}: TooltipHighlightProps) {
+    const [highlightedPoint, setHighlightedPoint] = useState<number | null>(
+        null
+    )
+
+    return (
+        <>
+            <rect
+                x={margin.left}
+                y={0}
+                height={height - margin.bottom}
+                width={width - margin.left - margin.right}
+                fill="transparent"
+                onMouseMove={(event) => {
+                    const [dataPoint, idx] = getHoveredDataPoint(
+                        event,
+                        data,
+                        xScale
+                    )
+
+                    if (idx !== highlightedPoint) {
+                        setHighlightedPoint(idx)
+
+                        setInteractiondata({
+                            xPos: xScale(dataPoint.x),
+                            yPos: yScale(dataPoint.y),
+                            label:
+                                yFormatter !== undefined
+                                    ? yFormatter(dataPoint.y)
+                                    : '',
+                            content:
+                                dataPoint.x instanceof Date
+                                    ? d3.timeFormat('Trim %q %Y')(dataPoint.x)
+                                    : dataPoint.x.toLocaleString(),
+                        })
+                    }
+                }}
+                onMouseLeave={(event) => {
+                    const isOutOfBounds =
+                        d3.pointer(event)[0] + 1 > width - margin.right ||
+                        d3.pointer(event)[0] - 1 < margin.left ||
+                        d3.pointer(event)[1] > height - margin.bottom ||
+                        d3.pointer(event)[1] < margin.top
+
+                    if (isOutOfBounds && highlightedPoint !== null) {
+                        setHighlightedPoint(null)
+                        setInteractiondata(null)
+                    }
+                }}
+            />
+            {data.map((d, i) => {
+                return (
+                    <g
+                        key={`tooltip-${i}`}
+                        style={{
+                            display: highlightedPoint === i ? 'block' : 'none',
+                        }}
+                    >
+                        <line
+                            x1={xScale(d.x)}
+                            x2={xScale(d.x)}
+                            y1={0}
+                            y2={height - margin.bottom}
+                            stroke={lineColour}
+                            strokeWidth={1}
+                            strokeDasharray={'7, 5'}
+                        />
+                        <circle
+                            cx={xScale(d.x)}
+                            cy={yScale(d.y)}
+                            r={3}
+                            stroke={circleColour}
+                            strokeWidth={1}
+                            fill="white"
+                        />
+                    </g>
+                )
+            })}
+        </>
     )
 }
