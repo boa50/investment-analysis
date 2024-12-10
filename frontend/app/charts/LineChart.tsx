@@ -14,6 +14,7 @@ interface LineChartProps {
     lineColour?: string
     axesColour?: string
     zeroLineColour?: string
+    isQuarterTooltipFormat?: boolean
 }
 
 export const LineChart = ({
@@ -25,6 +26,7 @@ export const LineChart = ({
     lineColour = 'currentColor',
     axesColour = 'currentColor',
     zeroLineColour,
+    isQuarterTooltipFormat = false,
 }: LineChartProps) => {
     const paddingMultiplier = 1.07
     const yScale = d3
@@ -97,6 +99,7 @@ export const LineChart = ({
                     yFormatter={yFormatter}
                     lineColour={axesColour}
                     circleColour={lineColour}
+                    isQuarterDateFormat={isQuarterTooltipFormat}
                 />
                 <Axes
                     xScale={xScale}

@@ -19,6 +19,7 @@ interface Props {
     displayMargin?: number
     labelFontSize?: string
     contentFontSize?: string
+    isQuarterDateFormat?: boolean
 }
 
 export default function Tooltip({
@@ -35,6 +36,7 @@ export default function Tooltip({
     displayMargin = 8,
     labelFontSize = '0.9rem',
     contentFontSize = '0.8rem',
+    isQuarterDateFormat = false,
 }: Props) {
     const [interactionData, setInteractiondata] =
         useState<InteractionData | null>(null)
@@ -52,6 +54,7 @@ export default function Tooltip({
                 yFormatter={yFormatter}
                 lineColour={lineColour}
                 circleColour={circleColour}
+                isQuarterDateFormat={isQuarterDateFormat}
             />
             <TooltipDisplay
                 interactionData={interactionData}
@@ -139,6 +142,7 @@ interface TooltipHighlightProps {
     yFormatter: ((value: number) => string) | undefined
     lineColour: string
     circleColour: string
+    isQuarterDateFormat: boolean
 }
 
 function TooltipHighlight({
@@ -152,6 +156,7 @@ function TooltipHighlight({
     yFormatter,
     lineColour,
     circleColour,
+    isQuarterDateFormat,
 }: TooltipHighlightProps) {
     const [highlightedPoint, setHighlightedPoint] = useState<number | null>(
         null
@@ -184,7 +189,11 @@ function TooltipHighlight({
                                     : '',
                             content:
                                 dataPoint.x instanceof Date
-                                    ? d3.timeFormat('Trim %q %Y')(dataPoint.x)
+                                    ? d3.timeFormat(
+                                          isQuarterDateFormat
+                                              ? 'Trim %q %Y'
+                                              : '%d/%m/%Y'
+                                      )(dataPoint.x)
                                     : dataPoint.x.toLocaleString(),
                         })
                     }

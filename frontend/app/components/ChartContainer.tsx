@@ -93,6 +93,14 @@ export default function ChartContainer({
     )
 }
 
+const fullDateKpis: Kpi[] = [
+    'price',
+    'pl',
+    'pvp',
+    'dividendYield',
+    'dividendPayout',
+]
+
 interface ChartProps {
     ticker: string
     kpi: Kpi
@@ -135,6 +143,7 @@ function Chart({ ticker, kpi, chartDimensions }: ChartProps) {
                 lineColour="rgb(var(--color-primary))"
                 axesColour="rgb(var(--color-weak-light))"
                 zeroLineColour="rgb(var(--color-divider-strong-light))"
+                isQuarterTooltipFormat={!fullDateKpis.includes(kpi)}
             />
         </div>
     )
