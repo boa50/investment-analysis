@@ -33,7 +33,7 @@ export default function ChartContainer({
         let scale = 0
         if (screenSize.xl2) {
             width = 1056
-            scale = 9 / 16
+            scale = 9.75 / 16
         } else if (screenSize.xl) {
             width = 880
             scale = 12 / 16
@@ -68,16 +68,15 @@ export default function ChartContainer({
                     ></div>
                     <div className="relative h-[75%] w-[55%] p-4 rounded-2xl bg-white shadow shadow-grey-950/5 z-50">
                         <div className="flex flex-col h-full">
-                            <div className="flex items-center justify-between gap-4 mb-2">
+                            <div className="flex items-center justify-between gap-4">
                                 <div>{title}</div>
                                 <div className="flex space-x-2">
-                                    <div>Chart Options</div>
                                     <button onClick={closeChartContainer}>
                                         <Icon type="cross" size={6} />
                                     </button>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-8 pt-4 mt-6 border-t border-appRowDividerStrong"></div>
+                            <div className="flex items-center gap-8 pt-4 mt-4 border-t border-appRowDividerStrong"></div>
                             {isOpened ? (
                                 <Chart
                                     ticker={ticker}

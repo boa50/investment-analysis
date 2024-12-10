@@ -117,6 +117,7 @@ function AxisBottom({
                     textAnchor="middle"
                     fontSize={fontSize}
                     fill={colour}
+                    cursor={'default'}
                 >
                     {formatter
                         ? formatter(value)
@@ -182,6 +183,7 @@ function AxisLeft({
                     textAnchor="end"
                     fontSize={fontSize}
                     fill={colour}
+                    cursor={'default'}
                 >
                     {formatter ? formatter(value) : value}
                 </text>
