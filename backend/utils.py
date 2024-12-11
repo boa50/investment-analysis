@@ -1,8 +1,16 @@
 import pandas as pd
+import numpy as np
 from os import path
 
 
-def get_data(file_name, dates_to_parse=[]):
+def get_data(file_name):
+    if file_name == "stocks-fundaments":
+        dates_to_parse = ["DT_INI_EXERC", "DT_FIM_EXERC"]
+    elif file_name == "stocks-history":
+        dates_to_parse = ["DATE"]
+    else:
+        dates_to_parse = []
+
     return pd.read_csv(
         path.join(
             path.dirname(__file__).replace("/backend", "/"),
@@ -10,6 +18,26 @@ def get_data(file_name, dates_to_parse=[]):
         ),
         parse_dates=dates_to_parse,
     )
+
+
+def is_kpi_fundaments(kpi):
+    if kpi in [
+        "CAGR_5_YEARS_PROFIT",
+        "CAGR_5_YEARS_REVENUE",
+        "DEBT",
+        "DEBT_NET",
+        "EBIT",
+        "EQUITY",
+        "NET_DEBT_BY_EBIT",
+        "NET_DEBT_BY_EQUITY",
+        "NET_MARGIN",
+        "NET_REVENUE",
+        "PROFIT",
+        "ROE",
+    ]:
+        return True
+    else:
+        return False
 
 
 def get_main_ticker(tickers):
@@ -75,3 +103,48 @@ def get_df_stocks_cleaned(df, return_cols):
     df = columns_rename(df)
 
     return df
+
+
+def get_company_by_ticker(df_basic_info, ticker):
+    return df_basic_info[df_basic_info["TICKERS"].str.contains(ticker)].iloc[0]
+
+
+def get_cd_cvm_by_ticker(df_basic_info, ticker):
+    return get_company_by_ticker(df_basic_info, ticker)["CD_CVM"]
+
+
+def get_segment_by_ticker(df_basic_info, ticker):
+    return get_company_by_ticker(df_basic_info, ticker)["SEGMENTO"]
+
+
+def get_companies_by_segment(df_basic_info, segment):
+    df_tmp = df_basic_info[df_basic_info["SEGMENTO"] == segment].copy()
+    df_tmp["MAIN_TICKER"] = df_tmp["TICKERS"].apply(get_main_ticker)
+    return df_tmp[["CD_CVM", "NOME", "MAIN_TICKER", "FOUNDATION"]]
+
+
+def _get_drawdowns(
+    risk_calculation_values, drawdown_kpi_multiplier=1, threshold=np.inf
+):
+    risk_values = np.minimum(
+        risk_calculation_values * drawdown_kpi_multiplier,
+        threshold * drawdown_kpi_multiplier,
+    )
+    running_max = np.maximum.accumulate(risk_values)
+    drawdowns = ((risk_values - running_max) / running_max) * drawdown_kpi_multiplier
+
+    return drawdowns.fillna(0)
+
+
+def get_pain_index(
+    risk_calculation_values, drawdown_kpi_multiplier=1, threshold=np.inf, weights=None
+):
+    drawdowns = _get_drawdowns(
+        risk_calculation_values=risk_calculation_values,
+        drawdown_kpi_multiplier=drawdown_kpi_multiplier,
+        threshold=threshold,
+    )
+
+    pain_index = np.average(drawdowns, weights=weights)
+
+    return pain_index
