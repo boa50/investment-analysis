@@ -8,6 +8,8 @@ def get_data(file_name):
         dates_to_parse = ["DT_INI_EXERC", "DT_FIM_EXERC"]
     elif file_name == "stocks-history":
         dates_to_parse = ["DATE"]
+    elif file_name == "ipca":
+        dates_to_parse = ["DATE"]
     else:
         dates_to_parse = []
 
@@ -123,28 +125,24 @@ def get_companies_by_segment(df_basic_info, segment):
     return df_tmp[["CD_CVM", "NOME", "MAIN_TICKER", "FOUNDATION"]]
 
 
-def _get_drawdowns(
-    risk_calculation_values, drawdown_kpi_multiplier=1, threshold=np.inf
-):
-    risk_values = np.minimum(
-        risk_calculation_values * drawdown_kpi_multiplier,
-        threshold * drawdown_kpi_multiplier,
-    )
-    running_max = np.maximum.accumulate(risk_values)
-    drawdowns = ((risk_values - running_max) / running_max) * drawdown_kpi_multiplier
+def get_ipca_weights(dates):
+    df_ipca = get_data("ipca")
 
-    return drawdowns.fillna(0)
+    df_ipca["DATE"] = df_ipca["DATE"].dt.to_period("M")
+
+    kpi_periods = dates.dt.to_period("M").values
+
+    df_ipca = df_ipca[df_ipca["DATE"].isin(kpi_periods)]
+
+    last_ipca_value = df_ipca["VALUE"].iloc[-1]
+
+    weights = last_ipca_value / df_ipca["VALUE"]
+
+    return weights.reset_index(drop=True).values
 
 
-def get_pain_index(
-    risk_calculation_values, drawdown_kpi_multiplier=1, threshold=np.inf, weights=None
-):
-    drawdowns = _get_drawdowns(
-        risk_calculation_values=risk_calculation_values,
-        drawdown_kpi_multiplier=drawdown_kpi_multiplier,
-        threshold=threshold,
-    )
+def get_date_weights(dates):
+    days_diff = (dates.max() - dates.min()).days
+    weights = (days_diff - (dates.max() - dates).dt.days) / days_diff
 
-    pain_index = np.average(drawdowns, weights=weights)
-
-    return pain_index
+    return np.exp(weights.reset_index(drop=True).values)

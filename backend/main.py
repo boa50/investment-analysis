@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
-import measures
-import info
+import company
+import measure
 
 ### Configuring CORS
 origins = [
@@ -27,25 +27,25 @@ def livetest():
 
 @app.get("/api/companies")
 def get_companies():
-    df = measures.get_companies()
+    df = company.get_companies()
     return Response(df.to_json(orient="records"), media_type="application/json")
 
 
 @app.get("/api/company")
 def get_company(ticker: str):
-    df = measures.get_company(ticker=ticker)
-    return Response(df.to_json(orient="records"), media_type="application/json")
-
-
-@app.get("/api/historicalValues")
-def get_historical_values(ticker: str, kpi: str):
-    df = measures.get_historical_values(ticker=ticker, kpi=kpi)
+    df = company.get_company(ticker=ticker)
     return Response(df.to_json(orient="records"), media_type="application/json")
 
 
 @app.get("/api/searchCompanies")
 def search_companies(text: str):
-    df = info.search_companies(text=text)
+    df = company.search_companies(text=text)
+    return Response(df.to_json(orient="records"), media_type="application/json")
+
+
+@app.get("/api/historicalValues")
+def get_historical_values(ticker: str, kpi: str):
+    df = measure.get_historical_values(ticker=ticker, kpi=kpi)
     return Response(df.to_json(orient="records"), media_type="application/json")
 
 
