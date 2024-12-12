@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import math
 from os import path
 
 
@@ -146,3 +147,12 @@ def get_date_weights(dates):
     weights = (days_diff - (dates.max() - dates).dt.days) / days_diff
 
     return np.exp(weights.reset_index(drop=True).values)
+
+
+def get_number_length(number):
+    length = abs(int(math.log10(abs(number))))
+
+    if number < 0:
+        length += 1
+
+    return length

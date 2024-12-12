@@ -2,39 +2,65 @@ import pandas as pd
 import utils
 
 
-def _clear_df_segment(df_segment, value_column):
-    df_segment = df_segment[["DATE", value_column]]
-    df_segment = df_segment.groupby("DATE").mean().reset_index()
+def _clear_df_segment(
+    df_segment: pd.DataFrame, value_column: str, group_segment_values: bool = True
+):
+    if group_segment_values:
+        df_segment = df_segment.groupby("DATE")[value_column].mean().reset_index()
+        df_segment["CD_CVM"] = -1
+        df_segment["TICKER"] = "SEGMENT"
+
+    if "TICKER" not in df_segment.columns:
+        df_basic_info = utils.get_data("stocks-basic-info")
+        df_segment = df_segment.merge(
+            df_basic_info[["CD_CVM", "TICKERS"]], how="left", on="CD_CVM"
+        )
+        df_segment["TICKERS"] = df_segment["TICKERS"].str[:4]
+        df_segment = df_segment.rename(columns={"TICKERS": "TICKER"})
+
+    df_segment = df_segment[["CD_CVM", "TICKER", "DATE", value_column]]
     df_segment = df_segment.sort_values(by="DATE")
-    df_segment["TICKER"] = "SEGMENT"
-    df_segment["CD_CVM"] = -1
 
     return df_segment
 
 
-def _get_kpi_fundaments_segment(df_basic_info, segment, df_kpi, value_column):
+def _get_kpi_fundaments_segment(
+    df_basic_info, segment, df_kpi, value_column, group_segment_values=True
+):
     cd_cvm_segment = utils.get_companies_by_segment(
         df_basic_info=df_basic_info, segment=segment
     )["CD_CVM"].values
 
     df_segment = df_kpi[df_kpi["CD_CVM"].isin(cd_cvm_segment)]
-    df_segment = _clear_df_segment(df_segment=df_segment, value_column=value_column)
+    df_segment = _clear_df_segment(
+        df_segment=df_segment,
+        value_column=value_column,
+        group_segment_values=group_segment_values,
+    )
 
     return df_segment
 
 
-def _get_kpi_history_segment(df_basic_info, segment, df_history, kpi):
+def _get_kpi_history_segment(
+    df_basic_info, segment, df_history, kpi, group_segment_values=True
+):
     tickers_segment = utils.get_companies_by_segment(
         df_basic_info=df_basic_info, segment=segment
     )["MAIN_TICKER"].values
 
     df_segment = df_history[df_history["TICKER"].isin(tickers_segment)]
-    df_segment = df_segment = _clear_df_segment(df_segment=df_segment, value_column=kpi)
+    df_segment = df_segment = _clear_df_segment(
+        df_segment=df_segment,
+        value_column=kpi,
+        group_segment_values=group_segment_values,
+    )
 
     return df_segment
 
 
-def _get_kpi_fundaments(ticker, kpi, n_years=10, is_from_segment=False):
+def _get_kpi_fundaments(
+    ticker, kpi, n_years=10, is_from_segment=False, group_segment_values=True
+):
     df_basic_info = utils.get_data("stocks-basic-info")
     df_fundaments = utils.get_data("stocks-fundaments")
 
@@ -62,6 +88,7 @@ def _get_kpi_fundaments(ticker, kpi, n_years=10, is_from_segment=False):
             ),
             df_kpi=df_kpi,
             value_column="VALUE",
+            group_segment_values=group_segment_values,
         )
 
     if not is_from_segment:
@@ -76,7 +103,9 @@ def _get_kpi_fundaments(ticker, kpi, n_years=10, is_from_segment=False):
     return df_kpi
 
 
-def _get_kpi_history(ticker, kpi, n_years=10, is_from_segment=False):
+def _get_kpi_history(
+    ticker, kpi, n_years=10, is_from_segment=False, group_segment_values=True
+):
     df_basic_info = utils.get_data("stocks-basic-info")
     df_history = utils.get_data("stocks-history")
 
@@ -88,6 +117,7 @@ def _get_kpi_history(ticker, kpi, n_years=10, is_from_segment=False):
             ),
             df_history=df_history,
             kpi=kpi,
+            group_segment_values=group_segment_values,
         )
     else:
         df_kpi = df_history[df_history["TICKER"] == ticker]
@@ -100,14 +130,24 @@ def _get_kpi_history(ticker, kpi, n_years=10, is_from_segment=False):
     return df_kpi
 
 
-def get_kpi_values(ticker, kpi, n_years=10, is_from_segment=False):
+def get_kpi_values(
+    ticker, kpi, n_years=10, is_from_segment=False, group_segment_values=True
+):
     if utils.is_kpi_fundaments(kpi=kpi):
         return _get_kpi_fundaments(
-            ticker=ticker, kpi=kpi, n_years=n_years, is_from_segment=is_from_segment
+            ticker=ticker,
+            kpi=kpi,
+            n_years=n_years,
+            is_from_segment=is_from_segment,
+            group_segment_values=group_segment_values,
         )
     else:
         return _get_kpi_history(
-            ticker=ticker, kpi=kpi, n_years=n_years, is_from_segment=is_from_segment
+            ticker=ticker,
+            kpi=kpi,
+            n_years=n_years,
+            is_from_segment=is_from_segment,
+            group_segment_values=group_segment_values,
         )
 
 

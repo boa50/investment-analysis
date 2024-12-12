@@ -1,9 +1,14 @@
+import math
 import numpy as np
+import pandas as pd
 from sklearn import linear_model
 import datasource
+import utils
 
 
-def calculate_kpi_pain_index(df, ticker, kpi, thresholds=[], weights=None):
+def calculate_kpi_pain_index(
+    df, kpi, df_segment=None, ticker=None, thresholds=[], weights=None
+):
     values = df["VALUE"]
     drawdowns = None
 
@@ -24,9 +29,11 @@ def calculate_kpi_pain_index(df, ticker, kpi, thresholds=[], weights=None):
     elif kpi in ["PL", "PVP"]:
         ticker_shape = values.shape[0]
 
-        df_segment = datasource.get_kpi_values(
-            ticker=ticker, kpi=kpi, is_from_segment=True
-        )
+        if df_segment is None:
+            df_segment = datasource.get_kpi_values(
+                ticker=ticker, kpi=kpi, is_from_segment=True
+            )
+
         trend_line, _ = calculate_trend(df["DATE"], df_segment["VALUE"][-ticker_shape:])
 
         drawdowns = calculate_drawdowns(
@@ -73,3 +80,59 @@ def calculate_pain_index(drawdowns, weights=None):
     pain_index = np.average(drawdowns, weights=weights)
 
     return pain_index
+
+
+def calculate_kpi_rating(
+    pain_index: float,
+    slope: float,
+    last_value: float,
+    df_segment_ungrouped: pd.DataFrame,
+    kpi: str,
+    kpi_cap_jitter: float = 0.05,
+    slope_cap: float = 5,
+    pain_index_weight: float = 0.1,
+    slope_weight: float = 0.25,
+    last_value_weight: float = 0.65,
+):
+    pain_index_normalised = max(pain_index, -1) + 1
+
+    slope *= math.pow(10, utils.get_number_length(slope))
+
+    df_segment_last_dates = (
+        df_segment_ungrouped.groupby("TICKER")["DATE"].max().reset_index()
+    )
+    df_segment_last_dates = df_segment_last_dates.merge(
+        df_segment_ungrouped, on=["TICKER", "DATE"]
+    )
+    kpi_values = df_segment_last_dates["VALUE"].values
+
+    kpi_min = kpi_values.min()
+    kpi_min = (
+        kpi_min * (1 + kpi_cap_jitter)
+        if kpi_min < 0
+        else kpi_min * (1 - kpi_cap_jitter)
+    )
+    kpi_max = kpi_values.max()
+    kpi_max = (
+        kpi_max * (1 + kpi_cap_jitter)
+        if kpi_max > 0
+        else kpi_max * (1 - kpi_cap_jitter)
+    )
+
+    last_value_normalised = (last_value - kpi_min) / (kpi_max - kpi_min)
+
+    slope_min = -slope_cap
+    slope_capped = max(min(slope_cap, slope), slope_min)
+    slope_normalised = (slope_capped - slope_min) / (slope_cap - slope_min)
+
+    if kpi in ["PL"]:
+        last_value_normalised = (last_value_normalised - 1) * -1
+        slope_normalised = (slope_normalised - 1) * -1
+
+    rating = (
+        pain_index_normalised * pain_index_weight
+        + slope_normalised * slope_weight
+        + last_value_normalised * last_value_weight
+    )
+
+    return rating

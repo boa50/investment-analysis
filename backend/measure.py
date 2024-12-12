@@ -24,12 +24,16 @@ def get_historical_values(ticker, kpi, n_years=10):
 
 
 def get_kpi_rating(
-    ticker,
-    kpi,
-    is_time_weighted=True,
-    is_inflation_weighted=True,
+    ticker: str,
+    kpi: str,
+    is_time_weighted: bool = True,
+    is_inflation_weighted: bool = True,
 ):
     df = datasource.get_kpi_values(ticker=ticker, kpi=kpi)
+    df_segment_ungrouped = datasource.get_kpi_values(
+        ticker=ticker, kpi=kpi, is_from_segment=True, group_segment_values=False
+    )
+    df_segment = df_segment_ungrouped.groupby("DATE")["VALUE"].mean().reset_index()
 
     weights = utils.get_date_weights(dates=df["DATE"]) if is_time_weighted else None
 
@@ -48,7 +52,25 @@ def get_kpi_rating(
         thresholds = []
 
     pain_index = calculations.calculate_kpi_pain_index(
-        df=df, ticker=ticker, kpi=kpi, thresholds=thresholds, weights=weights
+        df=df,
+        kpi=kpi,
+        df_segment=df_segment,
+        thresholds=thresholds,
+        weights=weights,
     )
 
-    return pain_index
+    _, slope = calculations.calculate_trend(
+        x=df["DATE"], y=df["VALUE"], sample_weight=weights
+    )
+
+    last_value = df.iat[-1, -1]
+
+    rating = calculations.calculate_kpi_rating(
+        pain_index=pain_index,
+        slope=slope,
+        last_value=last_value,
+        df_segment_ungrouped=df_segment_ungrouped,
+        kpi=kpi,
+    )
+
+    return rating
