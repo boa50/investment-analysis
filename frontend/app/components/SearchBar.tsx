@@ -1,6 +1,6 @@
+import { useState, useEffect } from 'react'
 import { useQuery, useQueries } from '@tanstack/react-query'
 import { getStockRatings, searchCompanies } from '../api/stocks'
-import { useState, useEffect } from 'react'
 import { Link } from '@remix-run/react'
 import RatingStars from './RatingStars'
 import Placeholder from './Placeholder'
@@ -12,6 +12,7 @@ import type { CompanySearch } from '../types'
 export default function SearchBar() {
     const [showPopover, setShowPopover] = useState(false)
     const [searchText, setSearchText] = useState('')
+    const [stocks, setStocks] = useState<CompanySearch[]>([])
 
     const searchHandler = (e: ChangeEvent<HTMLInputElement>) => {
         setSearchText(e.target.value)
@@ -32,6 +33,7 @@ export default function SearchBar() {
         e.currentTarget.focus()
         e.currentTarget.blur()
         setSearchText('')
+        setStocks([])
     }
 
     useEffect(() => {
@@ -39,6 +41,7 @@ export default function SearchBar() {
             setShowPopover(true)
         } else {
             setShowPopover(false)
+            setStocks([])
         }
     }, [searchText])
 
@@ -88,6 +91,8 @@ export default function SearchBar() {
             >
                 <Stocks
                     searchText={searchText}
+                    stocks={stocks}
+                    updateStocksHandler={setStocks}
                     listClickHandler={listClickHandler}
                 />
             </div>
@@ -142,11 +147,17 @@ function StockBasicInfo({
 
 interface StocksProps {
     searchText: string
+    stocks: CompanySearch[]
+    updateStocksHandler: (stocks: CompanySearch[]) => void
     listClickHandler: (e: MouseEvent<HTMLAnchorElement>) => void
 }
 
-function Stocks({ searchText, listClickHandler }: StocksProps) {
-    const [stocks, setStocks] = useState<CompanySearch[]>([])
+function Stocks({
+    searchText,
+    stocks,
+    updateStocksHandler,
+    listClickHandler,
+}: StocksProps) {
     const [queryKey, setQueryKey] = useState('')
     const [queryRatingsTickers, setQueryRatingsTickers] = useState<string[]>([])
 
@@ -165,12 +176,12 @@ function Stocks({ searchText, listClickHandler }: StocksProps) {
     })
 
     useEffect(() => {
-        const stocks = query.data
-        if (stocks !== null && stocks !== undefined) {
-            setStocks(stocks)
-            setQueryRatingsTickers(stocks.map((d) => d.ticker))
+        const stocksTmp = query.data
+        if (stocksTmp !== null && stocksTmp !== undefined) {
+            updateStocksHandler(stocksTmp)
+            setQueryRatingsTickers(stocksTmp.map((d) => d.ticker))
         }
-    }, [query.data])
+    }, [query.data, updateStocksHandler])
 
     const queriesRatings = useQueries({
         queries: queryRatingsTickers.map((ticker) => {
@@ -193,7 +204,7 @@ function Stocks({ searchText, listClickHandler }: StocksProps) {
         return (
             <div className="flex justify-center items-center py-6 w-[23rem] h-24">
                 <span className="text-appTextWeak text-sm">
-                    Não foram encontrados resultados pra a busca
+                    Não foram encontrados resultados para a busca
                 </span>
             </div>
         )
@@ -210,10 +221,7 @@ function Stocks({ searchText, listClickHandler }: StocksProps) {
                         name={d.name}
                         segment={d.segment}
                         rating={queriesRatings[i].data?.overall}
-                        onClick={(e) => {
-                            setStocks([])
-                            listClickHandler(e)
-                        }}
+                        onClick={listClickHandler}
                     />
                 </li>
             ))}

@@ -29,9 +29,11 @@ export default function Icon({
     filled = 'full',
     colour = 'fill-current',
 }: Props) {
+    const gradientId = 'iconGradFill' + Math.random()
+
     const GradientFilling = () => (
         <defs>
-            <linearGradient id="iconGradFill">
+            <linearGradient id={gradientId}>
                 <stop offset="0%" stopColor="currentColor" />
                 <stop offset="49%" stopColor="currentColor" />
                 <stop offset="51%" stopColor="transparent" />
@@ -58,7 +60,7 @@ export default function Icon({
                     filled === 'full'
                         ? 'currentColor'
                         : filled === 'half'
-                          ? 'url(#iconGradFill)'
+                          ? `url(#${gradientId})`
                           : 'none'
                 }
                 d={iconsData[type].path}
