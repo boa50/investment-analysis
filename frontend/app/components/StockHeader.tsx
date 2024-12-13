@@ -1,7 +1,7 @@
 import KpiCard from './KpiCard'
 import RatingStars from './RatingStars'
 import PageHeaderContainer from './PageHeaderContainer'
-import Placeholder from './Placeholder'
+import StockImg from './StockImg'
 
 import type { Company, Kpi } from '../types'
 
@@ -26,29 +26,18 @@ export default function StockHeader({
         )
     }
 
-    const RatingStarsFallback = () =>
-        overallStockRating !== undefined ? (
-            <RatingStars rating={overallStockRating} />
-        ) : (
-            <Placeholder type="stars" />
-        )
-
     return (
         <PageHeaderContainer extraClasses="grid grid-cols-2 gap-24">
             <div className="flex flex-row space-x-8">
                 <div className="flex items-center">
-                    <img
-                        src="https://picsum.photos/seed/picsum/200"
-                        alt=""
-                        className="rounded-full h-20 object-cover"
-                    />
+                    <StockImg />
                 </div>
                 <div className="flex flex-col">
                     <div className="flex flex-row space-x-2 items-center">
                         <h1 className="tracking-wide text-2xl font-bold text-appTextStrongDark">
                             {ticker}
                         </h1>
-                        <RatingStarsFallback />
+                        <RatingStars rating={overallStockRating} />
                     </div>
                     <span className="text-lg font-semibold text-appTextNormalDark">
                         {tickerData.name}

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { Link } from '@remix-run/react'
 import RatingStars from './RatingStars'
 import Placeholder from './Placeholder'
+import StockImg from './StockImg'
 
 import type { ChangeEvent, MouseEvent } from 'react'
 import type { CompanySearch } from '../types'
@@ -109,13 +110,6 @@ function StockBasicInfo({
     rating,
     onClick,
 }: StockBasicInfoProps) {
-    const RatingStarsFallback = () =>
-        rating !== undefined ? (
-            <RatingStars rating={rating} size="small" />
-        ) : (
-            <Placeholder type="starsSmall" />
-        )
-
     return (
         <Link
             to={'/stock/' + ticker}
@@ -125,18 +119,14 @@ function StockBasicInfo({
         >
             <div className="flex flex-row space-x-4">
                 <div className="flex items-center">
-                    <img
-                        src="https://picsum.photos/seed/picsum/200"
-                        alt=""
-                        className="rounded-full w-12 object-cover"
-                    />
+                    <StockImg size="small" />
                 </div>
                 <div className="flex flex-col w-64">
                     <div className="flex flex-row space-x-1 items-center">
                         <h1 className="tracking-wide text-base font-semibold text-appTextStrong">
                             {ticker}
                         </h1>
-                        <RatingStarsFallback />
+                        <RatingStars rating={rating} size="small" />
                     </div>
                     <span className="text-sm font-normal text-appTextStrong truncate">
                         {name}

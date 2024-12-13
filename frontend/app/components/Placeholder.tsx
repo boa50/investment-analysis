@@ -15,6 +15,16 @@ export default function Placeholder({ type }: Props) {
         case 'stockSearch':
             return <StockSearchPlaceholder />
 
+        case 'stockImg':
+            return (
+                <div className="animate-pulse bg-slate-600 rounded-full w-20 object-cover aspect-square" />
+            )
+
+        case 'stockImgSmall':
+            return (
+                <div className="animate-pulse bg-slate-600 rounded-full w-12 object-cover aspect-square" />
+            )
+
         default:
             return <></>
     }

@@ -1,11 +1,15 @@
 import Icon from './Icon'
+import Placeholder from './Placeholder'
 
 interface Props {
-    rating: number
+    rating?: number
     size?: 'normal' | 'small'
 }
 
 export default function RatingStars({ rating, size = 'normal' }: Props) {
+    if (rating === undefined)
+        return <Placeholder type={size === 'normal' ? 'stars' : 'starsSmall'} />
+
     const ratingZeroToFive = rating / 20
     const totalStars = 5
     const starSize = size === 'normal' ? 5 : 3
