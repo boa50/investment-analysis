@@ -1,6 +1,7 @@
 import KpiCard from './KpiCard'
 import RatingStars from './RatingStars'
 import PageHeaderContainer from './PageHeaderContainer'
+import Placeholder from './Placeholder'
 
 import type { Company, Kpi } from '../types'
 
@@ -25,6 +26,13 @@ export default function StockHeader({
         )
     }
 
+    const RatingStarsFallback = () =>
+        overallStockRating !== undefined ? (
+            <RatingStars rating={overallStockRating} />
+        ) : (
+            <Placeholder type="stars" />
+        )
+
     return (
         <PageHeaderContainer extraClasses="grid grid-cols-2 gap-24">
             <div className="flex flex-row space-x-8">
@@ -40,11 +48,7 @@ export default function StockHeader({
                         <h1 className="tracking-wide text-2xl font-bold text-appTextStrongDark">
                             {ticker}
                         </h1>
-                        {overallStockRating !== undefined ? (
-                            <RatingStars rating={overallStockRating} />
-                        ) : (
-                            <div className="animate-pulse h-5 w-28 bg-slate-600 rounded col-span-2"></div>
-                        )}
+                        <RatingStarsFallback />
                     </div>
                     <span className="text-lg font-semibold text-appTextNormalDark">
                         {tickerData.name}
