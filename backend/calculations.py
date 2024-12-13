@@ -7,7 +7,12 @@ import utils
 
 
 def calculate_kpi_pain_index(
-    df, kpi, df_segment=None, ticker=None, thresholds=[], weights=None
+    df: pd.DataFrame,
+    kpi: str,
+    df_segment: pd.DataFrame = None,
+    ticker: str = None,
+    thresholds: list = [],
+    weights: list = None,
 ):
     values = df["VALUE"]
     drawdowns = None
@@ -35,6 +40,9 @@ def calculate_kpi_pain_index(
             )
 
         trend_line, _ = calculate_trend(df["DATE"], df_segment["VALUE"][-ticker_shape:])
+
+        # Filling undesired negative values to avoid problems with the drawdowns calculation
+        values = values.where(values >= 0).bfill()
 
         drawdowns = calculate_drawdowns(
             values + trend_line.reshape(-1),
@@ -64,7 +72,9 @@ def calculate_trend(x, y, sample_weight=None):
 
 
 def calculate_drawdowns(
-    risk_calculation_values, drawdown_kpi_multiplier=1, threshold=np.inf
+    risk_calculation_values: pd.Series,
+    drawdown_kpi_multiplier: float = 1,
+    threshold: float = np.inf,
 ):
     risk_values = np.minimum(
         risk_calculation_values * drawdown_kpi_multiplier,
@@ -93,6 +103,7 @@ def calculate_kpi_rating(
     pain_index_weight: float = 0.1,
     slope_weight: float = 0.25,
     last_value_weight: float = 0.65,
+    verbose: int = -1,
 ):
     pain_index_normalised = max(pain_index, -1) + 1
 
@@ -125,7 +136,14 @@ def calculate_kpi_rating(
     slope_capped = max(min(slope_cap, slope), slope_min)
     slope_normalised = (slope_capped - slope_min) / (slope_cap - slope_min)
 
-    if kpi in ["PL"]:
+    if kpi in [
+        "PL",
+        "PVP",
+        "NET_DEBT_BY_EBIT",
+        "NET_DEBT_BY_EQUITY",
+        "DEBT",
+        "DEBT_NET",
+    ]:
         last_value_normalised = (last_value_normalised - 1) * -1
         slope_normalised = (slope_normalised - 1) * -1
 
@@ -134,5 +152,12 @@ def calculate_kpi_rating(
         + slope_normalised * slope_weight
         + last_value_normalised * last_value_weight
     )
+
+    if verbose > 0:
+        print()
+        print("calculate_kpi_rating")
+        print(f"pain_index_normalised: {pain_index_normalised}")
+        print(f"slope_normalised: {slope_normalised}")
+        print(f"last_value_normalised: {last_value_normalised}")
 
     return rating
