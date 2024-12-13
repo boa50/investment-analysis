@@ -28,7 +28,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
     try {
         const data = await queryClient.fetchQuery({
             queryKey: ['company', { ticker }],
-            queryFn: () => getCompany(ticker !== undefined ? ticker : ''),
+            queryFn: () => getCompany(ticker ?? ''),
         })
 
         if (!data[0])
@@ -52,7 +52,7 @@ export default function StockInfo() {
 
     return (
         <HydrationBoundary state={dehydratedState}>
-            <StockData ticker={ticker} />
+            {ticker !== undefined ? <StockData ticker={ticker} /> : null}
         </HydrationBoundary>
     )
 }

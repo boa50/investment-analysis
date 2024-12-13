@@ -107,11 +107,11 @@ def get_stock_ratings(ticker: str, verbose: int = 0):
         for kpi in kpis:
             ratings[kpi_group] += try_get_kpi_rating(ticker=ticker, kpi=kpi)
 
-        ratings[kpi_group] /= len(kpis)
+        ratings[kpi_group] = ratings[kpi_group] * 100 / len(kpis)
 
     weights = [0.3, 0.3, 0.2, 0.1] if ratings["debt"] > 0 else [0.4, 0, 0.35, 0.25]
 
-    ratings["stock"] = (np.array(list(ratings.values())) * np.array(weights)).sum()
+    ratings["overall"] = (np.array(list(ratings.values())) * np.array(weights)).sum()
 
     if verbose > 0:
         print()

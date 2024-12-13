@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { getCompany } from '../api/stocks'
+import { getCompany, getStockRatings } from '../api/stocks'
 import StockHeader from '../components/StockHeader'
 import KpiCard from '../components/KpiCard'
 import DataContainer from '../components/DataContainer'
@@ -31,6 +31,11 @@ export default function StockData({ ticker }: Props) {
         queryFn: () => getCompany(ticker),
     })
 
+    const queryRatings = useQuery({
+        queryKey: ['stockRating', { ticker }],
+        queryFn: () => getStockRatings(ticker),
+    })
+
     if (query.isPending)
         return (
             <div className="font-normal text-appTextNormal">
@@ -49,7 +54,11 @@ export default function StockData({ ticker }: Props) {
 
     return (
         <div className="w-screen pb-4">
-            <StockHeader ticker={ticker} tickerData={tickerData} />
+            <StockHeader
+                ticker={ticker}
+                tickerData={tickerData}
+                overallStockRating={queryRatings.data?.overall}
+            />
             <div className="space-y-4">
                 <DataContainer title="Indicadores" childrenHeight="31">
                     <div className="mb-0 space-y-6">

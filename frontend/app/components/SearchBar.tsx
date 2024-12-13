@@ -1,11 +1,11 @@
-import { useQuery } from '@tanstack/react-query'
-import { searchCompanies } from '../api/stocks'
+import { useQuery, useQueries } from '@tanstack/react-query'
+import { getStockRatings, searchCompanies } from '../api/stocks'
 import { useState, useEffect } from 'react'
 import { Link } from '@remix-run/react'
 import RatingStars from './RatingStars'
 
 import type { ChangeEvent, MouseEvent } from 'react'
-import type { CompanySearch } from '../types/stocks'
+import type { CompanySearch } from '../types'
 
 export default function SearchBar() {
     const [showPopover, setShowPopover] = useState(false)
@@ -97,7 +97,7 @@ interface StockBasicInfoProps {
     ticker: string
     name: string
     segment: string
-    rating: number
+    rating: number | undefined
     onClick?: (e: MouseEvent<HTMLAnchorElement>) => void
 }
 
@@ -111,6 +111,7 @@ function StockBasicInfo({
     return (
         <Link
             to={'/stock/' + ticker}
+            prefetch="intent"
             onMouseDown={(e) => e.preventDefault()}
             onClick={onClick}
         >
@@ -127,7 +128,11 @@ function StockBasicInfo({
                         <h1 className="tracking-wide text-base font-semibold text-appTextStrong">
                             {ticker}
                         </h1>
-                        <RatingStars rating={rating} size="small" />
+                        {rating !== undefined ? (
+                            <RatingStars rating={rating} size="small" />
+                        ) : (
+                            <div className="animate-pulse h-2 w-16 bg-slate-700 rounded col-span-2"></div>
+                        )}
                     </div>
                     <span className="text-sm font-normal text-appTextStrong truncate">
                         {name}
@@ -149,6 +154,7 @@ interface StocksProps {
 function Stocks({ searchText, listClickHandler }: StocksProps) {
     const [stocks, setStocks] = useState<CompanySearch[]>([])
     const [queryKey, setQueryKey] = useState('')
+    const [queryRatingsTickers, setQueryRatingsTickers] = useState<string[]>([])
 
     useEffect(() => {
         const changeQueryKey = setTimeout(() => {
@@ -165,10 +171,21 @@ function Stocks({ searchText, listClickHandler }: StocksProps) {
     })
 
     useEffect(() => {
-        if (query.data !== null && query.data !== undefined) {
-            setStocks(query.data)
+        const stocks = query.data
+        if (stocks !== null && stocks !== undefined) {
+            setStocks(stocks)
+            setQueryRatingsTickers(stocks.map((d) => d.ticker))
         }
     }, [query.data])
+
+    const queriesRatings = useQueries({
+        queries: queryRatingsTickers.map((ticker) => {
+            return {
+                queryKey: ['stockRating', { ticker }],
+                queryFn: () => getStockRatings(ticker),
+            }
+        }),
+    })
 
     if (query.isPending || searchText !== queryKey)
         return (
@@ -202,8 +219,11 @@ function Stocks({ searchText, listClickHandler }: StocksProps) {
                         ticker={d.ticker}
                         name={d.name}
                         segment={d.segment}
-                        rating={d.rating}
-                        onClick={listClickHandler}
+                        rating={queriesRatings[i].data?.overall}
+                        onClick={(e) => {
+                            setStocks([])
+                            listClickHandler(e)
+                        }}
                     />
                 </li>
             ))}

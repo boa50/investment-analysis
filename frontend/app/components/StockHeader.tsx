@@ -7,9 +7,14 @@ import type { Company, Kpi } from '../types'
 interface Props {
     ticker: string | undefined
     tickerData: Company
+    overallStockRating?: number
 }
 
-export default function StockHeader({ ticker, tickerData }: Props) {
+export default function StockHeader({
+    ticker,
+    tickerData,
+    overallStockRating,
+}: Props) {
     const Kpis = () => {
         return (
             <div className="grid grid-cols-3 gap-4 flex items-center">
@@ -35,7 +40,11 @@ export default function StockHeader({ ticker, tickerData }: Props) {
                         <h1 className="tracking-wide text-2xl font-bold text-appTextStrongDark">
                             {ticker}
                         </h1>
-                        <RatingStars rating={tickerData.rating} />
+                        {overallStockRating !== undefined ? (
+                            <RatingStars rating={overallStockRating} />
+                        ) : (
+                            <div className="animate-pulse h-5 w-28 bg-slate-600 rounded col-span-2"></div>
+                        )}
                     </div>
                     <span className="text-lg font-semibold text-appTextNormalDark">
                         {tickerData.name}

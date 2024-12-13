@@ -11,7 +11,7 @@ import { formatNum } from '../components/utils'
 import PageHeaderContainer from '../components/PageHeaderContainer'
 
 import type { Cell, Header } from '@tanstack/react-table'
-import type { Stock } from '../types/stocks'
+import type { Stock } from '../types'
 
 const isLowerVisibilityCol = (cell: Cell<Stock, unknown>): boolean =>
     cell.column.id === 'segment'
