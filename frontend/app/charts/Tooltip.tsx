@@ -2,14 +2,14 @@ import * as d3 from 'd3'
 import { useState } from 'react'
 import { getHoveredDataPoint } from './utils'
 
-import type { Dataset, InteractionData, Margin } from './types'
+import type { LineDataset, InteractionData, Margin } from './types'
 import type { ScaleLinear, ScaleTime } from 'd3'
 
 interface Props {
     chartWidth: number
     chartHeight: number
     margin: Margin
-    data: Dataset
+    data: LineDataset
     xScale: ScaleLinear<number, number> | ScaleTime<number, number>
     yScale: ScaleLinear<number, number>
     yFormatter?: (value: number) => string
@@ -133,7 +133,7 @@ interface TooltipHighlightProps {
     width: number
     height: number
     margin: Margin
-    data: Dataset
+    data: LineDataset
     xScale: ScaleLinear<number, number> | ScaleTime<number, number>
     yScale: ScaleLinear<number, number>
     setInteractiondata: React.Dispatch<

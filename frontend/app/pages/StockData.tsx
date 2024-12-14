@@ -5,6 +5,7 @@ import StockHeader from '../components/StockHeader'
 import KpiCard from '../components/KpiCard'
 import DataContainer from '../components/DataContainer'
 import ChartContainer from '../components/ChartContainer'
+import RadarChart from '../charts/RadarChart'
 
 import type { Kpi, Company } from '../types'
 
@@ -60,6 +61,14 @@ export default function StockData({ ticker }: Props) {
                 overallStockRating={queryRatings.data?.overall}
             />
             <div className="space-y-4">
+                <DataContainer title="Visão Geral" childrenHeight="20">
+                    <div className="flex w-full">
+                        <div className="flex">TEste</div>
+                        <div className="w-60">
+                            <RadarChart width={200} height={200} />
+                        </div>
+                    </div>
+                </DataContainer>
                 <DataContainer title="Indicadores" childrenHeight="31">
                     <div className="mb-0 space-y-6">
                         <KpiGroup

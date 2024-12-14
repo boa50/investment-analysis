@@ -12,6 +12,6 @@ export type InteractionData = {
     content: string
 }
 
-export type Datapoint = { x: number | Date; y: number }
+export type LineDatapoint = { x: number | Date; y: number }
 
-export type Dataset = Datapoint[]
+export type LineDataset = LineDatapoint[]

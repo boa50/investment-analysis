@@ -2,13 +2,14 @@ import * as d3 from 'd3'
 import Axes from './Axes'
 import { getLeftMargin } from './utils'
 import Tooltip from './Tooltip'
+import BaseChart from './BaseChart'
 
-import type { Margin, Dataset, Datapoint } from './types'
+import type { Margin, LineDataset, LineDatapoint } from './types'
 
 interface LineChartProps {
     width: number
     height: number
-    data: Dataset
+    data: LineDataset
     margin?: Margin
     yFormatter?: (value: number) => string
     lineColour?: string
@@ -63,7 +64,7 @@ export const LineChart = ({
     }
 
     const lineBuilder = d3
-        .line<Datapoint>()
+        .line<LineDatapoint>()
         .x((d) => xScale(d.x))
         .y((d) => yScale(d.y))
 
@@ -78,50 +79,45 @@ export const LineChart = ({
     }
 
     return (
-        <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-            <svg
-                viewBox={`0 0 ${width} ${height}`}
-                preserveAspectRatio="xMinYMid meet"
-            >
-                {yScale.domain()[0] < 0 ? (
-                    <path
-                        className="zero-line"
-                        d={`M ${margin.left} ${yScale(0)} H ${width - margin.right}`}
-                        stroke={zeroLineColour ? zeroLineColour : axesColour}
-                        fill="none"
-                    />
-                ) : null}
-                <path stroke={lineColour} fill="none" strokeWidth={2}>
-                    <animate
-                        fill="freeze"
-                        attributeName="d"
-                        dur="0.25s"
-                        values={`${defaultPath}; ${linePath}`}
-                    />
-                </path>
+        <BaseChart width={width} height={height}>
+            {yScale.domain()[0] < 0 ? (
+                <path
+                    className="zero-line"
+                    d={`M ${margin.left} ${yScale(0)} H ${width - margin.right}`}
+                    stroke={zeroLineColour ? zeroLineColour : axesColour}
+                    fill="none"
+                />
+            ) : null}
+            <path stroke={lineColour} fill="none" strokeWidth={2}>
+                <animate
+                    fill="freeze"
+                    attributeName="d"
+                    dur="0.25s"
+                    values={`${defaultPath}; ${linePath}`}
+                />
+            </path>
 
-                <Tooltip
-                    chartWidth={width}
-                    chartHeight={height}
-                    margin={margin}
-                    data={data}
-                    xScale={xScale}
-                    yScale={yScale}
-                    yFormatter={yFormatter}
-                    lineColour={axesColour}
-                    circleColour={lineColour}
-                    isQuarterDateFormat={isQuarterTooltipFormat}
-                />
-                <Axes
-                    xScale={xScale}
-                    yScale={yScale}
-                    width={width}
-                    height={height}
-                    margin={margin}
-                    colour={axesColour}
-                    yFormatter={yFormatter}
-                />
-            </svg>
-        </div>
+            <Tooltip
+                chartWidth={width}
+                chartHeight={height}
+                margin={margin}
+                data={data}
+                xScale={xScale}
+                yScale={yScale}
+                yFormatter={yFormatter}
+                lineColour={axesColour}
+                circleColour={lineColour}
+                isQuarterDateFormat={isQuarterTooltipFormat}
+            />
+            <Axes
+                xScale={xScale}
+                yScale={yScale}
+                width={width}
+                height={height}
+                margin={margin}
+                colour={axesColour}
+                yFormatter={yFormatter}
+            />
+        </BaseChart>
     )
 }
