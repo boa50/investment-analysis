@@ -1,19 +1,16 @@
 import * as d3 from 'd3'
 import { polarToCartesian } from './utils'
 
-export type AxisConfig = {
-    name: string
-    max: number
-}
+import type { RadarGridAxisConfig, RadarGridType } from './types'
 
 interface Props {
-    axisConfig: AxisConfig[]
+    axisConfig: RadarGridAxisConfig[]
     angleScale: d3.ScaleBand<string>
     outerRadius: number
     innerRadius?: number
     nLevels?: number
     colour?: string
-    type?: 'circle' | 'straight'
+    type?: RadarGridType
 }
 
 export const RadarGrid = ({

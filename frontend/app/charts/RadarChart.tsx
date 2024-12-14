@@ -2,65 +2,92 @@ import * as d3 from 'd3'
 import BaseChart from './BaseChart'
 import { RadarGrid } from './RadarGrid'
 
-import type { Margin } from './types'
-
-type DataItem = {
-    [variable: string]: number
-} & { name: string }
+import type { ScaleRadial } from 'd3'
+import type {
+    RadarGridType,
+    RadarDatapoint,
+    RadarVariableMinMaxValues,
+} from './types'
 
 interface Props {
     width: number
     height: number
-    data?: { [key: string]: number }
+    data: RadarDatapoint
+    minMaxValues?: RadarVariableMinMaxValues | undefined
     margin?: number
+    innerRadius?: number
+    valueColour?: string
+    gridType?: RadarGridType
 }
 
 export default function RadarChart({
     width,
     height,
-    datas,
+    data,
+    minMaxValues,
     margin = 24,
+    innerRadius = 0,
+    valueColour = 'red',
+    gridType = 'straight',
 }: Props) {
-    const data: { [key: string]: number } = {
-        a: 100,
-        b: 75,
-        c: 82,
-        d: 24,
-        e: 10,
-    }
-
     const outerRadius = Math.min(width, height) / 2 - margin
-    const INNER_RADIUS = 40
+    const variableNames = Object.keys(data)
 
-    const allVariableNames = Object.keys(data)
+    let minMaxValuesCleaned: RadarVariableMinMaxValues = {}
+    if (minMaxValues === undefined) {
+        variableNames.forEach((variable) => {
+            minMaxValuesCleaned[variable] = [0, 100]
+        })
+    } else {
+        minMaxValuesCleaned = { ...minMaxValues }
+    }
 
     const angleScale = d3
         .scaleBand()
-        .domain(allVariableNames)
+        .domain(variableNames)
         .range([0, 2 * Math.PI])
 
-    // const valueScales: { [name: string]: YScale } = {}
-    const valueScales = {}
+    const radiusScales: { [name: string]: ScaleRadial<number, number, never> } =
+        {}
 
-    allVariableNames.forEach((key) => {
-        valueScales[key] = d3
+    variableNames.forEach((variable) => {
+        radiusScales[variable] = d3
             .scaleRadial()
-            .domain([0, 100])
-            .range([INNER_RADIUS, outerRadius])
+            .domain(minMaxValuesCleaned[variable])
+            .range([innerRadius, outerRadius])
     })
 
-    const axisConfig = allVariableNames.map((key) => {
-        return { name: key, max: 100 }
+    const axisConfig = variableNames.map((variable) => {
+        return { name: variable, max: minMaxValuesCleaned[variable][1] }
     })
+
+    const radarCoordinates = axisConfig.map((axis) => {
+        const radiusScale = radiusScales[axis.name]
+        const angle = angleScale(axis.name)
+        const radius = radiusScale(data[axis.name])
+        const coordinate: [number, number] = [angle ?? 0, radius]
+        return coordinate
+    })
+    radarCoordinates.push(radarCoordinates[0])
+
+    const linePath = d3.lineRadial()(radarCoordinates)
 
     return (
         <BaseChart width={width} height={height}>
             <g transform={'translate(' + width / 2 + ',' + height / 2 + ')'}>
                 <RadarGrid
+                    innerRadius={innerRadius}
                     outerRadius={outerRadius}
                     angleScale={angleScale}
                     axisConfig={axisConfig}
-                    type="straight"
+                    type={gridType}
+                />
+                <path
+                    d={linePath ?? ''}
+                    stroke={valueColour}
+                    strokeWidth={1}
+                    fill={valueColour}
+                    fillOpacity={0.1}
                 />
             </g>
         </BaseChart>

@@ -15,3 +15,18 @@ export type InteractionData = {
 export type LineDatapoint = { x: number | Date; y: number }
 
 export type LineDataset = LineDatapoint[]
+
+export type RadarGridAxisConfig = {
+    name: string
+    max: number
+}
+
+export type RadarGridType = 'circle' | 'straight'
+
+export type RadarDatapoint = {
+    [variable: string]: number
+}
+
+export type RadarVariableMinMaxValues = {
+    [variable: string]: [number, number]
+}

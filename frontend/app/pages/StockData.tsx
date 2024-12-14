@@ -53,6 +53,17 @@ export default function StockData({ ticker }: Props) {
 
     const tickerData = query.data[0]
 
+    let stockRatings:
+        | {
+              [variable: string]: number
+          }
+        | undefined
+
+    if (queryRatings.data !== undefined) {
+        stockRatings = { ...queryRatings.data }
+        delete stockRatings['overall']
+    }
+
     return (
         <div className="w-screen pb-4">
             <StockHeader
@@ -65,7 +76,13 @@ export default function StockData({ ticker }: Props) {
                     <div className="flex w-full">
                         <div className="flex">TEste</div>
                         <div className="w-60">
-                            <RadarChart width={200} height={200} />
+                            {stockRatings !== undefined ? (
+                                <RadarChart
+                                    width={200}
+                                    height={200}
+                                    data={stockRatings}
+                                />
+                            ) : null}
                         </div>
                     </div>
                 </DataContainer>
