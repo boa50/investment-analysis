@@ -12,6 +12,7 @@ interface Props {
     colour?: string
     type?: RadarGridType
     strokeWidth?: number
+    axesLabels: { [name: string]: string }
 }
 
 export const RadarGrid = ({
@@ -23,7 +24,10 @@ export const RadarGrid = ({
     colour = 'grey',
     type = 'straight',
     strokeWidth = 0.75,
+    axesLabels = {},
 }: Props) => {
+    const hasAxesLabels = Object.keys(axesLabels).length > 0
+
     const axes = axisConfig.map((axis, i) => {
         const angle = angleScale(axis.name)
 
@@ -38,7 +42,7 @@ export const RadarGrid = ({
 
         const labelPosition = polarToCartesian(
             angle - Math.PI / 2,
-            outerRadius + 7
+            outerRadius + 10
         )
 
         const halfLabelWidth = getTextWidth(axis.name, '0.8rem', '400') / 2
@@ -66,7 +70,7 @@ export const RadarGrid = ({
                     textAnchor={labelPosition.x > 0 ? 'start' : 'end'}
                     dominantBaseline="middle"
                 >
-                    {axis.name}
+                    {hasAxesLabels ? axesLabels[axis.name] : axis.name}
                 </text>
             </g>
         )
@@ -94,25 +98,6 @@ export const RadarGrid = ({
     )
 }
 
-function getStraightLevelPath(
-    allAngles: (number | undefined)[],
-    radius: number
-) {
-    return allAngles
-        .reduce((accumulator, currentAngle, index) => {
-            const nextIndex = index < allAngles.length - 1 ? index + 1 : 0
-
-            return (
-                accumulator +
-                d3.lineRadial()([
-                    [currentAngle ?? 0, radius],
-                    [allAngles[nextIndex] ?? 0, radius],
-                ])
-            )
-        }, '')
-        ?.toString()
-}
-
 function getStraightLevels(
     allAngles: (number | undefined)[],
     nLevels: number,
@@ -122,14 +107,22 @@ function getStraightLevels(
 ) {
     return [...Array(nLevels).keys()].map((level) => {
         const levelRadius = getLevelRadius(level)
-        const path = getStraightLevelPath(allAngles, levelRadius)
+
+        const pathCoordinates: [number, number][] = allAngles.map((angle) => [
+            angle ?? 0,
+            levelRadius,
+        ])
+        pathCoordinates.push(pathCoordinates[0])
+
+        const path = d3.lineRadial()(pathCoordinates)
 
         return (
             <path
                 key={level}
-                d={path}
+                d={path ?? ''}
                 stroke={colour}
                 strokeWidth={strokeWidth}
+                fill="none"
                 rx={1}
                 opacity={level !== nLevels - 1 ? 0.25 : 1}
             />

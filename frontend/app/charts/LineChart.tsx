@@ -1,8 +1,8 @@
 import * as d3 from 'd3'
 import Axes from './Axes'
 import { getLeftMargin } from './utils'
-import Tooltip from './Tooltip'
 import BaseChart from './BaseChart'
+import LineTooltip from './tooltips/LineTooltip'
 
 import type { Margin, LineDataset, LineDatapoint } from './types'
 
@@ -97,7 +97,7 @@ export const LineChart = ({
                 />
             </path>
 
-            <Tooltip
+            <LineTooltip
                 chartWidth={width}
                 chartHeight={height}
                 margin={margin}

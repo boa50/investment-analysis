@@ -1,6 +1,7 @@
 import * as d3 from 'd3'
 import BaseChart from './BaseChart'
 import { RadarGrid } from './RadarGrid'
+import RadarTooltip from './tooltips/RadarTooltip'
 
 import type { ScaleRadial } from 'd3'
 import type {
@@ -20,6 +21,7 @@ interface Props {
     gridColour?: string
     gridType?: RadarGridType
     gridNumLevels?: number
+    gridAxesLabels?: { [name: string]: string }
 }
 
 export default function RadarChart({
@@ -33,6 +35,7 @@ export default function RadarChart({
     gridColour = 'red',
     gridType = 'straight',
     gridNumLevels = 4,
+    gridAxesLabels = {},
 }: Props) {
     const height = width
     const outerRadius = width / 2 - margin
@@ -66,28 +69,23 @@ export default function RadarChart({
         return { name: variable, max: minMaxValuesCleaned[variable][1] }
     })
 
-    const radarCoordinates = axisConfig.map((axis) => {
+    const dataCoordinates = axisConfig.map((axis) => {
         const radiusScale = radiusScales[axis.name]
         const angle = angleScale(axis.name)
         const radius = radiusScale(data[axis.name])
         const coordinate: [number, number] = [angle ?? 0, radius]
         return coordinate
     })
-    radarCoordinates.push(radarCoordinates[0])
+    dataCoordinates.push(dataCoordinates[0])
 
-    const linePath = d3.lineRadial()(radarCoordinates)
+    const linePath = d3.lineRadial()(dataCoordinates)
+
+    const pointsTransformTranslate =
+        'translate(' + (width + widthPadding) / 2 + ',' + height / 2 + ')'
 
     return (
         <BaseChart width={width + widthPadding} height={height}>
-            <g
-                transform={
-                    'translate(' +
-                    (width + widthPadding) / 2 +
-                    ',' +
-                    height / 2 +
-                    ')'
-                }
-            >
+            <g transform={pointsTransformTranslate}>
                 <RadarGrid
                     innerRadius={innerRadius}
                     outerRadius={outerRadius}
@@ -96,6 +94,7 @@ export default function RadarChart({
                     type={gridType}
                     colour={gridColour}
                     nLevels={gridNumLevels}
+                    axesLabels={gridAxesLabels}
                 />
                 <path
                     d={linePath ?? ''}
@@ -105,6 +104,12 @@ export default function RadarChart({
                     fillOpacity={0.1}
                 />
             </g>
+            <RadarTooltip
+                dataCoordinates={dataCoordinates}
+                chartWidth={width + widthPadding}
+                chartHeight={height}
+                pointsTransformTranslate={pointsTransformTranslate}
+            />
         </BaseChart>
     )
 }

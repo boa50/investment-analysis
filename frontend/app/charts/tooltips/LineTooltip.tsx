@@ -1,15 +1,16 @@
 import * as d3 from 'd3'
 import { useState } from 'react'
-import { getHoveredDataPoint } from './utils'
+import { getHoveredDataPoint } from '../utils'
+import Display from './Display'
 
-import type { LineDataset, InteractionData, Margin } from './types'
+import type { LineDataset, InteractionData, Margin } from '../types'
 import type { ScaleLinear, ScaleTime } from 'd3'
 
 interface Props {
+    data: LineDataset
     chartWidth: number
     chartHeight: number
     margin: Margin
-    data: LineDataset
     xScale: ScaleLinear<number, number> | ScaleTime<number, number>
     yScale: ScaleLinear<number, number>
     yFormatter?: (value: number) => string
@@ -22,11 +23,11 @@ interface Props {
     isQuarterDateFormat?: boolean
 }
 
-export default function Tooltip({
+export default function LineTooltip({
+    data,
     chartWidth,
     chartHeight,
     margin,
-    data,
     xScale,
     yScale,
     yFormatter,
@@ -43,7 +44,7 @@ export default function Tooltip({
 
     return (
         <>
-            <TooltipHighlight
+            <Highlight
                 width={chartWidth}
                 height={chartHeight}
                 margin={margin}
@@ -56,7 +57,7 @@ export default function Tooltip({
                 circleColour={circleColour}
                 isQuarterDateFormat={isQuarterDateFormat}
             />
-            <TooltipDisplay
+            <Display
                 interactionData={interactionData}
                 chartWidth={chartWidth}
                 tooltipWidth={tooltipWidth}
@@ -68,68 +69,7 @@ export default function Tooltip({
     )
 }
 
-interface TooltipDisplayProps {
-    interactionData: InteractionData | null
-    chartWidth: number
-    tooltipWidth: number
-    margin: number
-    labelFontSize: string
-    contentFontSize: string
-}
-
-function TooltipDisplay({
-    interactionData,
-    chartWidth,
-    tooltipWidth,
-    margin,
-    labelFontSize,
-    contentFontSize,
-}: TooltipDisplayProps) {
-    if (!interactionData) return null
-
-    return (
-        <foreignObject
-            style={{
-                width: '100%',
-                height: '100%',
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                pointerEvents: 'none',
-            }}
-        >
-            <div
-                style={{
-                    position: 'absolute',
-                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-                    borderRadius: '4px',
-                    color: 'white',
-                    padding: '6px',
-                    transform: 'translateY(-50%)',
-                    width: tooltipWidth,
-                    transition: 'all 0.1s ease',
-                    left:
-                        interactionData.xPos <= chartWidth / 2
-                            ? interactionData.xPos + margin
-                            : interactionData.xPos - tooltipWidth - margin,
-                    top: interactionData.yPos,
-                }}
-            >
-                <div style={{ fontWeight: 700, fontSize: labelFontSize }}>
-                    {interactionData.label}
-                </div>
-                <div
-                    style={{ fontSize: contentFontSize }}
-                    dangerouslySetInnerHTML={{
-                        __html: interactionData.content,
-                    }}
-                />
-            </div>
-        </foreignObject>
-    )
-}
-
-interface TooltipHighlightProps {
+interface HighlightProps {
     width: number
     height: number
     margin: Margin
@@ -145,7 +85,7 @@ interface TooltipHighlightProps {
     isQuarterDateFormat: boolean
 }
 
-function TooltipHighlight({
+function Highlight({
     width,
     height,
     margin,
@@ -157,7 +97,7 @@ function TooltipHighlight({
     lineColour,
     circleColour,
     isQuarterDateFormat,
-}: TooltipHighlightProps) {
+}: HighlightProps) {
     const [highlightedPoint, setHighlightedPoint] = useState<number | null>(
         null
     )

@@ -27,6 +27,8 @@ export type RadarDatapoint = {
     [variable: string]: number
 }
 
+export type RadarDataCoordinates = [number, number][]
+
 export type RadarVariableMinMaxValues = {
     [variable: string]: [number, number]
 }
