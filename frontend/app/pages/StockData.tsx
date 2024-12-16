@@ -77,12 +77,13 @@ export default function StockData({ ticker }: Props) {
                         <div className="w-96">
                             {stockRatings !== undefined ? (
                                 <RadarChart
+                                    data={stockRatings}
                                     width={275}
                                     widthPadding={150}
                                     gridColour="rgb(var(--color-weak-light))"
                                     valueColour="rgb(var(--color-primary))"
-                                    data={stockRatings}
                                     gridNumLevels={6}
+                                    gridType="circle"
                                     gridAxesLabels={{
                                         value: 'Valor',
                                         debt: 'Endividamento',

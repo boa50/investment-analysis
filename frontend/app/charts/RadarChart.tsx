@@ -1,9 +1,9 @@
 import * as d3 from 'd3'
 import BaseChart from './BaseChart'
-import { RadarGrid } from './RadarGrid'
+import RadarGrid from './RadarGrid'
 import RadarTooltip from './tooltips/RadarTooltip'
 
-import type { ScaleRadial } from 'd3'
+import type { ScaleLinear } from 'd3'
 import type {
     RadarGridType,
     RadarDatapoint,
@@ -55,12 +55,12 @@ export default function RadarChart({
         .domain(variableNames)
         .range([0, 2 * Math.PI])
 
-    const radiusScales: { [name: string]: ScaleRadial<number, number, never> } =
+    const radiusScales: { [name: string]: ScaleLinear<number, number, never> } =
         {}
 
     variableNames.forEach((variable) => {
         radiusScales[variable] = d3
-            .scaleRadial()
+            .scaleLinear()
             .domain(minMaxValuesCleaned[variable])
             .range([innerRadius, outerRadius])
     })

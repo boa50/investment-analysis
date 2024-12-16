@@ -15,7 +15,7 @@ interface Props {
     axesLabels: { [name: string]: string }
 }
 
-export const RadarGrid = ({
+export default function RadarGrid({
     axisConfig,
     angleScale,
     outerRadius,
@@ -25,7 +25,7 @@ export const RadarGrid = ({
     type = 'straight',
     strokeWidth = 0.75,
     axesLabels = {},
-}: Props) => {
+}: Props) {
     const hasAxesLabels = Object.keys(axesLabels).length > 0
 
     const axes = axisConfig.map((axis, i) => {
