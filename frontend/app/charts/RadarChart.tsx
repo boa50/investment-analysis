@@ -11,26 +11,31 @@ import type {
 
 interface Props {
     width: number
-    height: number
+    widthPadding?: number
     data: RadarDatapoint
     minMaxValues?: RadarVariableMinMaxValues | undefined
     margin?: number
     innerRadius?: number
     valueColour?: string
+    gridColour?: string
     gridType?: RadarGridType
+    gridNumLevels?: number
 }
 
 export default function RadarChart({
     width,
-    height,
+    widthPadding = 0,
     data,
     minMaxValues,
     margin = 24,
     innerRadius = 0,
-    valueColour = 'red',
+    valueColour = 'black',
+    gridColour = 'red',
     gridType = 'straight',
+    gridNumLevels = 4,
 }: Props) {
-    const outerRadius = Math.min(width, height) / 2 - margin
+    const height = width
+    const outerRadius = width / 2 - margin
     const variableNames = Object.keys(data)
 
     let minMaxValuesCleaned: RadarVariableMinMaxValues = {}
@@ -73,19 +78,29 @@ export default function RadarChart({
     const linePath = d3.lineRadial()(radarCoordinates)
 
     return (
-        <BaseChart width={width} height={height}>
-            <g transform={'translate(' + width / 2 + ',' + height / 2 + ')'}>
+        <BaseChart width={width + widthPadding} height={height}>
+            <g
+                transform={
+                    'translate(' +
+                    (width + widthPadding) / 2 +
+                    ',' +
+                    height / 2 +
+                    ')'
+                }
+            >
                 <RadarGrid
                     innerRadius={innerRadius}
                     outerRadius={outerRadius}
                     angleScale={angleScale}
                     axisConfig={axisConfig}
                     type={gridType}
+                    colour={gridColour}
+                    nLevels={gridNumLevels}
                 />
                 <path
                     d={linePath ?? ''}
                     stroke={valueColour}
-                    strokeWidth={1}
+                    strokeWidth={1.5}
                     fill={valueColour}
                     fillOpacity={0.1}
                 />

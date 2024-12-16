@@ -1,5 +1,5 @@
 import * as d3 from 'd3'
-import { polarToCartesian } from './utils'
+import { polarToCartesian, getTextWidth } from './utils'
 
 import type { RadarGridAxisConfig, RadarGridType } from './types'
 
@@ -11,6 +11,7 @@ interface Props {
     nLevels?: number
     colour?: string
     type?: RadarGridType
+    strokeWidth?: number
 }
 
 export const RadarGrid = ({
@@ -21,6 +22,7 @@ export const RadarGrid = ({
     nLevels = 4,
     colour = 'grey',
     type = 'straight',
+    strokeWidth = 0.75,
 }: Props) => {
     const axes = axisConfig.map((axis, i) => {
         const angle = angleScale(axis.name)
@@ -36,16 +38,30 @@ export const RadarGrid = ({
 
         const labelPosition = polarToCartesian(
             angle - Math.PI / 2,
-            outerRadius + 10
+            outerRadius + 7
         )
+
+        const halfLabelWidth = getTextWidth(axis.name, '0.8rem', '400') / 2
 
         return (
             <g key={i}>
-                <path d={path ?? ''} stroke={colour} strokeWidth={0.5} rx={1} />
+                <path
+                    d={path ?? ''}
+                    stroke={colour}
+                    opacity={0.25}
+                    strokeWidth={strokeWidth}
+                    rx={1}
+                />
                 <text
                     x={labelPosition.x}
                     y={labelPosition.y}
-                    fontSize={12}
+                    dx={
+                        Math.abs(labelPosition.x) > 1
+                            ? -halfLabelWidth / labelPosition.x
+                            : -halfLabelWidth
+                    }
+                    fontSize={'0.8rem'}
+                    fontWeight={400}
                     fill={colour}
                     textAnchor={labelPosition.x > 0 ? 'start' : 'end'}
                     dominantBaseline="middle"
@@ -65,9 +81,10 @@ export const RadarGrid = ({
                   axisConfig.map((axis) => angleScale(axis.name)),
                   nLevels,
                   getLevelRadius,
-                  colour
+                  colour,
+                  strokeWidth
               )
-            : getCircleLevels(nLevels, getLevelRadius, colour)
+            : getCircleLevels(nLevels, getLevelRadius, colour, strokeWidth)
 
     return (
         <g>
@@ -100,14 +117,22 @@ function getStraightLevels(
     allAngles: (number | undefined)[],
     nLevels: number,
     getLevelRadius: (level: number) => number,
-    colour: string = 'grey'
+    colour: string = 'grey',
+    strokeWidth: number
 ) {
     return [...Array(nLevels).keys()].map((level) => {
         const levelRadius = getLevelRadius(level)
         const path = getStraightLevelPath(allAngles, levelRadius)
 
         return (
-            <path key={level} d={path} stroke={colour} strokeWidth={1} rx={1} />
+            <path
+                key={level}
+                d={path}
+                stroke={colour}
+                strokeWidth={strokeWidth}
+                rx={1}
+                opacity={level !== nLevels - 1 ? 0.25 : 1}
+            />
         )
     })
 }
@@ -115,7 +140,8 @@ function getStraightLevels(
 function getCircleLevels(
     nLevels: number,
     getLevelRadius: (level: number) => number,
-    colour: string = 'grey'
+    colour: string = 'grey',
+    strokeWidth: number
 ) {
     return [...Array(nLevels).keys()].map((level) => {
         const levelRadius = getLevelRadius(level)
@@ -127,7 +153,9 @@ function getCircleLevels(
                 cy={0}
                 r={levelRadius}
                 stroke={colour}
+                strokeWidth={strokeWidth}
                 fill="none"
+                opacity={level !== nLevels - 1 ? 0.25 : 1}
             />
         )
     })

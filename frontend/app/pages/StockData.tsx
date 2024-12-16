@@ -75,12 +75,15 @@ export default function StockData({ ticker }: Props) {
                 <DataContainer title="Visão Geral" childrenHeight="20">
                     <div className="flex w-full">
                         <div className="flex">TEste</div>
-                        <div className="w-60">
+                        <div className="w-80">
                             {stockRatings !== undefined ? (
                                 <RadarChart
-                                    width={200}
-                                    height={200}
+                                    width={275}
+                                    widthPadding={50}
+                                    gridColour="rgb(var(--color-weak-light))"
+                                    valueColour="rgb(var(--color-primary))"
                                     data={stockRatings}
+                                    gridNumLevels={6}
                                 />
                             ) : null}
                         </div>
