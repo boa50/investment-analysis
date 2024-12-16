@@ -6,6 +6,7 @@ import type { RadarDataCoordinates, InteractionData } from '../types'
 
 interface Props {
     dataCoordinates: RadarDataCoordinates
+    dataValues: number[]
     chartWidth: number
     chartHeight: number
     pointsTransformTranslate: string
@@ -18,6 +19,7 @@ interface Props {
 
 export default function RadarTooltip({
     dataCoordinates,
+    dataValues,
     chartWidth,
     chartHeight,
     pointsTransformTranslate,
@@ -34,6 +36,7 @@ export default function RadarTooltip({
         <>
             <Highlight
                 dataCoordinates={dataCoordinates}
+                dataValues={dataValues}
                 chartWidth={chartWidth}
                 chartHeight={chartHeight}
                 pointsTransformTranslate={pointsTransformTranslate}
@@ -54,6 +57,7 @@ export default function RadarTooltip({
 
 interface HighlightProps {
     dataCoordinates: RadarDataCoordinates
+    dataValues: number[]
     chartWidth: number
     chartHeight: number
     pointsTransformTranslate: string
@@ -65,6 +69,7 @@ interface HighlightProps {
 
 function Highlight({
     dataCoordinates,
+    dataValues,
     chartWidth,
     chartHeight,
     pointsTransformTranslate,
@@ -89,12 +94,14 @@ function Highlight({
                         strokeWidth={1}
                         fill="white"
                         onMouseEnter={() => {
+                            const score =
+                                dataValues[i < dataValues.length ? i : 0]
+
                             setInteractiondata({
                                 xPos: circlePosition.x + chartWidth / 2,
                                 yPos: circlePosition.y + chartHeight / 2,
                                 label: '',
-                                content:
-                                    'Score: ' + circlePosition.y.toString(),
+                                content: 'Score: ' + score,
                             })
                         }}
                         onMouseLeave={() => {

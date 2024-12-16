@@ -106,6 +106,7 @@ export default function RadarChart({
             </g>
             <RadarTooltip
                 dataCoordinates={dataCoordinates}
+                dataValues={Object.values(data)}
                 chartWidth={width + widthPadding}
                 chartHeight={height}
                 pointsTransformTranslate={pointsTransformTranslate}
