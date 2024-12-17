@@ -1,4 +1,5 @@
 import * as d3 from 'd3'
+import { useState, useEffect, useLayoutEffect, useCallback } from 'react'
 
 import type { ScaleLinear, ScaleTime } from 'd3'
 
@@ -70,4 +71,35 @@ export const polarToCartesian = (angle: number, distance: number) => {
     const x = distance * Math.cos(angle)
     const y = distance * Math.sin(angle)
     return { x, y }
+}
+
+export const useDimensions = (targetDiv: HTMLDivElement | null) => {
+    const getDimensions = useCallback(() => {
+        const dims = {
+            width: targetDiv?.offsetWidth ?? 0,
+            height: targetDiv?.offsetHeight ?? 0,
+        }
+
+        // Multiplied by 0.99 to prevent exploding the chart container when resizing
+        dims.height *= 0.99
+
+        return dims
+    }, [targetDiv])
+
+    const [dimensions, setDimensions] = useState(getDimensions)
+
+    const handleResize = useCallback(() => {
+        setDimensions(getDimensions())
+    }, [getDimensions])
+
+    useEffect(() => {
+        window.addEventListener('resize', handleResize)
+        return () => window.removeEventListener('resize', handleResize)
+    }, [handleResize])
+
+    useLayoutEffect(() => {
+        handleResize()
+    }, [handleResize])
+
+    return dimensions
 }

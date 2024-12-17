@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useState, useCallback } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { getHistoricalValues } from '../api/stocks'
 import { getKpiInfo } from '../data/kpi'
 import { LineChart } from '../charts/LineChart'
-import { useMediaQueries } from './utils'
+import { useDimensions } from '../charts/utils'
 import Icon from './Icon'
 
 import type { Kpi } from '../types'
@@ -21,38 +21,7 @@ export default function ChartContainer({
     ticker,
     closeChartContainer,
 }: Props) {
-    const screenSize = useMediaQueries()
-    const [chartDimensions, setChartDimensions] = useState({
-        width: 0,
-        height: 0,
-    })
     const { title } = getKpiInfo(kpi)
-
-    useEffect(() => {
-        let width = 0
-        let scale = 0
-        if (screenSize.xl2) {
-            width = 1056
-            scale = 9.75 / 16
-        } else if (screenSize.xl) {
-            width = 880
-            scale = 12 / 16
-        } else if (screenSize.lg) {
-            width = 880
-            scale = 12 / 16
-        } else if (screenSize.md) {
-            width = 880
-            scale = 12 / 16
-        } else {
-            width = 880
-            scale = 12 / 16
-        }
-
-        setChartDimensions({
-            width: width,
-            height: width * scale,
-        })
-    }, [screenSize.xl2, screenSize.xl, screenSize.lg, screenSize.md])
 
     const commonClasses = 'fixed w-screen h-screen inset-0 z-40'
 
@@ -78,11 +47,7 @@ export default function ChartContainer({
                             </div>
                             <div className="flex items-center gap-8 pt-4 mt-4 border-t border-appRowDividerStrong"></div>
                             {isOpened ? (
-                                <Chart
-                                    ticker={ticker}
-                                    kpi={kpi}
-                                    chartDimensions={chartDimensions}
-                                />
+                                <Chart ticker={ticker} kpi={kpi} />
                             ) : null}
                         </div>
                     </div>
@@ -103,13 +68,15 @@ const fullDateKpis: Kpi[] = [
 interface ChartProps {
     ticker: string
     kpi: Kpi
-    chartDimensions: {
-        width: number
-        height: number
-    }
 }
 
-function Chart({ ticker, kpi, chartDimensions }: ChartProps) {
+function Chart({ ticker, kpi }: ChartProps) {
+    const [chartDiv, setChartDiv] = useState<HTMLDivElement | null>(null)
+    const onRefChange = useCallback((node: HTMLDivElement) => {
+        if (node !== null) setChartDiv(node)
+    }, [])
+    const chartDimensions = useDimensions(chartDiv)
+
     const query = useQuery({
         queryKey: ['historicalValues', { ticker, kpi }],
         queryFn: () => getHistoricalValues(ticker, kpi),
@@ -134,7 +101,7 @@ function Chart({ ticker, kpi, chartDimensions }: ChartProps) {
     })
 
     return (
-        <div className="flex items-center justify-center w-full h-full">
+        <div ref={onRefChange} className="w-full h-full">
             <LineChart
                 {...chartDimensions}
                 data={historicalData}
