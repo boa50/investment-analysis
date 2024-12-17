@@ -15,6 +15,7 @@ interface Props {
     displayMargin?: number
     labelFontSize?: string
     contentFontSize?: string
+    valueFormatter?: (value: number) => string
 }
 
 export default function RadarTooltip({
@@ -28,6 +29,7 @@ export default function RadarTooltip({
     displayMargin = 8,
     labelFontSize = '0.9rem',
     contentFontSize = '0.8rem',
+    valueFormatter,
 }: Props) {
     const [interactionData, setInteractiondata] =
         useState<InteractionData | null>(null)
@@ -42,6 +44,7 @@ export default function RadarTooltip({
                 pointsTransformTranslate={pointsTransformTranslate}
                 setInteractiondata={setInteractiondata}
                 circleColour={circleColour}
+                valueFormatter={valueFormatter}
             />
             <Display
                 interactionData={interactionData}
@@ -65,6 +68,7 @@ interface HighlightProps {
         React.SetStateAction<InteractionData | null>
     >
     circleColour: string
+    valueFormatter?: (value: number) => string
 }
 
 function Highlight({
@@ -75,6 +79,7 @@ function Highlight({
     pointsTransformTranslate,
     setInteractiondata,
     circleColour,
+    valueFormatter,
 }: HighlightProps) {
     return (
         <g transform={pointsTransformTranslate}>
@@ -101,7 +106,11 @@ function Highlight({
                                 xPos: circlePosition.x + chartWidth / 2,
                                 yPos: circlePosition.y + chartHeight / 2,
                                 label: '',
-                                content: 'Score: ' + score,
+                                content:
+                                    'Score: ' +
+                                    (valueFormatter !== undefined
+                                        ? valueFormatter(score)
+                                        : score),
                             })
                         }}
                         onMouseLeave={() => {

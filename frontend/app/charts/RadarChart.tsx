@@ -17,6 +17,7 @@ interface Props {
     minMaxValues?: RadarVariableMinMaxValues | undefined
     margin?: number
     innerRadius?: number
+    valueFormatter?: (value: number) => string
     valueColour?: string
     gridColour?: string
     gridType?: RadarGridType
@@ -31,6 +32,7 @@ export default function RadarChart({
     minMaxValues,
     margin = 24,
     innerRadius = 0,
+    valueFormatter,
     valueColour = 'black',
     gridColour = 'red',
     gridType = 'straight',
@@ -110,6 +112,8 @@ export default function RadarChart({
                 chartWidth={width + widthPadding}
                 chartHeight={height}
                 pointsTransformTranslate={pointsTransformTranslate}
+                valueFormatter={valueFormatter}
+                contentFontSize="0.9rem"
             />
         </BaseChart>
     )

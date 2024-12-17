@@ -64,6 +64,26 @@ export default function StockData({ ticker }: Props) {
         delete stockRatings['overall']
     }
 
+    const ratingsChart =
+        stockRatings !== undefined ? (
+            <RadarChart
+                data={stockRatings}
+                width={250}
+                widthPadding={150}
+                gridColour="rgb(var(--color-weak-light))"
+                valueColour="rgb(var(--color-primary))"
+                gridNumLevels={6}
+                gridType="circle"
+                gridAxesLabels={{
+                    value: 'Valor',
+                    debt: 'Endividamento',
+                    growth: 'Crescimento',
+                    efficiency: 'Eficiência',
+                }}
+                valueFormatter={(value) => (value / 20).toFixed(2)}
+            />
+        ) : null
+
     return (
         <div className="w-screen pb-4">
             <StockHeader
@@ -74,25 +94,7 @@ export default function StockData({ ticker }: Props) {
             <div className="space-y-4">
                 <DataContainer title="Visão Geral" childrenHeight="20">
                     <div className="flex w-full">
-                        <div className="w-96">
-                            {stockRatings !== undefined ? (
-                                <RadarChart
-                                    data={stockRatings}
-                                    width={275}
-                                    widthPadding={150}
-                                    gridColour="rgb(var(--color-weak-light))"
-                                    valueColour="rgb(var(--color-primary))"
-                                    gridNumLevels={6}
-                                    gridType="circle"
-                                    gridAxesLabels={{
-                                        value: 'Valor',
-                                        debt: 'Endividamento',
-                                        growth: 'Crescimento',
-                                        efficiency: 'Eficiência',
-                                    }}
-                                />
-                            ) : null}
-                        </div>
+                        <div className="w-96">{ratingsChart}</div>
                         <div className="flex">
                             More info about the company history
                         </div>

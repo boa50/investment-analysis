@@ -40,6 +40,8 @@ export default function Display({
                     transform: 'translateY(-50%)',
                     width: tooltipWidth,
                     transition: 'all 0.1s ease',
+                    overflow: 'clip',
+                    overflowClipMargin: '4px',
                     left:
                         interactionData.xPos <= chartWidth / 2
                             ? interactionData.xPos + margin

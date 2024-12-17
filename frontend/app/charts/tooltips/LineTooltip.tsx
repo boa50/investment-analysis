@@ -79,7 +79,7 @@ interface HighlightProps {
     setInteractiondata: React.Dispatch<
         React.SetStateAction<InteractionData | null>
     >
-    yFormatter: ((value: number) => string) | undefined
+    yFormatter?: (value: number) => string
     lineColour: string
     circleColour: string
     isQuarterDateFormat: boolean
