@@ -81,6 +81,10 @@ function Highlight({
     circleColour,
     valueFormatter,
 }: HighlightProps) {
+    const [highlightedPoint, setHighlightedPoint] = useState<number | null>(
+        null
+    )
+
     return (
         <g transform={pointsTransformTranslate}>
             {dataCoordinates.map((d, i) => {
@@ -98,7 +102,13 @@ function Highlight({
                         stroke={circleColour}
                         strokeWidth={1}
                         fill="white"
+                        style={{
+                            opacity: highlightedPoint === i ? 1 : 0,
+                            transition: 'opacity 0.1s ease-in-out',
+                        }}
                         onMouseEnter={() => {
+                            setHighlightedPoint(i)
+
                             const score =
                                 dataValues[i < dataValues.length ? i : 0]
 
@@ -115,6 +125,7 @@ function Highlight({
                         }}
                         onMouseLeave={() => {
                             setInteractiondata(null)
+                            setHighlightedPoint(null)
                         }}
                     />
                 )

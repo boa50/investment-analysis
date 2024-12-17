@@ -103,7 +103,7 @@ export default function RadarChart({
                     stroke={valueColour}
                     strokeWidth={1.5}
                     fill={valueColour}
-                    fillOpacity={0.1}
+                    fillOpacity={0.25}
                 />
             </g>
             <RadarTooltip
@@ -111,6 +111,7 @@ export default function RadarChart({
                 dataValues={Object.values(data)}
                 chartWidth={width + widthPadding}
                 chartHeight={height}
+                circleColour={valueColour}
                 pointsTransformTranslate={pointsTransformTranslate}
                 valueFormatter={valueFormatter}
                 contentFontSize="0.9rem"
