@@ -31,7 +31,7 @@ export default function DataContainer({
     }
 
     return (
-        <div className="container">
+        <>
             <div className="flex flex-col h-full p-6 rounded-2xl bg-white shadow shadow-grey-950/5">
                 <div
                     role="button"
@@ -62,6 +62,6 @@ export default function DataContainer({
                     {children}
                 </div>
             </div>
-        </div>
+        </>
     )
 }

@@ -21,6 +21,16 @@ const getNavLinkOnClick = (
 export default function Header() {
     const location = useLocation()
 
+    const getLink = (destination: string, description: string) => (
+        <Link
+            to={destination}
+            onClick={(e) => getNavLinkOnClick(e, destination, location)}
+            className={getNavLinkClass(destination, location)}
+        >
+            {description}
+        </Link>
+    )
+
     return (
         <div className="bg-appBackground w-full sticky top-0 left-0 right-0 z-10 shadow-md">
             <div className="relative container flex justify-between py-2">
@@ -36,23 +46,9 @@ export default function Header() {
 
                 <div className="absolute inset-y-0 left-1/2 transform -translate-x-1/2 flex items-center">
                     <nav className="items-center hidden space-x-8 lg:flex">
-                        <Link
-                            to="/"
-                            onClick={(e) => getNavLinkOnClick(e, '/', location)}
-                            className={getNavLinkClass('/', location)}
-                        >
-                            Início
-                        </Link>
-
-                        <Link
-                            to="/stocks"
-                            onClick={(e) =>
-                                getNavLinkOnClick(e, '/stocks', location)
-                            }
-                            className={getNavLinkClass('/stocks', location)}
-                        >
-                            Lista de Ações
-                        </Link>
+                        {getLink('/', 'Início')}
+                        {getLink('/stocks', 'Lista de Ações')}
+                        {getLink('/stocks-compare', 'Comparador de Ações')}
                     </nav>
                 </div>
 

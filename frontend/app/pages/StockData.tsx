@@ -91,7 +91,7 @@ export default function StockData({ ticker }: Props) {
                 tickerData={tickerData}
                 overallStockRating={queryRatings.data?.overall}
             />
-            <div className="space-y-4">
+            <div className="container space-y-4">
                 <DataContainer title="Visão Geral" childrenHeight="20">
                     <div className="flex w-full">
                         <div className="w-96">{ratingsChart}</div>

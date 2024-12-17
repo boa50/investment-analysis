@@ -6,14 +6,14 @@ import {
 import { json } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import { getStocks } from '../api/stocks'
-import StocksTable from '../pages/StocksTable'
+import StocksCompare from '../pages/StocksCompare'
 
 import type { MetaFunction } from '@remix-run/node'
 
 export const meta: MetaFunction = () => {
     return [
-        { title: 'Investment Analysis - Stocks List' },
-        { name: 'description', content: 'List of the stocks' },
+        { title: 'Investment Analysis - Stocks Compare' },
+        { name: 'description', content: 'Comparison of Stocks' },
     ]
 }
 
@@ -33,7 +33,7 @@ export default function StocksList() {
 
     return (
         <HydrationBoundary state={dehydratedState}>
-            <StocksTable />
+            <StocksCompare />
         </HydrationBoundary>
     )
 }

@@ -75,7 +75,7 @@ function StockTableCell({ cell }: { cell: Cell<Stock, unknown> }) {
     )
 }
 
-export default function StockTable() {
+export default function StocksTable() {
     const query = useQuery({ queryKey: ['stocks'], queryFn: getStocks })
 
     const table = useReactTable({
@@ -105,7 +105,7 @@ export default function StockTable() {
                     Lista de Ações
                 </h1>
             </PageHeaderContainer>
-            <div className="px-8 flex w-screen items-center justify-center">
+            <div className="container flex items-center justify-center">
                 <div className="overflow-hidden border border-gray-300 md:rounded-lg">
                     <table className={cssDivide}>
                         <thead>
