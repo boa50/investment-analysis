@@ -4,7 +4,7 @@ import { getHistoricalValues } from '../api/stocks'
 import { getKpiInfo } from '../data/kpi'
 import { LineChart } from '../charts/LineChart'
 import { useDimensions } from '../charts/utils'
-import Icon from './Icon'
+import { Icon } from './ui'
 
 import type { Kpi } from '../types'
 

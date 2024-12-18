@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { useFocus } from './utils'
-import Icon from './Icon'
+import { useFocus } from '../utils'
+import { Icon } from '.'
 
 import type { ChangeEvent, Dispatch, SetStateAction } from 'react'
 
@@ -8,7 +8,7 @@ interface Props {
     items: string[]
 }
 
-export default function Select({ items }: Props) {
+export function Select({ items }: Props) {
     const [filteredItems, setFilteredItems] = useState<string[]>(items)
     const [activeItems, setActiveItems] = useState<Set<string>>(new Set([]))
     const [textFilter, setTextFilter] = useState<string>('')

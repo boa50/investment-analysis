@@ -28,7 +28,7 @@ const iconsData = {
     },
 }
 
-export default function Icon({
+export function Icon({
     size = 5,
     type,
     filled = 'full',

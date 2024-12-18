@@ -1,12 +1,11 @@
-import Icon from './Icon'
-import Placeholder from './Placeholder'
+import { Icon, Placeholder } from '.'
 
 interface Props {
     rating?: number
     size?: 'normal' | 'small'
 }
 
-export default function RatingStars({ rating, size = 'normal' }: Props) {
+export function RatingStars({ rating, size = 'normal' }: Props) {
     if (rating === undefined)
         return <Placeholder type={size === 'normal' ? 'stars' : 'starsSmall'} />
 

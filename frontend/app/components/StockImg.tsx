@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import Placeholder from './Placeholder'
+import { Placeholder } from './ui'
 
 interface Props {
     size?: 'normal' | 'small'

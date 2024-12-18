@@ -2,7 +2,7 @@ interface Props {
     type: 'stars' | 'starsSmall' | 'stockSearch' | 'stockImg' | 'stockImgSmall'
 }
 
-export default function Placeholder({ type }: Props) {
+export function Placeholder({ type }: Props) {
     switch (type) {
         case 'stars':
             return (

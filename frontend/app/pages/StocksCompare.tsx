@@ -1,5 +1,5 @@
 import PageHeaderContainer from '../components/PageHeaderContainer'
-import Select from '../components/Select'
+import { Select } from '../components/ui'
 
 export default function StocksCompare() {
     return (

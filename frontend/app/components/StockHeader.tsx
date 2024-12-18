@@ -1,5 +1,5 @@
 import KpiCard from './KpiCard'
-import RatingStars from './RatingStars'
+import { RatingStars } from './ui'
 import PageHeaderContainer from './PageHeaderContainer'
 import StockImg from './StockImg'
 
