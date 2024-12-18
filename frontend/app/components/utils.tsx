@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 const formatDecimal = (num: number): string =>
     Intl.NumberFormat('pt-BR', {
@@ -63,4 +63,12 @@ export const useMediaQueries = () => {
     const md = useMediaQuery('(min-width: 768px)')
 
     return { xl2, xl, lg, md }
+}
+
+export function useFocus<T extends HTMLElement = HTMLElement>() {
+    const ref = useRef<T>(null)
+    const setFocus = () => ref?.current?.focus?.()
+    const unsetFocus = () => ref?.current?.blur?.()
+
+    return [ref, setFocus, unsetFocus] as const
 }

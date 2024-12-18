@@ -210,7 +210,7 @@ function Stocks({
         )
 
     return (
-        <ul className="divide-y divide-appRowDivider max-h-[21rem] overflow-y-hidden overflow-y-scroll">
+        <ul className="divide-y divide-appRowDivider max-h-[21rem] overflow-x-hidden overflow-y-scroll">
             {stocks.map((d, i) => (
                 <li
                     key={i}

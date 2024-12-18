@@ -11,7 +11,7 @@ export default function StocksCompare() {
             </PageHeaderContainer>
             <div className="container space-y-4">
                 <div className="grid grid-cols-3">
-                    <Select />
+                    <Select items={['BBAS3', 'ITUB4', 'CMIG4']} />
                     <div className="flex flex-col h-fit w-fit p-6 rounded-2xl bg-white shadow shadow-grey-950/5">
                         <button>Select all from segment button</button>
                     </div>
