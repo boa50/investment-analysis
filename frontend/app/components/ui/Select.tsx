@@ -2,17 +2,28 @@ import { useState } from 'react'
 import { useFocus } from '../utils'
 import { Icon } from '.'
 
-import type { ChangeEvent, Dispatch, SetStateAction } from 'react'
+import type { ChangeEvent, Dispatch, SetStateAction, RefObject } from 'react'
 
 interface Props {
     items: string[]
+    activeItems: Set<string>
+    setActiveItems: Dispatch<SetStateAction<Set<string>>>
+    placeholderText?: string
+    isSingleChoice?: boolean
 }
 
-export function Select({ items }: Props) {
+export function Select({
+    items,
+    activeItems,
+    setActiveItems,
+    placeholderText = 'Choose an item',
+    isSingleChoice = false,
+}: Props) {
     const [filteredItems, setFilteredItems] = useState<string[]>(items)
-    const [activeItems, setActiveItems] = useState<Set<string>>(new Set([]))
     const [textFilter, setTextFilter] = useState<string>('')
     const [isOpened, setIsOpened] = useState<boolean>(false)
+    const [inputRef, setInputFocus, unsetInputFocus] =
+        useFocus<HTMLInputElement>()
 
     const toggleIsActive = (item: string) => {
         if (getIsActive(item)) {
@@ -23,6 +34,14 @@ export function Select({ items }: Props) {
             setActiveItems(new Set([...activeItems, item]))
         }
     }
+
+    const changeIsActive = (item: string) => {
+        setActiveItems(new Set([item]))
+        setIsOpened(false)
+        setTextFilter('')
+        unsetInputFocus()
+    }
+
     const getIsActive = (item: string) => activeItems.has(item)
 
     const filterHandler = (e: ChangeEvent<HTMLInputElement>) => {
@@ -49,6 +68,10 @@ export function Select({ items }: Props) {
                     setIsOpened={setIsOpened}
                     clearFilter={clearFilter}
                     isOpened={isOpened}
+                    placeholderText={placeholderText}
+                    inputRef={inputRef}
+                    setInputFocus={setInputFocus}
+                    unsetInputFocus={unsetInputFocus}
                 />
                 <div
                     className={`absolute shadow top-full z-40 w-full left-0 rounded max-h-40 overflow-x-hidden overflow-y-scroll 
@@ -59,8 +82,13 @@ export function Select({ items }: Props) {
                             <Item
                                 key={i}
                                 name={d}
-                                toggleIsActive={toggleIsActive}
+                                toggleIsActive={
+                                    isSingleChoice
+                                        ? changeIsActive
+                                        : toggleIsActive
+                                }
                                 isActive={getIsActive(d)}
+                                isSingleChoice={isSingleChoice}
                             />
                         ))}
                     </div>
@@ -76,6 +104,10 @@ interface InputProps {
     setIsOpened: Dispatch<SetStateAction<boolean>>
     clearFilter: () => void
     isOpened: boolean
+    placeholderText: string
+    inputRef: RefObject<HTMLInputElement>
+    setInputFocus: () => void | undefined
+    unsetInputFocus: () => void | undefined
 }
 
 function Input({
@@ -84,10 +116,12 @@ function Input({
     setIsOpened,
     clearFilter,
     isOpened,
+    placeholderText,
+    inputRef,
+    setInputFocus,
+    unsetInputFocus,
 }: InputProps) {
     const isFiltering = textFilter.length > 0
-    const [inputRef, setInputFocus, unsetInputFocus] =
-        useFocus<HTMLInputElement>()
 
     return (
         <div className="w-60">
@@ -97,7 +131,7 @@ function Input({
                     ref={inputRef}
                     value={textFilter}
                     className="p-1 px-2 appearance-none outline-none w-full text-sm text-gray-700 placeholder:text-gray-400"
-                    placeholder="Busque um aitvo..."
+                    placeholder={`${placeholderText}...`}
                     onChange={filterHandler}
                     onFocus={() => setIsOpened(true)}
                     onBlur={() => setIsOpened(false)}
@@ -136,10 +170,11 @@ function Input({
 interface ItemProps {
     name: string
     isActive: boolean
+    isSingleChoice: boolean
     toggleIsActive: (name: string) => void
 }
 
-function Item({ name, isActive, toggleIsActive }: ItemProps) {
+function Item({ name, isActive, isSingleChoice, toggleIsActive }: ItemProps) {
     return (
         <div
             role="checkbox"
@@ -149,7 +184,7 @@ function Item({ name, isActive, toggleIsActive }: ItemProps) {
             onKeyDown={() => null}
             aria-checked="true"
             className={`cursor-pointer flex w-full items-center p-2 relative 
-                ${isActive ? 'bg-gray-500 hover:bg-gray-400 text-gray-50' : 'bg-white hover:bg-gray-200'}`}
+                ${isActive && !isSingleChoice ? 'bg-gray-500 hover:bg-gray-400 text-gray-50' : 'bg-white hover:bg-gray-200'}`}
         >
             <div className="w-full items-center flex">
                 <div className="mx-2 leading-5 text-sm">{name}</div>

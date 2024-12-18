@@ -1,13 +1,33 @@
+import { useEffect, useState, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { getStocksAndSegments } from '../api/stocks'
 import PageHeaderContainer from '../components/PageHeaderContainer'
 import { Select } from '../components/ui'
 
 export default function StocksCompare() {
+    const [activeStocks, setActiveStocks] = useState<Set<string>>(new Set([]))
+    const [includedSegment, setIncludedSegment] = useState<Set<string>>(
+        new Set([])
+    )
+
     const query = useQuery({
         queryKey: ['stocksAndCompanies'],
         queryFn: getStocksAndSegments,
     })
+
+    const stocksAndSegmentsData = useMemo(() => query.data ?? [], [query.data])
+    const selectStocks = stocksAndSegmentsData.map((d) => d.ticker)
+    const selectSegments = [
+        ...new Set(stocksAndSegmentsData.map((d) => d.segment)),
+    ]
+
+    useEffect(() => {
+        const stocks = stocksAndSegmentsData
+            .filter((d) => d.segment === includedSegment.values().next().value)
+            .map((d) => d.ticker)
+
+        setActiveStocks((activeStocks) => new Set([...activeStocks, ...stocks]))
+    }, [includedSegment, stocksAndSegmentsData])
 
     if (query.isPending)
         return (
@@ -21,9 +41,6 @@ export default function StocksCompare() {
             </div>
         )
 
-    const selectItems =
-        query.data !== undefined ? query.data.map((d) => d.ticker) : []
-
     return (
         <div className="w-screen pb-4">
             <PageHeaderContainer>
@@ -33,10 +50,19 @@ export default function StocksCompare() {
             </PageHeaderContainer>
             <div className="container space-y-4">
                 <div className="grid grid-cols-3">
-                    <Select items={selectItems} />
-                    <div className="flex flex-col h-fit w-fit p-6 rounded-2xl bg-white shadow shadow-grey-950/5">
-                        <button>Select all from segment button</button>
-                    </div>
+                    <Select
+                        items={selectStocks}
+                        placeholderText="Escolha um ativo"
+                        activeItems={activeStocks}
+                        setActiveItems={setActiveStocks}
+                    />
+                    <Select
+                        items={selectSegments}
+                        placeholderText="Inclua um segmento"
+                        activeItems={includedSegment}
+                        setActiveItems={setIncludedSegment}
+                        isSingleChoice={true}
+                    />
                     <div className="flex flex-col h-fit w-fit p-6 rounded-2xl bg-white shadow shadow-grey-950/5">
                         <div className="flex h-full w-full items-center justify-center">
                             Show/Hide Radar Chart
