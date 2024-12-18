@@ -2,13 +2,14 @@ import { useEffect, useState, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { getStocksAndSegments } from '../api/stocks'
 import PageHeaderContainer from '../components/PageHeaderContainer'
-import { Select } from '../components/ui'
+import { Select, ToggleButton } from '../components/ui'
 
 export default function StocksCompare() {
     const [activeStocks, setActiveStocks] = useState<Set<string>>(new Set([]))
     const [includedSegment, setIncludedSegment] = useState<Set<string>>(
         new Set([])
     )
+    const [isChartShown, setIsChartShown] = useState<boolean>(true)
 
     const query = useQuery({
         queryKey: ['stocksAndCompanies'],
@@ -63,17 +64,20 @@ export default function StocksCompare() {
                         setActiveItems={setIncludedSegment}
                         isSingleChoice={true}
                     />
-                    <div className="flex flex-col h-fit w-fit p-6 rounded-2xl bg-white shadow shadow-grey-950/5">
-                        <div className="flex h-full w-full items-center justify-center">
-                            Show/Hide Radar Chart
-                        </div>
-                    </div>
                 </div>
                 <div className="grid grid-cols-3 space-x-4">
-                    <div className="flex flex-col h-80 w-full p-6 rounded-2xl bg-white shadow shadow-grey-950/5">
-                        <div className="flex h-full w-full items-center justify-center">
-                            Comparative Radar Chart
-                        </div>
+                    <div className="flex flex-col h-80 w-full rounded-2xl bg-white shadow shadow-grey-950/5">
+                        {isChartShown ? (
+                            <div className="flex h-full w-full items-center justify-center">
+                                Comparative Radar Chart
+                            </div>
+                        ) : null}
+                        <div className="grow" />
+                        <ToggleButton
+                            label="Mostrar Gráfico?"
+                            isChecked={isChartShown}
+                            setIsChecked={setIsChartShown}
+                        />
                     </div>
                     <div className="col-span-2 flex flex-col h-80 w-full p-6 rounded-2xl bg-white shadow shadow-grey-950/5">
                         <div className="flex h-full w-full items-center justify-center">
