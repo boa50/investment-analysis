@@ -12,6 +12,7 @@ import type {
 
 interface Props {
     width: number
+    height?: number
     widthPadding?: number
     data: RadarDatapoint
     minMaxValues?: RadarVariableMinMaxValues | undefined
@@ -27,6 +28,7 @@ interface Props {
 
 export default function RadarChart({
     width,
+    height = 1e10,
     widthPadding = 0,
     data,
     minMaxValues,
@@ -34,13 +36,13 @@ export default function RadarChart({
     innerRadius = 0,
     valueFormatter,
     valueColour = 'black',
-    gridColour = 'red',
+    gridColour = 'grey',
     gridType = 'straight',
     gridNumLevels = 4,
     gridAxesLabels = {},
 }: Props) {
-    const height = width
-    const outerRadius = width / 2 - margin
+    const side = Math.min(width, height)
+    const outerRadius = side / 2 - margin
     const variableNames = Object.keys(data)
 
     let minMaxValuesCleaned: RadarVariableMinMaxValues = {}
@@ -83,10 +85,10 @@ export default function RadarChart({
     const linePath = d3.lineRadial()(dataCoordinates)
 
     const pointsTransformTranslate =
-        'translate(' + (width + widthPadding) / 2 + ',' + height / 2 + ')'
+        'translate(' + (side + widthPadding) / 2 + ',' + side / 2 + ')'
 
     return (
-        <BaseChart width={width + widthPadding} height={height}>
+        <BaseChart width={side + widthPadding} height={side}>
             <g transform={pointsTransformTranslate}>
                 <RadarGrid
                     innerRadius={innerRadius}
@@ -109,8 +111,8 @@ export default function RadarChart({
             <RadarTooltip
                 dataCoordinates={dataCoordinates}
                 dataValues={Object.values(data)}
-                chartWidth={width + widthPadding}
-                chartHeight={height}
+                chartWidth={side + widthPadding}
+                chartHeight={side}
                 circleColour={valueColour}
                 pointsTransformTranslate={pointsTransformTranslate}
                 valueFormatter={valueFormatter}
