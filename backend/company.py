@@ -15,6 +15,19 @@ def get_companies():
     return df
 
 
+def get_companies_and_segments():
+    df = utils.get_data("stocks-basic-info")
+
+    df["MAIN_TICKER"] = df["TICKERS"].apply(lambda x: utils.get_main_ticker(x))
+
+    return_cols = ["MAIN_TICKER", "SEGMENTO"]
+
+    df = utils.get_df_stocks_cleaned(df, return_cols)
+    df = df.sort_values(by=["segment", "ticker"], ascending=True)
+
+    return df
+
+
 def get_company(ticker):
     df = datasource.get_kpis_latest_values([ticker])
     df = df.dropna(axis=1)
