@@ -34,6 +34,11 @@ export type Stock = {
     netMargin: number
 }
 
+export type StockAndSegement = {
+    ticker: string
+    segment: string
+}
+
 export type Company = {
     ticker: string
     name: string

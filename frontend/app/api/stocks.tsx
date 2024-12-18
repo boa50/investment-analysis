@@ -5,10 +5,18 @@ import type {
     Kpi,
     HistoricalValue,
     StockRating,
+    StockAndSegement,
 } from '../types/'
 
 export const getStocks = async (): Promise<Stock[]> => {
     const response = await fetch('http://127.0.0.1:8000/api/companies')
+    return await response.json()
+}
+
+export const getStocksAndSegments = async (): Promise<StockAndSegement[]> => {
+    const response = await fetch(
+        'http://127.0.0.1:8000/api/companiesAndSegments'
+    )
     return await response.json()
 }
 

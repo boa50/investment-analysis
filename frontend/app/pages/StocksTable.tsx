@@ -79,7 +79,7 @@ export default function StocksTable() {
     const query = useQuery({ queryKey: ['stocks'], queryFn: getStocks })
 
     const table = useReactTable({
-        data: query.data !== undefined ? query.data : [],
+        data: query.data ?? [],
         columns,
         getCoreRowModel: getCoreRowModel(),
     })
