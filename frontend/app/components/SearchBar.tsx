@@ -5,6 +5,7 @@ import { Link } from '@remix-run/react'
 import RatingStars from './RatingStars'
 import Placeholder from './Placeholder'
 import StockImg from './StockImg'
+import Icon from './Icon'
 
 import type { ChangeEvent, MouseEvent } from 'react'
 import type { CompanySearch } from '../types'
@@ -52,18 +53,13 @@ export default function SearchBar() {
                             hover:ring-gray-300 focus-within:!ring-2 ring-inset focus-within:!ring-appAccent 
                             rounded-md"
             >
-                <svg
-                    className="mr-2 h-5 w-5 stroke-slate-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="2"
-                >
-                    <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    ></path>
-                </svg>
+                <div className="mr-2">
+                    <Icon
+                        type="magnifier"
+                        filled="none"
+                        colour="stroke-slate-400"
+                    />
+                </div>
                 <input
                     className="block appearance-none bg-transparent text-base 
                                 text-gray-700 placeholder:text-gray-400 focus:outline-none 
