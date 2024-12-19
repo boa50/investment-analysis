@@ -26,7 +26,7 @@ export default function StocksTable() {
                 </h1>
             </PageHeaderContainer>
             <div className="container flex items-center justify-center">
-                <div className="overflow-hidden border border-gray-300 md:rounded-lg">
+                <div className="overflow-auto h-[48rem] border border-gray-300 md:rounded-lg">
                     <Table
                         data={query.data}
                         columns={[

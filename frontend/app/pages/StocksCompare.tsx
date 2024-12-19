@@ -149,7 +149,7 @@ export default function StocksCompare() {
                 </div>
                 <div className="grid grid-cols-3 gap-x-4">
                     <div
-                        className={`flex flex-col h-80 w-full p-6 rounded-2xl bg-white shadow shadow-grey-950/5 ${isChartShown ? 'col-span-2' : 'col-span-3'}`}
+                        className={`relative h-80 w-full overflow-auto rounded-2xl bg-white shadow shadow-grey-950/5 ${isChartShown ? 'col-span-2' : 'col-span-3'}`}
                     >
                         <Table
                             data={companiesData}

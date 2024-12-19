@@ -71,7 +71,7 @@ export default function Table({
     const cssDivide = 'divide-y divide-appRowDivider'
 
     return (
-        <table className={cssDivide}>
+        <table className={cssDivide + ' w-full'}>
             <TableHeader table={table} />
             <TableBody
                 table={table}
@@ -89,7 +89,14 @@ interface TableHeaderProps {
 
 function TableHeader({ table }: TableHeaderProps) {
     return (
-        <thead>
+        <thead
+            className="bg-appBackground"
+            style={{
+                position: 'sticky',
+                top: 0,
+                zIndex: 1,
+            }}
+        >
             {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
                     {headerGroup.headers.map((header) => (
@@ -158,7 +165,7 @@ function TableBody({
     lowVisibilityCols,
 }: TableBodyProps) {
     return (
-        <tbody className={cssDivide + ' bg-white'}>
+        <tbody className={cssDivide + ' bg-white overflow-y-scroll'}>
             {table.getRowModel()?.rows.map((row) => (
                 <tr key={row.id} className="hover:bg-gray-100">
                     {row.getVisibleCells().map((cell) => (
