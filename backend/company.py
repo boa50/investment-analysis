@@ -33,6 +33,7 @@ def get_company(ticker):
     df = df.dropna(axis=1)
 
     return_cols = [
+        "TICKER",
         "NOME",
         "SEGMENTO",
         "MARKET_CAP",
