@@ -89,14 +89,7 @@ interface TableHeaderProps {
 
 function TableHeader({ table }: TableHeaderProps) {
     return (
-        <thead
-            className="bg-appBackground"
-            style={{
-                position: 'sticky',
-                top: 0,
-                zIndex: 1,
-            }}
-        >
+        <thead className="bg-appBackground sticky top-0 z-10">
             {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
                     {headerGroup.headers.map((header) => (
