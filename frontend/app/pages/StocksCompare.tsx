@@ -1,10 +1,17 @@
 import { useEffect, useState, useMemo, useCallback } from 'react'
 import { useQuery, useQueries } from '@tanstack/react-query'
-import { getStocksAndSegments, getStockRatings } from '../api/stocks'
+import {
+    getStocksAndSegments,
+    getStockRatings,
+    getCompany,
+} from '../api/stocks'
 import PageHeaderContainer from '../components/PageHeaderContainer'
 import { Select, ToggleButton } from '../components/ui'
 import RadarChart from '../charts/RadarChart'
 import { useDimensions } from '../charts/utils'
+import Table from '../components/Table'
+
+import type { Company } from '../types'
 
 export default function StocksCompare() {
     const [activeStocks, setActiveStocks] = useState<Set<string>>(new Set([]))
@@ -22,6 +29,19 @@ export default function StocksCompare() {
         queryKey: ['stocksAndCompanies'],
         queryFn: getStocksAndSegments,
     })
+
+    const queriesCompanies = useQueries({
+        queries: [...activeStocks].map((ticker) => {
+            return {
+                queryKey: ['company', { ticker }],
+                queryFn: () => getCompany(ticker),
+            }
+        }),
+    })
+
+    const companiesData: Company[] = useMemo(() => {
+        return queriesCompanies.filter((d) => d.isSuccess).map((d) => d.data[0])
+    }, [queriesCompanies])
 
     const queriesRatings = useQueries({
         queries: [...activeStocks].map((ticker) => {
@@ -74,29 +94,28 @@ export default function StocksCompare() {
             </div>
         )
 
-    const radarChart =
-        stockRatings.length > 0 ? (
-            <RadarChart
-                data={stockRatings}
-                {...chartDimensions}
-                widthPadding={175}
-                gridColour="rgb(var(--color-weak-light))"
-                valueColours={[
-                    'rgb(var(--color-primary))',
-                    'rgb(var(--color-divider-strong-light))',
-                    'red',
-                ]}
-                gridNumLevels={6}
-                gridType="circle"
-                gridAxesLabels={{
-                    value: 'Valor',
-                    debt: 'Endividamento',
-                    growth: 'Crescimento',
-                    efficiency: 'Eficiência',
-                }}
-                showTooltips={true}
-            />
-        ) : null
+    const radarChart = stockRatings.length > 0 && (
+        <RadarChart
+            data={stockRatings}
+            {...chartDimensions}
+            widthPadding={175}
+            gridColour="rgb(var(--color-weak-light))"
+            valueColours={[
+                'rgb(var(--color-primary))',
+                'rgb(var(--color-divider-strong-light))',
+                'red',
+            ]}
+            gridNumLevels={6}
+            gridType="circle"
+            gridAxesLabels={{
+                value: 'Valor',
+                debt: 'Endividamento',
+                growth: 'Crescimento',
+                efficiency: 'Eficiência',
+            }}
+            showTooltips={false}
+        />
+    )
 
     return (
         <div className="w-screen pb-4">
@@ -132,9 +151,10 @@ export default function StocksCompare() {
                     <div
                         className={`flex flex-col h-80 w-full p-6 rounded-2xl bg-white shadow shadow-grey-950/5 ${isChartShown ? 'col-span-2' : 'col-span-3'}`}
                     >
-                        <div className="flex h-full w-full items-center justify-center">
-                            Table with kpis
-                        </div>
+                        <Table
+                            data={companiesData}
+                            columns={['ticker', 'marketCap', 'pl', 'netMargin']}
+                        />
                     </div>
                     {isChartShown ? (
                         <div className="flex flex-col h-80 w-full rounded-2xl bg-white shadow shadow-grey-950/5">
