@@ -100,11 +100,14 @@ export default function StocksCompare() {
             {...chartDimensions}
             widthPadding={175}
             gridColour="rgb(var(--color-weak-light))"
-            valueColours={[
-                'rgb(var(--color-primary))',
-                'rgb(var(--color-divider-strong-light))',
-                'red',
-            ]}
+            valueColours={
+                stockRatings.length <= 2
+                    ? [
+                          'rgb(var(--color-primary))',
+                          'rgb(var(--color-secondary))',
+                      ]
+                    : ['rgb(var(--color-divider-strong-light))']
+            }
             gridNumLevels={6}
             gridType="circle"
             gridAxesLabels={{
