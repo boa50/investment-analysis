@@ -4,15 +4,22 @@ interface Props {
     isChecked?: boolean
     setIsChecked?: Dispatch<SetStateAction<boolean>>
     label?: string
+    isLabelFirst?: boolean
 }
 
 export function ToggleButton({
     isChecked = false,
     setIsChecked = () => null,
     label,
+    isLabelFirst = true,
 }: Props) {
+    const labelEl = label ? (
+        <div className="text-sm text-appTextNormal">{label}</div>
+    ) : null
+
     return (
-        <div className="flex flex-row space-x-2 items-center">
+        <div className={`flex 'flex-row' space-x-2 items-center`}>
+            {isLabelFirst && labelEl}
             <div className="relative inline-flex cursor-pointer items-center">
                 <input
                     type="checkbox"
@@ -29,9 +36,7 @@ export function ToggleButton({
                     className="peer h-5 w-9 rounded-full border bg-gray-200 after:absolute after:left-[2px] after:top-0.5 after:h-4 after:w-4 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-appAccent peer-checked:after:translate-x-full peer-checked:after:border-white"
                 ></div>
             </div>
-            {label ? (
-                <div className="text-sm text-appTextNormal">{label}</div>
-            ) : null}
+            {!isLabelFirst && labelEl}
         </div>
     )
 }

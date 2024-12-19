@@ -10,7 +10,8 @@ interface Props {
     chartWidth: number
     chartHeight: number
     pointsTransformTranslate: string
-    circleColour?: string
+    circleColours?: string[]
+    nVariables?: number
     tooltipWidth?: number
     displayMargin?: number
     labelFontSize?: string
@@ -24,7 +25,8 @@ export default function RadarTooltip({
     chartWidth,
     chartHeight,
     pointsTransformTranslate,
-    circleColour = 'currentColor',
+    circleColours = ['currentColor'],
+    nVariables = 1e10,
     tooltipWidth = 100,
     displayMargin = 8,
     labelFontSize = '0.9rem',
@@ -43,7 +45,8 @@ export default function RadarTooltip({
                 chartHeight={chartHeight}
                 pointsTransformTranslate={pointsTransformTranslate}
                 setInteractiondata={setInteractiondata}
-                circleColour={circleColour}
+                circleColours={circleColours}
+                nVariables={nVariables}
                 valueFormatter={valueFormatter}
             />
             <Display
@@ -67,7 +70,8 @@ interface HighlightProps {
     setInteractiondata: React.Dispatch<
         React.SetStateAction<InteractionData | null>
     >
-    circleColour: string
+    circleColours: string[]
+    nVariables: number
     valueFormatter?: (value: number) => string
 }
 
@@ -78,7 +82,8 @@ function Highlight({
     chartHeight,
     pointsTransformTranslate,
     setInteractiondata,
-    circleColour,
+    circleColours,
+    nVariables,
     valueFormatter,
 }: HighlightProps) {
     const [highlightedPoint, setHighlightedPoint] = useState<number | null>(
@@ -98,8 +103,13 @@ function Highlight({
                         key={i}
                         cx={circlePosition.x}
                         cy={circlePosition.y}
-                        r={3}
-                        stroke={circleColour}
+                        r={5}
+                        stroke={
+                            circleColours[
+                                Math.floor(i / nVariables) %
+                                    circleColours.length
+                            ]
+                        }
                         strokeWidth={1}
                         fill="white"
                         style={{

@@ -67,11 +67,11 @@ export default function StockData({ ticker }: Props) {
     const ratingsChart =
         stockRatings !== undefined ? (
             <RadarChart
-                data={stockRatings}
+                data={[stockRatings]}
                 width={250}
                 widthPadding={150}
                 gridColour="rgb(var(--color-weak-light))"
-                valueColour="rgb(var(--color-primary))"
+                valueColours={['rgb(var(--color-primary))']}
                 gridNumLevels={6}
                 gridType="circle"
                 gridAxesLabels={{

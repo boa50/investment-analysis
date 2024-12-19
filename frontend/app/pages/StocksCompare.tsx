@@ -74,6 +74,30 @@ export default function StocksCompare() {
             </div>
         )
 
+    const radarChart =
+        stockRatings.length > 0 ? (
+            <RadarChart
+                data={stockRatings}
+                {...chartDimensions}
+                widthPadding={175}
+                gridColour="rgb(var(--color-weak-light))"
+                valueColours={[
+                    'rgb(var(--color-primary))',
+                    'rgb(var(--color-divider-strong-light))',
+                    'red',
+                ]}
+                gridNumLevels={6}
+                gridType="circle"
+                gridAxesLabels={{
+                    value: 'Valor',
+                    debt: 'Endividamento',
+                    growth: 'Crescimento',
+                    efficiency: 'Eficiência',
+                }}
+                showTooltips={true}
+            />
+        ) : null
+
     return (
         <div className="w-screen pb-4">
             <PageHeaderContainer>
@@ -81,11 +105,11 @@ export default function StocksCompare() {
                     Comparador de Ações
                 </h1>
             </PageHeaderContainer>
-            <div className="container space-y-4">
+            <div className="container space-y-1">
                 <div className="grid grid-cols-3">
                     <Select
                         items={selectStocks}
-                        placeholderText="Escolha um ativo"
+                        placeholderText="Inclua um ativo"
                         activeItems={activeStocks}
                         setActiveItems={setActiveStocks}
                     />
@@ -96,53 +120,32 @@ export default function StocksCompare() {
                         setActiveItems={setIncludedSegment}
                         isSingleChoice={true}
                     />
-                </div>
-                <div className="space-y-1">
-                    <div>
+                    <div className="flex justify-end align-bottom items-end">
                         <ToggleButton
                             isChecked={isChartShown}
                             setIsChecked={setIsChartShown}
                             label="Mostrar Gráfico"
                         />
                     </div>
-                    <div className="grid grid-cols-3 space-x-4">
-                        {isChartShown ? (
-                            <div className="flex flex-col h-80 w-full rounded-2xl bg-white shadow shadow-grey-950/5 space-y-4">
-                                <div
-                                    ref={onRefChange}
-                                    className="flex h-full w-full items-center justify-center"
-                                >
-                                    {stockRatings.length > 0 ? (
-                                        <RadarChart
-                                            data={stockRatings[0]}
-                                            {...chartDimensions}
-                                            widthPadding={175}
-                                            gridColour="rgb(var(--color-weak-light))"
-                                            valueColour="rgb(var(--color-primary))"
-                                            gridNumLevels={6}
-                                            gridType="circle"
-                                            gridAxesLabels={{
-                                                value: 'Valor',
-                                                debt: 'Endividamento',
-                                                growth: 'Crescimento',
-                                                efficiency: 'Eficiência',
-                                            }}
-                                            valueFormatter={(value) =>
-                                                (value / 20).toFixed(2)
-                                            }
-                                        />
-                                    ) : null}
-                                </div>
-                            </div>
-                        ) : null}
-                        <div
-                            className={`flex flex-col h-80 w-full p-6 rounded-2xl bg-white shadow shadow-grey-950/5 ${isChartShown ? 'col-span-2' : 'col-span-3'}`}
-                        >
-                            <div className="flex h-full w-full items-center justify-center">
-                                Table with kpis
-                            </div>
+                </div>
+                <div className="grid grid-cols-3 gap-x-4">
+                    <div
+                        className={`flex flex-col h-80 w-full p-6 rounded-2xl bg-white shadow shadow-grey-950/5 ${isChartShown ? 'col-span-2' : 'col-span-3'}`}
+                    >
+                        <div className="flex h-full w-full items-center justify-center">
+                            Table with kpis
                         </div>
                     </div>
+                    {isChartShown ? (
+                        <div className="flex flex-col h-80 w-full rounded-2xl bg-white shadow shadow-grey-950/5">
+                            <div
+                                ref={onRefChange}
+                                className="flex h-full w-full items-center justify-center"
+                            >
+                                {radarChart}
+                            </div>
+                        </div>
+                    ) : null}
                 </div>
             </div>
         </div>

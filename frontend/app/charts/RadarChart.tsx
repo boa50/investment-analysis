@@ -3,6 +3,7 @@ import BaseChart from './BaseChart'
 import RadarGrid from './RadarGrid'
 import RadarTooltip from './tooltips/RadarTooltip'
 
+import type { JSX } from 'react'
 import type { ScaleLinear } from 'd3'
 import type {
     RadarGridType,
@@ -14,16 +15,17 @@ interface Props {
     width: number
     height?: number
     widthPadding?: number
-    data: RadarDatapoint
+    data: RadarDatapoint[]
     minMaxValues?: RadarVariableMinMaxValues | undefined
     margin?: number
     innerRadius?: number
     valueFormatter?: (value: number) => string
-    valueColour?: string
+    valueColours?: string[]
     gridColour?: string
     gridType?: RadarGridType
     gridNumLevels?: number
     gridAxesLabels?: { [name: string]: string }
+    showTooltips?: boolean
 }
 
 export default function RadarChart({
@@ -35,15 +37,16 @@ export default function RadarChart({
     margin = 24,
     innerRadius = 0,
     valueFormatter,
-    valueColour = 'black',
+    valueColours = ['black'],
     gridColour = 'grey',
     gridType = 'straight',
     gridNumLevels = 4,
     gridAxesLabels = {},
+    showTooltips = true,
 }: Props) {
     const side = Math.min(width, height)
     const outerRadius = side / 2 - margin
-    const variableNames = Object.keys(data)
+    const variableNames = Object.keys(data[0])
 
     let minMaxValuesCleaned: RadarVariableMinMaxValues = {}
     if (minMaxValues === undefined) {
@@ -73,16 +76,48 @@ export default function RadarChart({
         return { name: variable, max: minMaxValuesCleaned[variable][1] }
     })
 
+    const allDataCoordinates: [number, number][] = []
+    const allDataValues: number[] = []
+    const paths: JSX.Element[] = []
+
+    data.forEach((dataPoint, i) => {
+        const dataCoordinates = axisConfig.map((axis) => {
+            const radiusScale = radiusScales[axis.name]
+            const angle = angleScale(axis.name)
+            const radius = radiusScale(dataPoint[axis.name])
+
+            allDataValues.push(radius)
+
+            const coordinate: [number, number] = [angle ?? 0, radius]
+            return coordinate
+        })
+        allDataCoordinates.push(...dataCoordinates)
+
+        dataCoordinates.push(dataCoordinates[0])
+
+        const linePath = d3.lineRadial()(dataCoordinates)
+        const lineColour = valueColours[i % valueColours.length]
+
+        paths.push(
+            <path
+                key={i}
+                d={linePath ?? ''}
+                stroke={lineColour}
+                strokeWidth={1.5}
+                fill={lineColour}
+                fillOpacity={0.25}
+            />
+        )
+    })
+
     const dataCoordinates = axisConfig.map((axis) => {
         const radiusScale = radiusScales[axis.name]
         const angle = angleScale(axis.name)
-        const radius = radiusScale(data[axis.name])
+        const radius = radiusScale(data[0][axis.name])
         const coordinate: [number, number] = [angle ?? 0, radius]
         return coordinate
     })
     dataCoordinates.push(dataCoordinates[0])
-
-    const linePath = d3.lineRadial()(dataCoordinates)
 
     const pointsTransformTranslate =
         'translate(' + (side + widthPadding) / 2 + ',' + side / 2 + ')'
@@ -100,24 +135,21 @@ export default function RadarChart({
                     nLevels={gridNumLevels}
                     axesLabels={gridAxesLabels}
                 />
-                <path
-                    d={linePath ?? ''}
-                    stroke={valueColour}
-                    strokeWidth={1.5}
-                    fill={valueColour}
-                    fillOpacity={0.25}
-                />
+                {paths}
             </g>
-            <RadarTooltip
-                dataCoordinates={dataCoordinates}
-                dataValues={Object.values(data)}
-                chartWidth={side + widthPadding}
-                chartHeight={side}
-                circleColour={valueColour}
-                pointsTransformTranslate={pointsTransformTranslate}
-                valueFormatter={valueFormatter}
-                contentFontSize="0.9rem"
-            />
+            {showTooltips ? (
+                <RadarTooltip
+                    dataCoordinates={allDataCoordinates}
+                    dataValues={allDataValues}
+                    chartWidth={side + widthPadding}
+                    chartHeight={side}
+                    circleColours={valueColours}
+                    nVariables={variableNames.length}
+                    pointsTransformTranslate={pointsTransformTranslate}
+                    valueFormatter={valueFormatter}
+                    contentFontSize="0.9rem"
+                />
+            ) : null}
         </BaseChart>
     )
 }
