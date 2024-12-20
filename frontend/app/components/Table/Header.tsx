@@ -19,12 +19,21 @@ const TableHeader = ({ table, isTickerSticky }: TableHeaderProps) => {
         <thead className="sticky top-0 z-10">
             {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => (
+                    {headerGroup.headers.map((header, i) => (
                         <th
                             key={header.id}
                             colSpan={header.colSpan}
                             className={`px-4 py-3.5 text-xs font-normal text-appTextWeak bg-gray-200 
-                                ${!isHeaderGroup(header) ? (isTextCol(header) ? 'text-left' : 'text-right') : ''} 
+                                ${
+                                    isHeaderGroup(header)
+                                        ? i > 0 &&
+                                          i < headerGroup.headers.length - 1
+                                            ? 'border-r-2 border-gray-300'
+                                            : ''
+                                        : isTextCol(header)
+                                          ? 'text-left'
+                                          : 'text-right'
+                                } 
                                 ${getColumnStickyClass(isTickerSticky, header.id, 'header')}`}
                             style={getColumnStickyStyle(
                                 isTickerSticky,

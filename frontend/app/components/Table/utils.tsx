@@ -159,4 +159,4 @@ export const isTextCol = (
 ): boolean => !isKpi(cell.column.id)
 export const isHeaderGroup = (
     header: Header<Stock | Company, unknown>
-): boolean => header.subHeaders !== undefined
+): boolean => header.getLeafHeaders().length > 1
