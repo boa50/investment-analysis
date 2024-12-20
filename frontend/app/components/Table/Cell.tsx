@@ -1,6 +1,11 @@
 import { flexRender } from '@tanstack/react-table'
 import { Link } from '@remix-run/react'
-import { isLowerVisibilityCol, isTextCol, getColumnStickyClass } from './utils'
+import {
+    isLowerVisibilityCol,
+    isTextCol,
+    getColumnStickyClass,
+    getColumnStickyStyle,
+} from './utils'
 
 import type { Cell } from '@tanstack/react-table'
 import type { Column } from './types'
@@ -20,18 +25,20 @@ const TableCell = ({
     isTickerSticky,
 }: TableCellProps) => {
     const isCellLink = isTickerLink && cell.column.id === 'ticker'
-    const className =
-        'px-4 py-3 text-sm font-medium group-hover:bg-gray-100' +
-        (isLowerVisibilityCol(cell, lowVisibilityCols)
-            ? ' text-appTextWeak'
-            : ' text-appTextNormal') +
-        (isCellLink ? ' hover:text-appAccent' : '') +
-        (isTextCol(cell) ? ' text-left' : ' text-right')
+    const className = `px-4 py-3 text-sm font-medium group-hover:bg-gray-100 
+        ${
+            isLowerVisibilityCol(cell, lowVisibilityCols)
+                ? 'text-appTextWeak'
+                : 'text-appTextNormal'
+        } 
+        ${isCellLink ? ' hover:text-appAccent' : ''} 
+        ${isTextCol(cell) ? ' text-left' : ' text-right'}`
     const cellText = flexRender(cell.column.columnDef.cell, cell.getContext())
 
     return (
         <td
             className={`${className} ${getColumnStickyClass(isTickerSticky, cell.column.id, 'cell')}`}
+            style={getColumnStickyStyle(isTickerSticky, cell.column.id)}
         >
             {isCellLink ? (
                 <Link to={'/stock/' + cell.getValue()}>{cellText}</Link>

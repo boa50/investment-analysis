@@ -1,5 +1,10 @@
 import { flexRender } from '@tanstack/react-table'
-import { isHeaderGroup, isTextCol, getColumnStickyClass } from './utils'
+import {
+    isHeaderGroup,
+    isTextCol,
+    getColumnStickyClass,
+    getColumnStickyStyle,
+} from './utils'
 
 import type { Table } from '@tanstack/react-table'
 import type { Stock, Company } from '../../types'
@@ -21,6 +26,10 @@ const TableHeader = ({ table, isTickerSticky }: TableHeaderProps) => {
                             className={`px-4 py-3.5 text-xs font-normal text-appTextWeak bg-gray-200 
                                 ${!isHeaderGroup(header) ? (isTextCol(header) ? 'text-left' : 'text-right') : ''} 
                                 ${getColumnStickyClass(isTickerSticky, header.id, 'header')}`}
+                            style={getColumnStickyStyle(
+                                isTickerSticky,
+                                header.id
+                            )}
                         >
                             {header.isPlaceholder
                                 ? null

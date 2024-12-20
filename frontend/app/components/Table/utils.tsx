@@ -122,13 +122,29 @@ export const getColumnStickyClass = (
         isTickerSticky &&
         (columnId === 'ticker' || columnId.includes('nonKpiHeaderGroup'))
     ) {
+        const defaultClass =
+            'sticky z-20 left-0 shadow-[1px_0px_2px_0px_rgba(0,0,0,0.1)]'
         if (type === 'header') {
-            return 'sticky z-20 left-0'
+            return defaultClass
         } else {
-            return 'sticky z-20 left-0 bg-white'
+            return defaultClass + ' bg-white'
         }
     } else {
         return 'relative'
+    }
+}
+
+export const getColumnStickyStyle = (
+    isTickerSticky: boolean,
+    columnId: string
+) => {
+    if (
+        isTickerSticky &&
+        (columnId === 'ticker' || columnId.includes('nonKpiHeaderGroup'))
+    ) {
+        return { clipPath: 'inset(0 -4px 0 0)' }
+    } else {
+        return {}
     }
 }
 
