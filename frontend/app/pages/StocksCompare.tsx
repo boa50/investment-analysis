@@ -152,15 +152,35 @@ export default function StocksCompare() {
                 </div>
                 <div className="grid grid-cols-3 gap-x-4">
                     <div
-                        className={`relative h-80 w-full overflow-auto rounded-2xl bg-white shadow shadow-grey-950/5 ${isChartShown ? 'col-span-2' : 'col-span-3'}`}
+                        className={`relative h-96 border-t border-gray-300 w-full overflow-auto rounded-2xl bg-white shadow shadow-grey-950/5 ${isChartShown ? 'col-span-2' : 'col-span-3'}`}
                     >
                         <Table
                             data={companiesData}
-                            columns={['ticker', 'marketCap', 'pl', 'netMargin']}
+                            columns={[
+                                'ticker',
+                                'pl',
+                                'pvp',
+                                'dividendYield',
+                                'dividendPayout',
+                                'marketCap',
+                                'netDebtByEbit',
+                                'netDebtByEquity',
+                                'netMargin',
+                                'roe',
+                                'cagr5YearsProfit',
+                                'cagr5YearsRevenue',
+                                'equity',
+                                'netRevenue',
+                                'profit',
+                                'ebit',
+                                'debt',
+                                'netDebt',
+                            ]}
+                            isTickerSticky={true}
                         />
                     </div>
                     {isChartShown ? (
-                        <div className="flex flex-col h-80 w-full rounded-2xl bg-white shadow shadow-grey-950/5">
+                        <div className="flex flex-col h-96 w-full rounded-2xl bg-white shadow shadow-grey-950/5">
                             <div
                                 ref={onRefChange}
                                 className="flex h-full w-full items-center justify-center"

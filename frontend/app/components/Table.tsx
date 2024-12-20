@@ -52,6 +52,7 @@ interface Props {
     columns: Column[]
     isTickerLink?: boolean
     lowVisibilityCols?: Column[]
+    isTickerSticky?: boolean
 }
 
 export default function Table({
@@ -59,6 +60,7 @@ export default function Table({
     columns,
     isTickerLink = false,
     lowVisibilityCols = [],
+    isTickerSticky = false,
 }: Props) {
     const tableColumns = getColumns(columns)
 
@@ -71,13 +73,19 @@ export default function Table({
     const cssDivide = 'divide-y divide-appRowDivider'
 
     return (
-        <table className={cssDivide + ' w-full'}>
-            <TableHeader table={table} />
+        <table
+            className={cssDivide}
+            style={{
+                width: table.getTotalSize(),
+            }}
+        >
+            <TableHeader table={table} isTickerSticky={isTickerSticky} />
             <TableBody
                 table={table}
                 cssDivide={cssDivide}
                 isTickerLink={isTickerLink}
                 lowVisibilityCols={lowVisibilityCols}
+                isTickerSticky={isTickerSticky}
             />
         </table>
     )
@@ -85,22 +93,20 @@ export default function Table({
 
 interface TableHeaderProps {
     table: Table<Stock | Company>
+    isTickerSticky: boolean
 }
 
-function TableHeader({ table }: TableHeaderProps) {
+function TableHeader({ table, isTickerSticky }: TableHeaderProps) {
     return (
-        <thead className="bg-gray-200 sticky top-0 z-10">
+        <thead className="sticky top-0 z-10">
             {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
                     {headerGroup.headers.map((header) => (
                         <th
                             key={header.id}
-                            className={
-                                'px-4 py-3.5 text-xs font-normal text-appTextWeak' +
-                                (isTextCol(header)
-                                    ? ' text-left'
-                                    : ' text-right')
-                            }
+                            className={`px-4 py-3.5 text-xs font-normal text-appTextWeak bg-gray-200 
+                                ${isTextCol(header) ? 'text-left' : 'text-right'} 
+                                ${getColumnStickyClass(isTickerSticky, header.id, 'header')}`}
                         >
                             {header.isPlaceholder
                                 ? null
@@ -120,12 +126,18 @@ interface TableCellProps {
     cell: Cell<Stock, unknown>
     isTickerLink: boolean
     lowVisibilityCols: Column[]
+    isTickerSticky: boolean
 }
 
-function TableCell({ cell, isTickerLink, lowVisibilityCols }: TableCellProps) {
+function TableCell({
+    cell,
+    isTickerLink,
+    lowVisibilityCols,
+    isTickerSticky,
+}: TableCellProps) {
     const isCellLink = isTickerLink && cell.column.id === 'ticker'
     const className =
-        'px-4 py-3 text-sm font-medium' +
+        'px-4 py-3 text-sm font-medium group-hover:bg-gray-100' +
         (isLowerVisibilityCol(cell, lowVisibilityCols)
             ? ' text-appTextWeak'
             : ' text-appTextNormal') +
@@ -134,7 +146,9 @@ function TableCell({ cell, isTickerLink, lowVisibilityCols }: TableCellProps) {
     const cellText = flexRender(cell.column.columnDef.cell, cell.getContext())
 
     return (
-        <td className={className}>
+        <td
+            className={`${className} ${getColumnStickyClass(isTickerSticky, cell.column.id, 'cell')}`}
+        >
             {isCellLink ? (
                 <Link to={'/stock/' + cell.getValue()}>{cellText}</Link>
             ) : (
@@ -149,6 +163,7 @@ interface TableBodyProps {
     cssDivide: string
     isTickerLink: boolean
     lowVisibilityCols: Column[]
+    isTickerSticky: boolean
 }
 
 function TableBody({
@@ -156,17 +171,19 @@ function TableBody({
     cssDivide,
     isTickerLink,
     lowVisibilityCols,
+    isTickerSticky,
 }: TableBodyProps) {
     return (
         <tbody className={cssDivide + ' bg-white overflow-y-scroll'}>
             {table.getRowModel()?.rows.map((row) => (
-                <tr key={row.id} className="hover:bg-gray-100">
+                <tr key={row.id} className="group">
                     {row.getVisibleCells().map((cell) => (
                         <TableCell
                             key={cell.id}
                             cell={cell}
                             isTickerLink={isTickerLink}
                             lowVisibilityCols={lowVisibilityCols}
+                            isTickerSticky={isTickerSticky}
                         />
                     ))}
                 </tr>
@@ -185,5 +202,21 @@ function getTextColumnMapping(column: string) {
             return 'Segmento'
         default:
             return column
+    }
+}
+
+function getColumnStickyClass(
+    isTickerSticky: boolean,
+    columnId: string,
+    type: 'header' | 'cell'
+) {
+    if (isTickerSticky && columnId === 'ticker') {
+        if (type === 'header') {
+            return 'sticky z-20 left-0'
+        } else {
+            return 'sticky z-20 left-0 bg-white'
+        }
+    } else {
+        return 'relative'
     }
 }
