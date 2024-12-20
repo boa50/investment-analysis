@@ -3,6 +3,8 @@ import { getStocks } from '../api/stocks'
 import PageHeaderContainer from '../components/PageHeaderContainer'
 import Table from '../components/Table'
 
+import { Kpi } from '../types'
+
 export default function StocksTable() {
     const query = useQuery({ queryKey: ['stocks'], queryFn: getStocks })
 
@@ -33,9 +35,9 @@ export default function StocksTable() {
                             'ticker',
                             'name',
                             'segment',
-                            'marketCap',
-                            'pl',
-                            'netMargin',
+                            Kpi.MarketCap,
+                            Kpi.Pl,
+                            Kpi.NetMargin,
                         ]}
                         isTickerLink={true}
                         lowVisibilityCols={['segment']}

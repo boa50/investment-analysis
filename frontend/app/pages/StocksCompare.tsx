@@ -10,7 +10,9 @@ import { Select, ToggleButton } from '../components/ui'
 import RadarChart from '../charts/RadarChart'
 import { useDimensions } from '../charts/utils'
 import Table from '../components/Table'
+import { getGroupTitle } from '../data/group'
 
+import { Kpi, KpiGroup } from '../types'
 import type { Company } from '../types'
 
 export default function StocksCompare() {
@@ -111,10 +113,10 @@ export default function StocksCompare() {
             gridNumLevels={6}
             gridType="circle"
             gridAxesLabels={{
-                value: 'Valor',
-                debt: 'Endividamento',
-                growth: 'Crescimento',
-                efficiency: 'Eficiência',
+                value: getGroupTitle(KpiGroup.Value),
+                debt: getGroupTitle(KpiGroup.Debt),
+                growth: getGroupTitle(KpiGroup.Growth),
+                efficiency: getGroupTitle(KpiGroup.Efficiency),
             }}
             showTooltips={false}
         />
@@ -158,25 +160,26 @@ export default function StocksCompare() {
                             data={companiesData}
                             columns={[
                                 'ticker',
-                                'pl',
-                                'pvp',
-                                'dividendYield',
-                                'dividendPayout',
-                                'marketCap',
-                                'netDebtByEbit',
-                                'netDebtByEquity',
-                                'netMargin',
-                                'roe',
-                                'cagr5YearsProfit',
-                                'cagr5YearsRevenue',
-                                'equity',
-                                'netRevenue',
-                                'profit',
-                                'ebit',
-                                'debt',
-                                'netDebt',
+                                Kpi.Pl,
+                                Kpi.Pvp,
+                                Kpi.DividendYield,
+                                Kpi.DividendPayout,
+                                Kpi.MarketCap,
+                                Kpi.NetDebtByEbit,
+                                Kpi.NetDebtByEquity,
+                                Kpi.NetMargin,
+                                Kpi.Roe,
+                                Kpi.Cagr5YearsProfit,
+                                Kpi.Cagr5YearsRevenue,
+                                Kpi.Equity,
+                                Kpi.NetRevenue,
+                                Kpi.Profit,
+                                Kpi.Ebit,
+                                Kpi.Debt,
+                                Kpi.NetDebt,
                             ]}
                             isTickerSticky={true}
+                            isHeaderGrouped={true}
                         />
                     </div>
                     {isChartShown ? (

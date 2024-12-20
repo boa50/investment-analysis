@@ -1,6 +1,6 @@
 import { formatNum } from '../components/utils'
 
-import type { Kpi } from '../types'
+import { Kpi } from '../types'
 
 interface ReturnProps {
     title: string
@@ -12,7 +12,7 @@ interface ReturnProps {
 
 export const getKpiInfo = (kpi: Kpi): ReturnProps => {
     switch (kpi) {
-        case 'marketCap':
+        case Kpi.MarketCap:
             return {
                 title: 'Valor de Mercado',
                 valueFormat: (value) => formatNum(value, 'currency'),
@@ -21,12 +21,12 @@ export const getKpiInfo = (kpi: Kpi): ReturnProps => {
                 calculation:
                     'Preço da Ação x Número Total de Ações em Circulação',
             }
-        case 'price':
+        case Kpi.Price:
             return {
                 title: 'Preço',
                 valueFormat: (value) => formatNum(value, 'currencyDecimal'),
             }
-        case 'bazinPrice':
+        case Kpi.BazinPrice:
             return {
                 title: 'Preço Bazin',
                 valueFormat: (value) => formatNum(value, 'currencyDecimal'),
@@ -35,7 +35,7 @@ export const getKpiInfo = (kpi: Kpi): ReturnProps => {
                 calculation:
                     '(Dividendos dos últimos 3 anos / 3 anos) / 6% (Dividend Yield desejado)',
             }
-        case 'pl':
+        case Kpi.Pl:
             return {
                 title: 'P/L',
                 valueFormat: (value) => formatNum(value, 'decimal'),
@@ -44,7 +44,7 @@ export const getKpiInfo = (kpi: Kpi): ReturnProps => {
                     'Indicador utilizado para avaliar se uma ação está cara ou barata em relação ao lucro que a empresa gera. Representa o número de anos que levaria para recuperar o investimento em uma ação, assumindo que o lucro por ação permaneça constante e seja distribuído integralmente como dividendos',
                 calculation: 'Preço da Ação / Lucro por Ação (LPA)',
             }
-        case 'pvp':
+        case Kpi.Pvp:
             return {
                 title: 'P/VP',
                 valueFormat: (value) => formatNum(value, 'decimal'),
@@ -53,7 +53,7 @@ export const getKpiInfo = (kpi: Kpi): ReturnProps => {
                     'Indicador utilizado para avaliar se uma ação está cara ou barata em relação ao valor contábil da empresa. Ele relaciona o preço de uma ação com o seu valor patrimonial por ação (VP), fornecendo uma métrica de avaliação relativa',
                 calculation: 'Preço da Ação / Valor Patrimonial por Ação (VPA)',
             }
-        case 'dividendYield':
+        case Kpi.DividendYield:
             return {
                 title: 'Dividend Yield',
                 valueFormat: (value) => formatNum(value, 'percent'),
@@ -62,7 +62,7 @@ export const getKpiInfo = (kpi: Kpi): ReturnProps => {
                 calculation:
                     '(Dividendos Anuais por Ação / Preço Atual da Ação) x 100',
             }
-        case 'dividendPayout':
+        case Kpi.DividendPayout:
             return {
                 title: 'Dividend Payout',
                 valueFormat: (value) => formatNum(value, 'percent'),
@@ -70,7 +70,7 @@ export const getKpiInfo = (kpi: Kpi): ReturnProps => {
                     'Métrica que indica a proporção do lucro líquido de uma empresa que é distribuída aos acionistas na forma de dividendos. Ele reflete a política de dividendos da empresa e ajuda investidores a avaliar o quanto do lucro gerado está sendo compartilhado com os acionistas e quanto está sendo reinvestido na própria empresa',
                 calculation: '(Dividendos por Ação / Lucro por Ação) x 100',
             }
-        case 'equity':
+        case Kpi.Equity:
             return {
                 title: 'Patrimônio',
                 valueFormat: (value) => formatNum(value, 'currency'),
@@ -78,14 +78,14 @@ export const getKpiInfo = (kpi: Kpi): ReturnProps => {
                     'Representa a diferença entre os ativos e os passivos da empresa. Ele reflete o valor contábil que pertence aos acionistas após o pagamento de todas as obrigações. É um indicador importante para avaliar a saúde financeira e o valor intrínseco de uma empresa',
                 calculation: 'Ativos Totais - Passivos Totais',
             }
-        case 'netRevenue':
+        case Kpi.NetRevenue:
             return {
                 title: 'Receitas',
                 valueFormat: (value) => formatNum(value, 'currency'),
                 description:
                     'Representa o valor total obtido com as vendas de seus produtos ou serviços em um determinado período, geralmente um trimestre ou ano. Esse é um dos principais indicadores financeiros que mostram o desempenho da empresa, sendo uma métrica básica para avaliar sua capacidade de gerar dinheiro com suas operações principais',
             }
-        case 'profit':
+        case Kpi.Profit:
             return {
                 title: 'Lucro Líquido',
                 valueFormat: (value) => formatNum(value, 'currency'),
@@ -94,7 +94,7 @@ export const getKpiInfo = (kpi: Kpi): ReturnProps => {
                 calculation:
                     'Receita Total - Custos de Venda - Despesas Operacionais - Impostos',
             }
-        case 'ebit':
+        case Kpi.Ebit:
             return {
                 title: 'EBIT',
                 valueFormat: (value) => formatNum(value, 'currency'),
@@ -104,7 +104,7 @@ export const getKpiInfo = (kpi: Kpi): ReturnProps => {
                 calculation:
                     'Receita Total - Custos de Venda - Despesas Operacionais',
             }
-        case 'debt':
+        case Kpi.Debt:
             return {
                 title: 'Dívida Bruta',
                 valueFormat: (value) => formatNum(value, 'currency'),
@@ -113,7 +113,7 @@ export const getKpiInfo = (kpi: Kpi): ReturnProps => {
                 calculation:
                     'Passivos Financeiros de Curto Prazo + Passivos Financeiros de Longo Prazo',
             }
-        case 'netDebt':
+        case Kpi.NetDebt:
             return {
                 title: 'Dívida Líquida',
                 valueFormat: (value) => formatNum(value, 'currency'),
@@ -121,7 +121,7 @@ export const getKpiInfo = (kpi: Kpi): ReturnProps => {
                     'representa o quanto a empresa deve, considerando suas obrigações financeiras e o caixa disponível',
                 calculation: 'Dívida Bruta - Caixa e Equivalentes de Caixa',
             }
-        case 'netMargin':
+        case Kpi.NetMargin:
             return {
                 title: 'Margem Líquida',
                 valueFormat: (value) => formatNum(value, 'percent'),
@@ -129,7 +129,7 @@ export const getKpiInfo = (kpi: Kpi): ReturnProps => {
                     'Mede a eficiência de uma empresa em transformar sua receita total em lucro líquido. Em outras palavras, mostra qual é a porcentagem do faturamento que sobra como lucro após a dedução de todos os custos, despesas, impostos e outros encargos',
                 calculation: '(Lucro Líquido / Receita Líquida) x 100',
             }
-        case 'roe':
+        case Kpi.Roe:
             return {
                 title: 'RoE',
                 valueFormat: (value) => formatNum(value, 'percent'),
@@ -138,14 +138,14 @@ export const getKpiInfo = (kpi: Kpi): ReturnProps => {
                     'É um indicador utilizado para medir a rentabilidade de uma empresa em relação ao capital investido pelos seus acionistas. Ele mostra o quanto a empresa está gerando de lucro para cada real investido pelos acionistas',
                 calculation: '(Lucro Líquido / Patrimônio Líquido) x 100',
             }
-        case 'netDebtByEbit':
+        case Kpi.NetDebtByEbit:
             return {
                 title: 'Dívida Líquida / EBIT',
                 valueFormat: (value) => formatNum(value, 'decimal'),
                 description:
                     'Métrica usada para avaliar a capacidade de uma empresa de pagar suas dívidas com os lucros operacionais gerados antes de impostos e juros. Ele é muito usado por analistas e investidores para medir o risco financeiro de uma empresa e sua alavancagem',
             }
-        case 'netDebtByEquity':
+        case Kpi.NetDebtByEquity:
             return {
                 title: 'Dívida Líquida / PL',
                 valueFormat: (value) => formatNum(value, 'decimal'),
@@ -153,7 +153,7 @@ export const getKpiInfo = (kpi: Kpi): ReturnProps => {
                 description:
                     'Mede o nível de endividamento de uma empresa em relação ao seu patrimônio líquido, indicando o grau de alavancagem financeira da companhia. É um importante parâmetro de análise para investidores, pois permite avaliar a saúde financeira da empresa e sua capacidade de sustentar dívidas com os recursos próprios',
             }
-        case 'cagr5YearsProfit':
+        case Kpi.Cagr5YearsProfit:
             return {
                 title: 'CAGR Lucros - 5 anos',
                 valueFormat: (value) => formatNum(value, 'percent'),
@@ -163,7 +163,7 @@ export const getKpiInfo = (kpi: Kpi): ReturnProps => {
                 calculation:
                     '(Lucro Final / Lucro Inicial) ^ (1 / número_de_anos) - 1',
             }
-        case 'cagr5YearsRevenue':
+        case Kpi.Cagr5YearsRevenue:
             return {
                 title: 'CAGR Receitas - 5 anos',
                 valueFormat: (value) => formatNum(value, 'percent'),

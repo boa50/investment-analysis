@@ -6,8 +6,10 @@ import KpiCard from '../components/KpiCard'
 import DataContainer from '../components/DataContainer'
 import ChartContainer from '../components/ChartContainer'
 import RadarChart from '../charts/RadarChart'
+import { getKpisByGroup, getGroupTitle } from '../data/group'
 
-import type { Kpi, Company } from '../types'
+import { Kpi, KpiGroup as KpiGroupType } from '../types'
+import type { Company } from '../types'
 
 interface Props {
     ticker: string
@@ -15,7 +17,7 @@ interface Props {
 
 export default function StockData({ ticker }: Props) {
     const [isChartContainerOpened, setIsChartContainerOpened] = useState(false)
-    const [chartKpi, setChartKpi] = useState<Kpi>('price')
+    const [chartKpi, setChartKpi] = useState<Kpi>(Kpi.Price)
 
     const openChartContainer = (kpi: Kpi) => {
         setIsChartContainerOpened(true)
@@ -75,10 +77,10 @@ export default function StockData({ ticker }: Props) {
                 gridNumLevels={6}
                 gridType="circle"
                 gridAxesLabels={{
-                    value: 'Valor',
-                    debt: 'Endividamento',
-                    growth: 'Crescimento',
-                    efficiency: 'Eficiência',
+                    value: getGroupTitle(KpiGroupType.Value),
+                    debt: getGroupTitle(KpiGroupType.Debt),
+                    growth: getGroupTitle(KpiGroupType.Growth),
+                    efficiency: getGroupTitle(KpiGroupType.Efficiency),
                 }}
                 valueFormatter={(value) => (value / 20).toFixed(2)}
             />
@@ -104,32 +106,25 @@ export default function StockData({ ticker }: Props) {
                     <div className="mb-0 space-y-6">
                         <KpiGroup
                             groupName="Valor"
-                            kpis={[
-                                'pl',
-                                'pvp',
-                                'dividendYield',
-                                'dividendPayout',
-                                'marketCap',
-                                'bazinPrice',
-                            ]}
+                            kpis={getKpisByGroup(KpiGroupType.Value)}
                             tickerData={tickerData}
                             openChartContainer={openChartContainer}
                         />
                         <KpiGroup
                             groupName="Endividamento"
-                            kpis={['netDebtByEbit', 'netDebtByEquity']}
+                            kpis={getKpisByGroup(KpiGroupType.Debt)}
                             tickerData={tickerData}
                             openChartContainer={openChartContainer}
                         />
                         <KpiGroup
                             groupName="Eficiência"
-                            kpis={['netMargin', 'roe']}
+                            kpis={getKpisByGroup(KpiGroupType.Efficiency)}
                             tickerData={tickerData}
                             openChartContainer={openChartContainer}
                         />
                         <KpiGroup
                             groupName="Crescimento"
-                            kpis={['cagr5YearsProfit', 'cagr5YearsRevenue']}
+                            kpis={getKpisByGroup(KpiGroupType.Growth)}
                             tickerData={tickerData}
                             openChartContainer={openChartContainer}
                         />
@@ -139,14 +134,7 @@ export default function StockData({ ticker }: Props) {
                 <DataContainer title="Resultados" childrenHeight="10">
                     <div className="mb-0 space-y-6">
                         <KpiGroup
-                            kpis={[
-                                'equity',
-                                'netRevenue',
-                                'profit',
-                                'ebit',
-                                'debt',
-                                'netDebt',
-                            ]}
+                            kpis={getKpisByGroup(KpiGroupType.Results)}
                             tickerData={tickerData}
                             openChartContainer={openChartContainer}
                         />

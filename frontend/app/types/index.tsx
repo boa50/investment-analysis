@@ -1,23 +1,32 @@
-export type Kpi =
-    | 'marketCap'
-    | 'price'
-    | 'bazinPrice'
-    | 'pl'
-    | 'pvp'
-    | 'dividendYield'
-    | 'dividendPayout'
-    | 'equity'
-    | 'netRevenue'
-    | 'profit'
-    | 'ebit'
-    | 'debt'
-    | 'netDebt'
-    | 'netMargin'
-    | 'roe'
-    | 'netDebtByEbit'
-    | 'netDebtByEquity'
-    | 'cagr5YearsProfit'
-    | 'cagr5YearsRevenue'
+export enum Kpi {
+    MarketCap = 'marketCap',
+    Price = 'price',
+    BazinPrice = 'bazinPrice',
+    Pl = 'pl',
+    Pvp = 'pvp',
+    DividendYield = 'dividendYield',
+    DividendPayout = 'dividendPayout',
+    Equity = 'equity',
+    NetRevenue = 'netRevenue',
+    Profit = 'profit',
+    Ebit = 'ebit',
+    Debt = 'debt',
+    NetDebt = 'netDebt',
+    NetMargin = 'netMargin',
+    Roe = 'roe',
+    NetDebtByEbit = 'netDebtByEbit',
+    NetDebtByEquity = 'netDebtByEquity',
+    Cagr5YearsProfit = 'cagr5YearsProfit',
+    Cagr5YearsRevenue = 'cagr5YearsRevenue',
+}
+
+export enum KpiGroup {
+    Value = 'value',
+    Debt = 'debt',
+    Efficiency = 'efficiency',
+    Growth = 'growth',
+    Results = 'results',
+}
 
 export type CompanySearch = {
     ticker: string

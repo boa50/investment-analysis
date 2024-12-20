@@ -6,46 +6,13 @@ import {
 } from '@tanstack/react-table'
 import { Link } from '@remix-run/react'
 import { getKpiInfo } from '../data/kpi'
+import { getKpisByGroup, getGroupByKpi, getGroupTitle } from '../data/group'
 
-import type { Table, Cell, Header } from '@tanstack/react-table'
-import type { Stock, Company, Kpi } from '../types'
+import { Kpi } from '../types'
+import type { Table, Cell, Header, ColumnHelper } from '@tanstack/react-table'
+import type { Stock, Company, KpiGroup } from '../types'
 
 type Column = 'ticker' | 'name' | 'segment' | Kpi
-
-const isLowerVisibilityCol = (
-    cell: Cell<Stock | Company, unknown>,
-    lowVisibilityCols: string[]
-): boolean => lowVisibilityCols.includes(cell.column.id)
-const isKpi = (columnName: string): columnName is Kpi =>
-    !['ticker', 'name', 'segment'].includes(columnName)
-const isTextCol = (
-    cell: Cell<Stock | Company, unknown> | Header<Stock | Company, unknown>
-): boolean => !isKpi(cell.column.id)
-
-const getColumns = (columnsNames: Column[]) => {
-    const columnHelper = createColumnHelper<Stock | Company>()
-
-    const columns = columnsNames.map((columnName) => {
-        if (isKpi(columnName)) {
-            return columnHelper.accessor(columnName, {
-                header: getKpiInfo(columnName).title,
-                cell: (info) =>
-                    getKpiInfo(columnName).valueFormat(
-                        info.getValue() as number | undefined
-                    ),
-                footer: (info) => info.column.id,
-            })
-        } else {
-            return columnHelper.accessor(columnName, {
-                header: getTextColumnMapping(columnName),
-                cell: (info) => info.getValue(),
-                footer: (info) => info.column.id,
-            })
-        }
-    })
-
-    return columns
-}
 
 interface Props {
     data: Stock[] | Company[]
@@ -53,6 +20,7 @@ interface Props {
     isTickerLink?: boolean
     lowVisibilityCols?: Column[]
     isTickerSticky?: boolean
+    isHeaderGrouped?: boolean
 }
 
 export default function Table({
@@ -61,8 +29,9 @@ export default function Table({
     isTickerLink = false,
     lowVisibilityCols = [],
     isTickerSticky = false,
+    isHeaderGrouped = false,
 }: Props) {
-    const tableColumns = getColumns(columns)
+    const tableColumns = getColumns(columns, isHeaderGrouped)
 
     const table = useReactTable({
         data,
@@ -96,7 +65,7 @@ interface TableHeaderProps {
     isTickerSticky: boolean
 }
 
-function TableHeader({ table, isTickerSticky }: TableHeaderProps) {
+const TableHeader = ({ table, isTickerSticky }: TableHeaderProps) => {
     return (
         <thead className="sticky top-0 z-10">
             {table.getHeaderGroups().map((headerGroup) => (
@@ -104,8 +73,9 @@ function TableHeader({ table, isTickerSticky }: TableHeaderProps) {
                     {headerGroup.headers.map((header) => (
                         <th
                             key={header.id}
+                            colSpan={header.colSpan}
                             className={`px-4 py-3.5 text-xs font-normal text-appTextWeak bg-gray-200 
-                                ${isTextCol(header) ? 'text-left' : 'text-right'} 
+                                ${!isHeaderGroup(header) ? (isTextCol(header) ? 'text-left' : 'text-right') : ''} 
                                 ${getColumnStickyClass(isTickerSticky, header.id, 'header')}`}
                         >
                             {header.isPlaceholder
@@ -129,12 +99,12 @@ interface TableCellProps {
     isTickerSticky: boolean
 }
 
-function TableCell({
+const TableCell = ({
     cell,
     isTickerLink,
     lowVisibilityCols,
     isTickerSticky,
-}: TableCellProps) {
+}: TableCellProps) => {
     const isCellLink = isTickerLink && cell.column.id === 'ticker'
     const className =
         'px-4 py-3 text-sm font-medium group-hover:bg-gray-100' +
@@ -166,13 +136,13 @@ interface TableBodyProps {
     isTickerSticky: boolean
 }
 
-function TableBody({
+const TableBody = ({
     table,
     cssDivide,
     isTickerLink,
     lowVisibilityCols,
     isTickerSticky,
-}: TableBodyProps) {
+}: TableBodyProps) => {
     return (
         <tbody className={cssDivide + ' bg-white overflow-y-scroll'}>
             {table.getRowModel()?.rows.map((row) => (
@@ -192,7 +162,96 @@ function TableBody({
     )
 }
 
-function getTextColumnMapping(column: string) {
+const getColumns = (columnsNames: Column[], isHeaderGrouped: boolean) => {
+    const columnHelper = createColumnHelper<Stock | Company>()
+
+    const nonKpiColumns = columnsNames.filter(
+        (columnName) => !isKpi(columnName)
+    )
+    const kpiColumns = columnsNames.filter((columnName) => isKpi(columnName))
+
+    const columns = []
+
+    const nonKpiColumnsAcessors = nonKpiColumns.map((columnName) => {
+        return columnHelper.accessor(columnName, {
+            header: getTextColumnMapping(columnName),
+            cell: (info) => info.getValue(),
+            footer: (info) => info.column.id,
+        })
+    })
+    if (isHeaderGrouped) {
+        columns.push(
+            columnHelper.group({
+                id: 'nonKpiHeaderGroup',
+                columns: nonKpiColumnsAcessors,
+            })
+        )
+
+        const groupsToInclude = [
+            ...new Set(kpiColumns.map((kpiColumn) => getGroupByKpi(kpiColumn))),
+        ]
+
+        groupsToInclude
+            .filter((group) => group !== undefined)
+            .forEach((group) => {
+                const groupKpis = getColumnsByGroup(
+                    group,
+                    kpiColumns,
+                    columnHelper
+                )
+
+                columns.push(
+                    columnHelper.group({
+                        header: getGroupTitle(group),
+                        columns: groupKpis,
+                    })
+                )
+            })
+    } else {
+        columns.push(...nonKpiColumnsAcessors)
+
+        kpiColumns.forEach((columnName) => {
+            columns.push(
+                columnHelper.accessor(columnName, {
+                    header: getKpiInfo(columnName).title,
+                    cell: (info) =>
+                        getKpiInfo(columnName).valueFormat(
+                            info.getValue() as number | undefined
+                        ),
+                    footer: (info) => info.column.id,
+                })
+            )
+        })
+    }
+
+    return columns
+}
+
+const getColumnsByGroup = (
+    group: KpiGroup,
+    columnsNames: Column[],
+    columnHelper: ColumnHelper<Stock | Company>
+) => {
+    const groupKpis = getKpisByGroup(group)
+    const columnsToInclude = groupKpis.filter((groupKpi) =>
+        columnsNames.some((columnName) => groupKpi === columnName)
+    )
+
+    const columns = columnsToInclude.map((columnName) =>
+        columnHelper.accessor(columnName, {
+            header: getKpiInfo(columnName).title,
+            cell: (info) =>
+                getKpiInfo(columnName).valueFormat(
+                    info.getValue() as number | undefined
+                ),
+            footer: (info) => info.column.id,
+        })
+    )
+
+    return columns
+}
+
+const getTextColumnMapping = (column: string) => {
     switch (column) {
         case 'ticker':
             return 'Ticker'
@@ -205,12 +264,15 @@ function getTextColumnMapping(column: string) {
     }
 }
 
-function getColumnStickyClass(
+const getColumnStickyClass = (
     isTickerSticky: boolean,
     columnId: string,
     type: 'header' | 'cell'
-) {
-    if (isTickerSticky && columnId === 'ticker') {
+) => {
+    if (
+        isTickerSticky &&
+        (columnId === 'ticker' || columnId.includes('nonKpiHeaderGroup'))
+    ) {
         if (type === 'header') {
             return 'sticky z-20 left-0'
         } else {
@@ -220,3 +282,15 @@ function getColumnStickyClass(
         return 'relative'
     }
 }
+
+const isLowerVisibilityCol = (
+    cell: Cell<Stock | Company, unknown>,
+    lowVisibilityCols: string[]
+): boolean => lowVisibilityCols.includes(cell.column.id)
+const isKpi = (columnName: string): columnName is Kpi =>
+    Object.values(Kpi).includes(columnName as Kpi)
+const isTextCol = (
+    cell: Cell<Stock | Company, unknown> | Header<Stock | Company, unknown>
+): boolean => !isKpi(cell.column.id)
+const isHeaderGroup = (header: Header<Stock | Company, unknown>): boolean =>
+    header.subHeaders !== undefined

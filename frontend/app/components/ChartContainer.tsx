@@ -6,7 +6,7 @@ import { LineChart } from '../charts/LineChart'
 import { useDimensions } from '../charts/utils'
 import { Icon } from './ui'
 
-import type { Kpi } from '../types'
+import { Kpi } from '../types'
 
 interface Props {
     isOpened: boolean
@@ -58,11 +58,11 @@ export default function ChartContainer({
 }
 
 const fullDateKpis: Kpi[] = [
-    'price',
-    'pl',
-    'pvp',
-    'dividendYield',
-    'dividendPayout',
+    Kpi.Price,
+    Kpi.Pl,
+    Kpi.Pvp,
+    Kpi.DividendYield,
+    Kpi.DividendPayout,
 ]
 
 interface ChartProps {
