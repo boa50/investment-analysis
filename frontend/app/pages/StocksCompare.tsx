@@ -6,7 +6,7 @@ import {
     getCompany,
 } from '../api/stocks'
 import PageHeaderContainer from '../components/PageHeaderContainer'
-import { Select, ToggleButton } from '../components/ui'
+import { Select, ToggleButton, Icon } from '../components/ui'
 import RadarChart from '../charts/RadarChart'
 import { useDimensions } from '../charts/utils'
 import Table from '../components/Table'
@@ -34,6 +34,10 @@ export default function StocksCompare() {
             activeStocksTmp.delete(ticker)
             return activeStocksTmp
         })
+    }
+
+    const handleAllTickersRemoval = () => {
+        setActiveStocks(new Set([]))
     }
 
     const query = useQuery({
@@ -131,6 +135,8 @@ export default function StocksCompare() {
         />
     )
 
+    console.log([...activeStocks])
+
     return (
         <div className="w-screen pb-4">
             <PageHeaderContainer>
@@ -153,6 +159,20 @@ export default function StocksCompare() {
                         setActiveItems={setIncludedSegment}
                         isSingleChoice={true}
                     />
+                </div>
+                <div className="grid grid-cols-2">
+                    <div>
+                        <button
+                            disabled={[...activeStocks].length === 0}
+                            className="flex items-center disabled:opacity-50"
+                            onClick={handleAllTickersRemoval}
+                        >
+                            <Icon type="cross" size={5} />
+                            <div className="text-sm text-appTextNormal">
+                                Remover todas as ações
+                            </div>
+                        </button>
+                    </div>
                     <div className="flex justify-end align-bottom items-end">
                         <ToggleButton
                             isChecked={isChartShown}
