@@ -10,6 +10,7 @@ interface TableBodyProps {
     isTickerLink: boolean
     lowVisibilityCols: Column[]
     isTickerSticky: boolean
+    allowRowRemoval: boolean
 }
 
 const TableBody = ({
@@ -18,6 +19,7 @@ const TableBody = ({
     isTickerLink,
     lowVisibilityCols,
     isTickerSticky,
+    allowRowRemoval,
 }: TableBodyProps) => {
     return (
         <tbody className={cssDivide + ' bg-white overflow-y-scroll'}>
@@ -30,6 +32,7 @@ const TableBody = ({
                             isTickerLink={isTickerLink}
                             lowVisibilityCols={lowVisibilityCols}
                             isTickerSticky={isTickerSticky}
+                            allowRowRemoval={allowRowRemoval}
                         />
                     ))}
                 </tr>

@@ -13,6 +13,7 @@ import Table from '../components/Table'
 import { getGroupTitle } from '../data/group'
 
 import { Kpi, KpiGroup } from '../types'
+import { nonKpi } from '../components/Table/types'
 import type { Company } from '../types'
 
 export default function StocksCompare() {
@@ -26,6 +27,14 @@ export default function StocksCompare() {
         if (node !== null) setChartDiv(node)
     }, [])
     const chartDimensions = useDimensions(chartDiv)
+
+    const handleTickerRemoval = (ticker: string) => {
+        setActiveStocks((activeStocks) => {
+            const activeStocksTmp = new Set(activeStocks)
+            activeStocksTmp.delete(ticker)
+            return activeStocksTmp
+        })
+    }
 
     const query = useQuery({
         queryKey: ['stocksAndCompanies'],
@@ -159,7 +168,7 @@ export default function StocksCompare() {
                         <Table
                             data={companiesData}
                             columns={[
-                                'ticker',
+                                nonKpi.Ticker,
                                 Kpi.Pl,
                                 Kpi.Pvp,
                                 Kpi.DividendYield,
@@ -180,6 +189,7 @@ export default function StocksCompare() {
                             ]}
                             isTickerSticky={true}
                             isHeaderGrouped={true}
+                            handleRowRemoval={handleTickerRemoval}
                         />
                     </div>
                     {isChartShown ? (

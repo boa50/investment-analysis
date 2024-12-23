@@ -1,3 +1,9 @@
 import type { Kpi } from '../../types'
 
-export type Column = 'ticker' | 'name' | 'segment' | Kpi
+export enum nonKpi {
+    Ticker = 'ticker',
+    Name = 'name',
+    Segment = 'segment',
+}
+
+export type Column = nonKpi | Kpi

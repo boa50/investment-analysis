@@ -16,6 +16,7 @@ interface TableCellProps {
     isTickerLink: boolean
     lowVisibilityCols: Column[]
     isTickerSticky: boolean
+    allowRowRemoval: boolean
 }
 
 const TableCell = ({
@@ -23,9 +24,11 @@ const TableCell = ({
     isTickerLink,
     lowVisibilityCols,
     isTickerSticky,
+    allowRowRemoval,
 }: TableCellProps) => {
     const isCellLink = isTickerLink && cell.column.id === 'ticker'
-    const className = `px-4 py-3 text-sm font-medium group-hover:bg-gray-100 
+    const isCellTickerRemove = cell.column.id === 'excludeTicker'
+    const className = `${!isCellTickerRemove ? 'px-4 py-3' : 'w-8'} text-sm font-medium group-hover:bg-gray-100 
         ${
             isLowerVisibilityCol(cell, lowVisibilityCols)
                 ? 'text-appTextWeak'
@@ -37,7 +40,7 @@ const TableCell = ({
 
     return (
         <td
-            className={`${className} ${getColumnStickyClass(isTickerSticky, cell.column.id, 'cell')}`}
+            className={`${className} ${getColumnStickyClass(isTickerSticky, cell.column.id, 'cell', allowRowRemoval)}`}
             style={getColumnStickyStyle(isTickerSticky, cell.column.id)}
         >
             {isCellLink ? (

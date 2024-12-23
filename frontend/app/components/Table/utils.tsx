@@ -1,16 +1,23 @@
 import { createColumnHelper } from '@tanstack/react-table'
 import { getKpiInfo } from '../../data/kpi'
 import { getKpisByGroup, getGroupByKpi, getGroupTitle } from '../../data/group'
+import { Icon } from '../ui'
 
 import { Kpi } from '../../types'
-import type { Cell, Header, ColumnHelper } from '@tanstack/react-table'
+import type {
+    Cell,
+    Header,
+    ColumnHelper,
+    ColumnDef,
+} from '@tanstack/react-table'
 import type { Stock, Company, KpiGroup } from '../../types'
-
-type Column = 'ticker' | 'name' | 'segment' | Kpi
+import { nonKpi } from './types'
+import type { Column } from './types'
 
 export const getColumns = (
     columnsNames: Column[],
-    isHeaderGrouped: boolean
+    isHeaderGrouped: boolean,
+    handleRowRemoval?: (ticker: string) => void
 ) => {
     const columnHelper = createColumnHelper<Stock | Company>()
 
@@ -19,14 +26,43 @@ export const getColumns = (
     )
     const kpiColumns = columnsNames.filter((columnName) => isKpi(columnName))
 
-    const columns = []
+    const columns: ColumnDef<Stock | Company, unknown>[] = []
+
+    if (handleRowRemoval) {
+        const columnExcludeTicker: ColumnDef<Stock | Company, unknown> = {
+            id: 'excludeTicker',
+            size: 0,
+            cell: ({ row }) => (
+                <div className="flex items-center justify-center">
+                    <button
+                        onClick={() => handleRowRemoval(row.getValue('ticker'))}
+                    >
+                        <Icon type="cross" size={5} />
+                    </button>
+                </div>
+            ),
+        }
+
+        if (isHeaderGrouped) {
+            columns.push(
+                columnHelper.group({
+                    id: 'excludeTickerHeaderGroup',
+                    columns: [columnExcludeTicker],
+                })
+            )
+        } else {
+            columns.push(columnExcludeTicker)
+        }
+    }
 
     const nonKpiColumnsAcessors = nonKpiColumns.map((columnName) => {
-        return columnHelper.accessor(columnName, {
+        const accessor = columnHelper.accessor(columnName, {
             header: getTextColumnMapping(columnName),
             cell: (info) => info.getValue(),
             footer: (info) => info.column.id,
         })
+
+        return accessor
     })
     if (isHeaderGrouped) {
         columns.push(
@@ -100,13 +136,13 @@ const getColumnsByGroup = (
     return columns
 }
 
-const getTextColumnMapping = (column: string) => {
+const getTextColumnMapping = (column: nonKpi) => {
     switch (column) {
-        case 'ticker':
+        case nonKpi.Ticker:
             return 'Ticker'
-        case 'name':
+        case nonKpi.Name:
             return 'Nome'
-        case 'segment':
+        case nonKpi.Segment:
             return 'Segmento'
         default:
             return column
@@ -116,22 +152,33 @@ const getTextColumnMapping = (column: string) => {
 export const getColumnStickyClass = (
     isTickerSticky: boolean,
     columnId: string,
-    type: 'header' | 'cell'
+    type: 'header' | 'cell',
+    allowRowRemoval: boolean
 ) => {
-    if (
-        isTickerSticky &&
-        (columnId === 'ticker' || columnId.includes('nonKpiHeaderGroup'))
-    ) {
+    if (isTickerSticky) {
         const defaultClass =
-            'sticky z-20 left-0 shadow-[1px_0px_2px_0px_rgba(0,0,0,0.1)]'
-        if (type === 'header') {
-            return defaultClass
-        } else {
-            return defaultClass + ' bg-white'
+            'sticky z-20 shadow-[1px_0px_2px_0px_rgba(0,0,0,0.1)]'
+        if (columnId === 'ticker' || columnId.includes('nonKpiHeaderGroup')) {
+            const leftPosition = allowRowRemoval ? ' left-8' : ' left-0'
+            if (type === 'header') {
+                return defaultClass + leftPosition
+            } else {
+                return defaultClass + leftPosition + ' bg-white'
+            }
+        } else if (
+            columnId === 'excludeTicker' ||
+            columnId.includes('excludeTickerHeaderGroup')
+        ) {
+            const leftPosition = ' left-0'
+            if (type === 'header') {
+                return defaultClass + leftPosition
+            } else {
+                return defaultClass + leftPosition + ' bg-white'
+            }
         }
-    } else {
-        return 'relative'
     }
+
+    return 'relative'
 }
 
 export const getColumnStickyStyle = (
@@ -140,7 +187,10 @@ export const getColumnStickyStyle = (
 ) => {
     if (
         isTickerSticky &&
-        (columnId === 'ticker' || columnId.includes('nonKpiHeaderGroup'))
+        (columnId === 'ticker' ||
+            columnId.includes('nonKpiHeaderGroup') ||
+            columnId === 'excludeTicker' ||
+            columnId.includes('excludeTickerHeaderGroup'))
     ) {
         return { clipPath: 'inset(0 -4px 0 0)' }
     } else {

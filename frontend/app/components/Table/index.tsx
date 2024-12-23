@@ -14,6 +14,7 @@ interface Props {
     lowVisibilityCols?: Column[]
     isTickerSticky?: boolean
     isHeaderGrouped?: boolean
+    handleRowRemoval?: (ticker: string) => void
 }
 
 const Table = ({
@@ -23,8 +24,9 @@ const Table = ({
     lowVisibilityCols = [],
     isTickerSticky = false,
     isHeaderGrouped = false,
+    handleRowRemoval,
 }: Props) => {
-    const tableColumns = getColumns(columns, isHeaderGrouped)
+    const tableColumns = getColumns(columns, isHeaderGrouped, handleRowRemoval)
 
     const table = useReactTable({
         data,
@@ -41,13 +43,18 @@ const Table = ({
                 width: table.getTotalSize(),
             }}
         >
-            <TableHeader table={table} isTickerSticky={isTickerSticky} />
+            <TableHeader
+                table={table}
+                isTickerSticky={isTickerSticky}
+                allowRowRemoval={handleRowRemoval !== undefined}
+            />
             <TableBody
                 table={table}
                 cssDivide={cssDivide}
                 isTickerLink={isTickerLink}
                 lowVisibilityCols={lowVisibilityCols}
                 isTickerSticky={isTickerSticky}
+                allowRowRemoval={handleRowRemoval !== undefined}
             />
         </table>
     )
