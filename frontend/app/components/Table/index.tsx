@@ -38,7 +38,7 @@ const Table = ({
         getCoreRowModel: getCoreRowModel(),
     })
 
-    const cssDivide = 'divide-y divide-appRowDivider'
+    const cssDivide = 'divide-y divide-appRowDivider relative'
 
     return (
         <table
