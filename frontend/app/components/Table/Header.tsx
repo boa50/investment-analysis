@@ -21,7 +21,7 @@ const TableHeader = ({
     allowRowRemoval,
 }: TableHeaderProps) => {
     return (
-        <thead className="sticky top-0 z-20">
+        <thead className="sticky top-0 z-30">
             {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
                     {headerGroup.headers.map((header, i) => (
@@ -32,7 +32,7 @@ const TableHeader = ({
                                 isHeaderGroup(header)
                                     ? i > (allowRowRemoval ? 1 : 0) &&
                                       i < headerGroup.headers.length - 1
-                                        ? 'border-r-2 border-gray-300'
+                                        ? 'after:border after:border-gray-300 after:absolute after:right-0 after:top-0 after:h-[5.5rem] after:z-10'
                                         : ''
                                     : isTextCol(header)
                                       ? 'text-left'

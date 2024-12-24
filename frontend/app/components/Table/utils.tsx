@@ -161,7 +161,7 @@ export const getColumnStickyClass = (
             leftPosition: string
         ) => {
             const defaultClass =
-                'sticky shadow-[1px_0px_2px_0px_rgba(0,0,0,0.1)] z-10'
+                'sticky shadow-[1px_0px_2px_0px_rgba(0,0,0,0.1)] z-20'
 
             if (type === 'header') return defaultClass + leftPosition
             else return defaultClass + leftPosition + ' bg-white'
