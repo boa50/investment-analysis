@@ -121,6 +121,18 @@ export default function StocksCompare() {
             </div>
         )
 
+    const getStockHighlight = () => {
+        if (chartStockHighlight !== undefined) {
+            const highlightIndex = [...activeStocks].indexOf(
+                chartStockHighlight
+            )
+
+            if (highlightIndex < stockRatings.length) return highlightIndex
+        }
+
+        return undefined
+    }
+
     const radarChart = stockRatings.length > 0 && (
         <RadarChart
             data={stockRatings}
@@ -141,11 +153,7 @@ export default function StocksCompare() {
                 efficiency: getGroupTitle(KpiGroup.Efficiency),
             }}
             showTooltips={false}
-            highlightedIndex={
-                chartStockHighlight !== undefined
-                    ? [...activeStocks].indexOf(chartStockHighlight)
-                    : undefined
-            }
+            highlightedIndex={getStockHighlight()}
             highlightColour="rgb(var(--color-primary))"
         />
     )
@@ -246,6 +254,7 @@ export default function StocksCompare() {
                                             (d) => d.isPending
                                         ).length === 0
                                     }
+                                    blurStrength="strong"
                                 >
                                     <div
                                         ref={onRefChange}
