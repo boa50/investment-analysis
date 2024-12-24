@@ -21,7 +21,7 @@ const TableHeader = ({
     allowRowRemoval,
 }: TableHeaderProps) => {
     return (
-        <thead className="sticky top-0 z-10">
+        <thead className="sticky top-0 z-20">
             {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
                     {headerGroup.headers.map((header, i) => (

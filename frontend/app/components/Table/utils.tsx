@@ -156,25 +156,26 @@ export const getColumnStickyClass = (
     allowRowRemoval: boolean
 ) => {
     if (isTickerSticky) {
-        const defaultClass =
-            'sticky z-20 shadow-[1px_0px_2px_0px_rgba(0,0,0,0.1)]'
+        const returnClasses = (
+            type: 'header' | 'cell',
+            leftPosition: string
+        ) => {
+            const defaultClass =
+                'sticky shadow-[1px_0px_2px_0px_rgba(0,0,0,0.1)] z-10'
+
+            if (type === 'header') return defaultClass + leftPosition
+            else return defaultClass + leftPosition + ' bg-white'
+        }
+
         if (columnId === 'ticker' || columnId.includes('nonKpiHeaderGroup')) {
             const leftPosition = allowRowRemoval ? ' left-8' : ' left-0'
-            if (type === 'header') {
-                return defaultClass + leftPosition
-            } else {
-                return defaultClass + leftPosition + ' bg-white'
-            }
+            return returnClasses(type, leftPosition)
         } else if (
             columnId === 'excludeTicker' ||
             columnId.includes('excludeTickerHeaderGroup')
         ) {
             const leftPosition = ' left-0'
-            if (type === 'header') {
-                return defaultClass + leftPosition
-            } else {
-                return defaultClass + leftPosition + ' bg-white'
-            }
+            return returnClasses(type, leftPosition)
         }
     }
 
