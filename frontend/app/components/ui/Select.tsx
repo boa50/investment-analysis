@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useFocus } from '../utils'
 import { Icon } from '.'
 
@@ -6,18 +6,20 @@ import type { ChangeEvent, Dispatch, SetStateAction, RefObject } from 'react'
 
 interface Props {
     items: string[]
-    activeItems: Set<string>
-    setActiveItems: Dispatch<SetStateAction<Set<string>>>
+    activeItems?: Set<string>
+    handleItemsChange: (items: string[]) => void
     placeholderText?: string
     isSingleChoice?: boolean
+    isHideAfterClick?: boolean
 }
 
 export function Select({
     items,
     activeItems,
-    setActiveItems,
+    handleItemsChange,
     placeholderText = 'Choose an item',
     isSingleChoice = false,
+    isHideAfterClick = true,
 }: Props) {
     const [filteredItems, setFilteredItems] = useState<string[]>(items)
     const [textFilter, setTextFilter] = useState<string>('')
@@ -29,30 +31,37 @@ export function Select({
         if (getIsActive(item)) {
             const activeItemsTmp = new Set(activeItems)
             activeItemsTmp.delete(item)
-            setActiveItems(activeItemsTmp)
+            handleItemsChange([...activeItemsTmp])
         } else {
-            setActiveItems(new Set([...activeItems, item]))
+            if (activeItems !== undefined)
+                handleItemsChange([...activeItems, item])
+            else handleItemsChange([item])
         }
     }
 
-    const changeIsActive = (item: string) => {
-        setActiveItems(new Set([item]))
-        setIsOpened(false)
-        setTextFilter('')
-        unsetInputFocus()
+    const addIsActive = (item: string) => {
+        handleItemsChange([item])
+        if (isHideAfterClick) {
+            setIsOpened(false)
+            setTextFilter('')
+            unsetInputFocus()
+        }
     }
 
-    const getIsActive = (item: string) => activeItems.has(item)
+    const getIsActive = (item: string) => activeItems?.has(item) ?? false
 
     const filterHandler = (e: ChangeEvent<HTMLInputElement>) => {
         const text = e.target.value
         setTextFilter(text)
+    }
+
+    useEffect(() => {
         setFilteredItems(
             items.filter((item) =>
-                item.toLowerCase().includes(text.toLowerCase())
+                item.toLowerCase().includes(textFilter.toLowerCase())
             )
         )
-    }
+    }, [items, textFilter])
 
     const clearFilter = () => {
         setFilteredItems(items)
@@ -84,7 +93,7 @@ export function Select({
                                 name={d}
                                 toggleIsActive={
                                     isSingleChoice
-                                        ? changeIsActive
+                                        ? addIsActive
                                         : toggleIsActive
                                 }
                                 isActive={getIsActive(d)}

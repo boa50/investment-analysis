@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import { useQuery, useQueries } from '@tanstack/react-query'
 import {
     getStocksAndSegments,
@@ -18,9 +18,6 @@ import type { Company } from '../types'
 
 export default function StocksCompare() {
     const [activeStocks, setActiveStocks] = useState<Set<string>>(new Set([]))
-    const [includedSegment, setIncludedSegment] = useState<Set<string>>(
-        new Set([])
-    )
     const [isChartShown, setIsChartShown] = useState<boolean>(true)
     const [chartDiv, setChartDiv] = useState<HTMLDivElement | null>(null)
     const onRefChange = useCallback((node: HTMLDivElement) => {
@@ -28,7 +25,7 @@ export default function StocksCompare() {
     }, [])
     const chartDimensions = useDimensions(chartDiv)
 
-    const handleTickerRemoval = (ticker: string) => {
+    const handleStockRemoval = (ticker: string) => {
         setActiveStocks((activeStocks) => {
             const activeStocksTmp = new Set(activeStocks)
             activeStocksTmp.delete(ticker)
@@ -36,8 +33,20 @@ export default function StocksCompare() {
         })
     }
 
-    const handleAllTickersRemoval = () => {
+    const handleAllStocksRemoval = () => {
         setActiveStocks(new Set([]))
+    }
+
+    const handleStockInclusion = (stocks: string[]) => {
+        setActiveStocks((activeStocks) => new Set([...activeStocks, stocks[0]]))
+    }
+
+    const handleSegmentInclusion = (segment: string[]) => {
+        const stocks = stocksAndSegmentsData
+            .filter((d) => d.segment === segment[0])
+            .map((d) => d.ticker)
+
+        setActiveStocks((activeStocks) => new Set([...activeStocks, ...stocks]))
     }
 
     const query = useQuery({
@@ -84,18 +93,12 @@ export default function StocksCompare() {
     }
 
     const stocksAndSegmentsData = useMemo(() => query.data ?? [], [query.data])
-    const selectStocks = stocksAndSegmentsData.map((d) => d.ticker)
+    const selectStocks = stocksAndSegmentsData
+        .map((d) => d.ticker)
+        .filter((ticker) => !activeStocks.has(ticker))
     const selectSegments = [
         ...new Set(stocksAndSegmentsData.map((d) => d.segment)),
     ]
-
-    useEffect(() => {
-        const stocks = stocksAndSegmentsData
-            .filter((d) => d.segment === includedSegment.values().next().value)
-            .map((d) => d.ticker)
-
-        setActiveStocks((activeStocks) => new Set([...activeStocks, ...stocks]))
-    }, [includedSegment, stocksAndSegmentsData])
 
     if (query.isPending)
         return (
@@ -135,8 +138,6 @@ export default function StocksCompare() {
         />
     )
 
-    console.log([...activeStocks])
-
     return (
         <div className="w-screen pb-4">
             <PageHeaderContainer>
@@ -150,13 +151,14 @@ export default function StocksCompare() {
                         items={selectStocks}
                         placeholderText="Inclua um ativo"
                         activeItems={activeStocks}
-                        setActiveItems={setActiveStocks}
+                        handleItemsChange={handleStockInclusion}
+                        isSingleChoice={true}
+                        isHideAfterClick={false}
                     />
                     <Select
                         items={selectSegments}
                         placeholderText="Inclua um segmento"
-                        activeItems={includedSegment}
-                        setActiveItems={setIncludedSegment}
+                        handleItemsChange={handleSegmentInclusion}
                         isSingleChoice={true}
                     />
                 </div>
@@ -165,7 +167,7 @@ export default function StocksCompare() {
                         <button
                             disabled={[...activeStocks].length === 0}
                             className="flex items-center disabled:opacity-50"
-                            onClick={handleAllTickersRemoval}
+                            onClick={handleAllStocksRemoval}
                         >
                             <Icon type="cross" size={5} />
                             <div className="text-sm text-appTextNormal">
@@ -209,7 +211,7 @@ export default function StocksCompare() {
                             ]}
                             isTickerSticky={true}
                             isHeaderGrouped={true}
-                            handleRowRemoval={handleTickerRemoval}
+                            handleRowRemoval={handleStockRemoval}
                         />
                     </div>
                     {isChartShown ? (
