@@ -3,7 +3,7 @@ import { getColumns } from './utils'
 import TableHeader from './Header'
 import TableBody from './Body'
 
-import type { Table } from '@tanstack/react-table'
+import type { Table, Cell } from '@tanstack/react-table'
 import type { Column } from './types'
 import type { Stock, Company } from '../../types'
 
@@ -15,6 +15,8 @@ interface Props {
     isTickerSticky?: boolean
     isHeaderGrouped?: boolean
     handleRowRemoval?: (ticker: string) => void
+    handleRowHovered?: (rowCells: Cell<Stock | Company, unknown>[]) => void
+    handleRowUnhovered?: (rowCells: Cell<Stock | Company, unknown>[]) => void
 }
 
 const Table = ({
@@ -25,6 +27,8 @@ const Table = ({
     isTickerSticky = false,
     isHeaderGrouped = false,
     handleRowRemoval,
+    handleRowHovered,
+    handleRowUnhovered,
 }: Props) => {
     const tableColumns = getColumns(columns, isHeaderGrouped, handleRowRemoval)
 
@@ -55,6 +59,8 @@ const Table = ({
                 lowVisibilityCols={lowVisibilityCols}
                 isTickerSticky={isTickerSticky}
                 allowRowRemoval={handleRowRemoval !== undefined}
+                handleRowHovered={handleRowHovered}
+                handleRowUnhovered={handleRowUnhovered}
             />
         </table>
     )

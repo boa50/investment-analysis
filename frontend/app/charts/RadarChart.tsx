@@ -26,6 +26,8 @@ interface Props {
     gridNumLevels?: number
     gridAxesLabels?: { [name: string]: string }
     showTooltips?: boolean
+    highlightedIndex?: number
+    highlightColour?: string
 }
 
 export default function RadarChart({
@@ -43,6 +45,8 @@ export default function RadarChart({
     gridNumLevels = 4,
     gridAxesLabels = {},
     showTooltips = true,
+    highlightedIndex,
+    highlightColour = 'black',
 }: Props) {
     const side = Math.min(width, height)
     const outerRadius = side / 2 - margin
@@ -80,8 +84,8 @@ export default function RadarChart({
     const allDataValues: number[] = []
     const paths: JSX.Element[] = []
 
-    data.forEach((dataPoint, i) => {
-        const dataCoordinates = axisConfig.map((axis) => {
+    const getDataCoordinates = (dataPoint: RadarDatapoint) =>
+        axisConfig.map((axis) => {
             const radiusScale = radiusScales[axis.name]
             const angle = angleScale(axis.name)
             const radius = radiusScale(dataPoint[axis.name])
@@ -91,12 +95,27 @@ export default function RadarChart({
             const coordinate: [number, number] = [angle ?? 0, radius]
             return coordinate
         })
+
+    const dataSorted = [...data]
+    if (highlightedIndex !== undefined)
+        dataSorted.splice(
+            dataSorted.length - 1,
+            0,
+            dataSorted.splice(highlightedIndex, 1)[0]
+        )
+
+    dataSorted.forEach((dataPoint, i) => {
+        const dataCoordinates = getDataCoordinates(dataPoint)
         allDataCoordinates.push(...dataCoordinates)
 
         dataCoordinates.push(dataCoordinates[0])
 
         const linePath = d3.lineRadial()(dataCoordinates)
-        const lineColour = valueColours[i % valueColours.length]
+
+        let lineColour = 'black'
+        if (highlightedIndex !== undefined && i === dataSorted.length - 1)
+            lineColour = highlightColour
+        else lineColour = valueColours[i % valueColours.length]
 
         paths.push(
             <path
@@ -110,13 +129,7 @@ export default function RadarChart({
         )
     })
 
-    const dataCoordinates = axisConfig.map((axis) => {
-        const radiusScale = radiusScales[axis.name]
-        const angle = angleScale(axis.name)
-        const radius = radiusScale(data[0][axis.name])
-        const coordinate: [number, number] = [angle ?? 0, radius]
-        return coordinate
-    })
+    const dataCoordinates = getDataCoordinates(data[0])
     dataCoordinates.push(dataCoordinates[0])
 
     const pointsTransformTranslate =

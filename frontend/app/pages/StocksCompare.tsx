@@ -14,10 +14,12 @@ import { getGroupTitle } from '../data/group'
 
 import { Kpi, KpiGroup } from '../types'
 import { nonKpi } from '../components/Table/types'
-import type { Company } from '../types'
+import type { Company, Stock } from '../types'
+import type { Cell } from '@tanstack/react-table'
 
 export default function StocksCompare() {
     const [activeStocks, setActiveStocks] = useState<Set<string>>(new Set([]))
+    const [chartStockHighlight, setChartStockHighlight] = useState<string>()
     const [isChartShown, setIsChartShown] = useState<boolean>(true)
     const [chartDiv, setChartDiv] = useState<HTMLDivElement | null>(null)
     const onRefChange = useCallback((node: HTMLDivElement) => {
@@ -47,6 +49,13 @@ export default function StocksCompare() {
             .map((d) => d.ticker)
 
         setActiveStocks((activeStocks) => new Set([...activeStocks, ...stocks]))
+    }
+
+    const handleRowHovered = (rowCells: Cell<Stock | Company, unknown>[]) => {
+        setChartStockHighlight(rowCells[1].getValue() as string)
+    }
+    const handleRowUnhovered = () => {
+        setChartStockHighlight(undefined)
     }
 
     const query = useQuery({
@@ -119,11 +128,8 @@ export default function StocksCompare() {
             widthPadding={175}
             gridColour="rgb(var(--color-weak-light))"
             valueColours={
-                stockRatings.length <= 2
-                    ? [
-                          'rgb(var(--color-primary))',
-                          'rgb(var(--color-secondary))',
-                      ]
+                stockRatings.length === 1
+                    ? ['rgb(var(--color-primary))']
                     : ['rgb(var(--color-divider-strong-light))']
             }
             gridNumLevels={6}
@@ -135,6 +141,12 @@ export default function StocksCompare() {
                 efficiency: getGroupTitle(KpiGroup.Efficiency),
             }}
             showTooltips={false}
+            highlightedIndex={
+                chartStockHighlight !== undefined
+                    ? [...activeStocks].indexOf(chartStockHighlight)
+                    : undefined
+            }
+            highlightColour="rgb(var(--color-primary))"
         />
     )
 
@@ -212,6 +224,8 @@ export default function StocksCompare() {
                             isTickerSticky={true}
                             isHeaderGrouped={true}
                             handleRowRemoval={handleStockRemoval}
+                            handleRowHovered={handleRowHovered}
+                            handleRowUnhovered={handleRowUnhovered}
                         />
                     </div>
                     {isChartShown ? (
