@@ -1,4 +1,5 @@
-import { getCoreRowModel, useReactTable } from '@tanstack/react-table'
+import { useState } from 'react'
+import { getCoreRowModel, useReactTable, SortingState, getSortedRowModel } from '@tanstack/react-table'
 import { getColumns } from './utils'
 import TableHeader from './Header'
 import TableBody from './Body'
@@ -31,11 +32,17 @@ const Table = ({
     handleRowUnhovered,
 }: Props) => {
     const tableColumns = getColumns(columns, isHeaderGrouped, handleRowRemoval)
+    const [sorting, setSorting] = useState<SortingState>([])
 
     const table = useReactTable({
         data,
         columns: tableColumns,
         getCoreRowModel: getCoreRowModel(),
+        getSortedRowModel: getSortedRowModel(), // client-side sorting
+        onSortingChange: setSorting,
+        state: {
+            sorting,
+          },
     })
 
     const cssDivide = 'divide-y divide-appRowDivider relative'

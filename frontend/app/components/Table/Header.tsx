@@ -5,6 +5,7 @@ import {
     getColumnStickyClass,
     getColumnStickyStyle,
 } from './utils'
+import { Icon } from '../ui'
 
 import type { Table } from '@tanstack/react-table'
 import type { Stock, Company } from '../../types'
@@ -28,16 +29,18 @@ const TableHeader = ({
                         <th
                             key={header.id}
                             colSpan={header.colSpan}
+                            onClick={header.column.getToggleSortingHandler()}
                             className={`px-4 py-3.5 text-xs font-normal text-appTextWeak bg-gray-200 ${
                                 isHeaderGroup(header)
                                     ? i > (allowRowRemoval ? 1 : 0) &&
                                       i < headerGroup.headers.length - 1
                                         ? 'after:border after:border-gray-300 after:absolute after:right-0 after:top-0 after:h-[5.5rem] after:z-10'
                                         : ''
-                                    : isTextCol(header)
-                                      ? 'text-left'
-                                      : 'text-right'
+                                        : ''
                             } 
+                                ${header.column.getCanSort()
+                                    ? 'cursor-pointer select-none'
+                                    : ''}
                                 ${getColumnStickyClass(isTickerSticky, header.id, 'header', allowRowRemoval)}`}
                             style={getColumnStickyStyle(
                                 isTickerSticky,
@@ -46,10 +49,21 @@ const TableHeader = ({
                         >
                             {header.isPlaceholder
                                 ? null
-                                : flexRender(
-                                      header.column.columnDef.header,
-                                      header.getContext()
-                                  )}
+                                : <div className={`flex items-center
+                                    ${isHeaderGroup(header)? 'justify-center' : 
+                                        isTextCol(header)
+                                        ? 'text-left justify-start'
+                                        : 'text-right justify-start flex-row-reverse'}`
+                                        }>
+                                    {flexRender(
+                                        header.column.columnDef.header,
+                                        header.getContext()
+                                    )}
+                                    {{
+                                        asc: <span className='rotate-180'><Icon type='arrowDown'/></span>,
+                                        desc: <span><Icon type='arrowDown'/></span>,
+                                    }[header.column.getIsSorted() as string] ?? <span className='w-5 h-5'></span>}
+                                </div>}
                         </th>
                     ))}
                 </tr>
