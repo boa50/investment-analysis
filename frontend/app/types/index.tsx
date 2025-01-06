@@ -73,6 +73,7 @@ export type Company = {
     netDebtByEquity?: number
     cagr5YearsProfit: number
     cagr5YearsRevenue: number
+    overallRating?: number
 }
 
 export type HistoricalValue = {
