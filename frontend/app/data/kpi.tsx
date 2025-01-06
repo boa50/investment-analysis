@@ -174,6 +174,11 @@ export const getKpiInfo = (kpi: Kpi): ReturnProps => {
                 calculation:
                     '(Receita Final / Receita Inicial) ^ (1 / número_de_anos) - 1',
             }
+            case Kpi.OverallRating:
+                return {
+                    title: 'Score',
+                    valueFormat: (value) => formatNum(value, 'decimal')
+                }
         default:
             return {
                 title: '-',

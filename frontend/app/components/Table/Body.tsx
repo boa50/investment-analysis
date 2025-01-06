@@ -2,17 +2,17 @@ import TableCell from './Cell'
 
 import type { Table, Cell } from '@tanstack/react-table'
 import type { Column } from './types'
-import type { Stock, Company } from '../../types'
+import type { TableRow } from '../../types'
 
 interface TableBodyProps {
-    table: Table<Stock | Company>
+    table: Table<TableRow>
     cssDivide: string
     isTickerLink: boolean
     lowVisibilityCols: Column[]
     isTickerSticky: boolean
     allowRowRemoval: boolean
-    handleRowHovered?: (rowCells: Cell<Stock | Company, unknown>[]) => void
-    handleRowUnhovered?: (rowCells: Cell<Stock | Company, unknown>[]) => void
+    handleRowHovered?: (rowCells: Cell<TableRow, unknown>[]) => void
+    handleRowUnhovered?: (rowCells: Cell<TableRow, unknown>[]) => void
 }
 
 const TableBody = ({

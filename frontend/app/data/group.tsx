@@ -26,6 +26,7 @@ const kpiGroups: KpiGroups = {
         Kpi.Debt,
         Kpi.NetDebt,
     ],
+    [KpiGroup.General]: [Kpi.OverallRating],
 }
 
 export const getKpisByGroup = (group: KpiGroup) => {
@@ -50,6 +51,8 @@ export const getGroupTitle = (group: KpiGroup) => {
             return 'Crescimento'
         case KpiGroup.Results:
             return 'Resultado'
+        case KpiGroup.General:
+            return 'General'
 
         default:
             return ''

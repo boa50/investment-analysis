@@ -6,18 +6,18 @@ import TableBody from './Body'
 
 import type { Table, Cell } from '@tanstack/react-table'
 import type { Column } from './types'
-import type { Stock, Company } from '../../types'
+import type { TableRow } from '../../types'
 
 interface Props {
-    data: Stock[] | Company[]
+    data: TableRow[]
     columns: Column[]
     isTickerLink?: boolean
     lowVisibilityCols?: Column[]
     isTickerSticky?: boolean
     isHeaderGrouped?: boolean
     handleRowRemoval?: (ticker: string) => void
-    handleRowHovered?: (rowCells: Cell<Stock | Company, unknown>[]) => void
-    handleRowUnhovered?: (rowCells: Cell<Stock | Company, unknown>[]) => void
+    handleRowHovered?: (rowCells: Cell<TableRow, unknown>[]) => void
+    handleRowUnhovered?: (rowCells: Cell<TableRow, unknown>[]) => void
 }
 
 const Table = ({

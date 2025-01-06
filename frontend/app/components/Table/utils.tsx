@@ -3,14 +3,13 @@ import { getKpiInfo } from '../../data/kpi'
 import { getKpisByGroup, getGroupByKpi, getGroupTitle } from '../../data/group'
 import { Icon } from '../ui'
 
-import { Kpi } from '../../types'
 import type {
     Cell,
     Header,
     ColumnHelper,
     ColumnDef,
 } from '@tanstack/react-table'
-import type { Stock, Company, KpiGroup } from '../../types'
+import { Kpi, TableRow, KpiGroup } from '../../types'
 import { nonKpi } from './types'
 import type { Column } from './types'
 
@@ -19,17 +18,17 @@ export const getColumns = (
     isHeaderGrouped: boolean,
     handleRowRemoval?: (ticker: string) => void
 ) => {
-    const columnHelper = createColumnHelper<Stock | Company>()
+    const columnHelper = createColumnHelper<TableRow>()
 
     const nonKpiColumns = columnsNames.filter(
         (columnName) => !isKpi(columnName)
     )
     const kpiColumns = columnsNames.filter((columnName) => isKpi(columnName))
 
-    const columns: ColumnDef<Stock | Company, unknown>[] = []
+    const columns: ColumnDef<TableRow, string | number | undefined>[] = []
 
     if (handleRowRemoval) {
-        const columnExcludeTicker: ColumnDef<Stock | Company, unknown> = {
+        const columnExcludeTicker: ColumnDef<TableRow, unknown | undefined> = {
             id: 'excludeTicker',
             size: 0,
             cell: ({ row }) => (
@@ -57,7 +56,7 @@ export const getColumns = (
 
     const nonKpiColumnsAcessors = nonKpiColumns.map((columnName) => {
         const accessor = columnHelper.accessor(columnName, {
-            header: getTextColumnMapping(columnName),
+            header: getNonKpiColumnMapping(columnName),
             cell: (info) => info.getValue(),
             footer: (info) => info.column.id,
         })
@@ -87,7 +86,8 @@ export const getColumns = (
 
                 columns.push(
                     columnHelper.group({
-                        header: getGroupTitle(group),
+                        id: group,
+                        header: group !== KpiGroup.General ? getGroupTitle(group) : '',
                         columns: groupKpis,
                     })
                 )
@@ -115,7 +115,7 @@ export const getColumns = (
 const getColumnsByGroup = (
     group: KpiGroup,
     columnsNames: Column[],
-    columnHelper: ColumnHelper<Stock | Company>
+    columnHelper: ColumnHelper<TableRow>
 ) => {
     const groupKpis = getKpisByGroup(group)
     const columnsToInclude = groupKpis.filter((groupKpi) =>
@@ -136,7 +136,7 @@ const getColumnsByGroup = (
     return columns
 }
 
-const getTextColumnMapping = (column: nonKpi) => {
+const getNonKpiColumnMapping = (column: nonKpi) => {
     switch (column) {
         case nonKpi.Ticker:
             return 'Ticker'
@@ -200,14 +200,14 @@ export const getColumnStickyStyle = (
 }
 
 export const isLowerVisibilityCol = (
-    cell: Cell<Stock | Company, unknown>,
+    cell: Cell<TableRow, unknown>,
     lowVisibilityCols: string[]
 ): boolean => lowVisibilityCols.includes(cell.column.id)
 const isKpi = (columnName: string): columnName is Kpi =>
     Object.values(Kpi).includes(columnName as Kpi)
 export const isTextCol = (
-    cell: Cell<Stock | Company, unknown> | Header<Stock | Company, unknown>
+    cell: Cell<TableRow, unknown> | Header<TableRow, unknown>
 ): boolean => !isKpi(cell.column.id)
 export const isHeaderGroup = (
-    header: Header<Stock | Company, unknown>
+    header: Header<TableRow, unknown>
 ): boolean => header.getLeafHeaders().length > 1

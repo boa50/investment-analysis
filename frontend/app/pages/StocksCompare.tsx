@@ -14,7 +14,7 @@ import { getGroupTitle } from '../data/group'
 
 import { Kpi, KpiGroup } from '../types'
 import { nonKpi } from '../components/Table/types'
-import type { Company, Stock } from '../types'
+import type { TableRow } from '../types'
 import type { Cell } from '@tanstack/react-table'
 
 export default function StocksCompare() {
@@ -51,7 +51,7 @@ export default function StocksCompare() {
         setActiveStocks((activeStocks) => new Set([...activeStocks, ...stocks]))
     }
 
-    const handleRowHovered = (rowCells: Cell<Stock | Company, unknown>[]) => {
+    const handleRowHovered = (rowCells: Cell<TableRow, unknown>[]) => {
         setChartStockHighlight(rowCells[1].getValue() as string)
     }
     const handleRowUnhovered = () => {
@@ -71,10 +71,6 @@ export default function StocksCompare() {
             }
         }),
     })
-
-    const companiesData: Company[] = useMemo(() => {
-        return queriesCompanies.filter((d) => d.isSuccess).map((d) => d.data[0])
-    }, [queriesCompanies])
 
     const queriesRatings = useQueries({
         queries: [...activeStocks].map((ticker) => {
@@ -100,6 +96,15 @@ export default function StocksCompare() {
                 return ratingsTmp
             })
     }
+
+    const companiesData: TableRow[] = useMemo(() => {
+        const data = queriesCompanies.filter((d) => d.isSuccess).map((d) => d.data[0]) as TableRow[]
+        queriesRatings.filter(d => d.isSuccess).forEach((d, i) => {
+          data[i]['overallRating'] = (d.data.overall / 20)})
+
+        return data
+    }, [queriesCompanies, queriesRatings])
+    
 
     const stocksAndSegmentsData = useMemo(() => query.data ?? [], [query.data])
     const selectStocks = stocksAndSegmentsData
@@ -215,6 +220,7 @@ export default function StocksCompare() {
                                 data={companiesData}
                                 columns={[
                                     nonKpi.Ticker,
+                                    Kpi.OverallRating,
                                     Kpi.Pl,
                                     Kpi.Pvp,
                                     Kpi.DividendYield,

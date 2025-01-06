@@ -9,10 +9,10 @@ import {
 
 import type { Cell } from '@tanstack/react-table'
 import type { Column } from './types'
-import type { Stock } from '../../types'
+import type { TableRow } from '../../types'
 
 interface TableCellProps {
-    cell: Cell<Stock, unknown>
+    cell: Cell<TableRow, unknown>
     isTickerLink: boolean
     lowVisibilityCols: Column[]
     isTickerSticky: boolean

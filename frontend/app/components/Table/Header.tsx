@@ -8,10 +8,10 @@ import {
 import { Icon } from '../ui'
 
 import type { Table } from '@tanstack/react-table'
-import type { Stock, Company } from '../../types'
+import type { TableRow } from '../../types'
 
 interface TableHeaderProps {
-    table: Table<Stock | Company>
+    table: Table<TableRow>
     isTickerSticky: boolean
     allowRowRemoval: boolean
 }
@@ -34,7 +34,7 @@ const TableHeader = ({
                                 isHeaderGroup(header)
                                     ? i > (allowRowRemoval ? 1 : 0) &&
                                       i < headerGroup.headers.length - 1
-                                        ? 'after:border after:border-gray-300 after:absolute after:right-0 after:top-0 after:h-[5.5rem] after:z-10'
+                                        ? 'after:border after:border-gray-300 after:absolute after:right-0 after:top-0 after:h-[6rem] after:z-10'
                                         : ''
                                         : ''
                             } 

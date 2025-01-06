@@ -18,6 +18,7 @@ export enum Kpi {
     NetDebtByEquity = 'netDebtByEquity',
     Cagr5YearsProfit = 'cagr5YearsProfit',
     Cagr5YearsRevenue = 'cagr5YearsRevenue',
+    OverallRating = 'overallRating'
 }
 
 export enum KpiGroup {
@@ -26,6 +27,7 @@ export enum KpiGroup {
     Efficiency = 'efficiency',
     Growth = 'growth',
     Results = 'results',
+    General = 'general'
 }
 
 export type CompanySearch = {
@@ -86,4 +88,30 @@ export type StockRating = {
     efficiency: number
     growth: number
     overall: number
+}
+
+export type TableRow = {
+    ticker?: string
+    name?: string
+    segment?: string
+    marketCap?: number
+    price?: number
+    bazinPrice?: number
+    pl?: number
+    pvp?: number
+    dividendYield?: number
+    dividendPayout?: number
+    equity?: number
+    netRevenue?: number
+    profit?: number
+    ebit?: number
+    debt?: number
+    netDebt?: number
+    netMargin?: number
+    roe?: number
+    netDebtByEbit?: number
+    netDebtByEquity?: number
+    cagr5YearsProfit?: number
+    cagr5YearsRevenue?: number
+    overallRating?: number
 }
