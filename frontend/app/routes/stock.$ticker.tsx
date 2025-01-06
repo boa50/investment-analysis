@@ -22,7 +22,8 @@ export const meta: MetaFunction = () => {
 }
 
 export async function loader({ params }: LoaderFunctionArgs) {
-    const ticker = params.ticker?.toUpperCase()
+    let ticker = params.ticker?.toUpperCase()
+    ticker = ticker?.includes('TRPL') ? ('ISAE' + ticker.substring(4)) : ticker
     const queryClient = new QueryClient()
 
     try {
