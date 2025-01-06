@@ -1,5 +1,6 @@
 import { getKpiInfo } from '../data/kpi'
 import Tooltip from './Tooltip'
+import { Icon } from './ui'
 
 import type { Kpi, Company } from '../types'
 
@@ -122,11 +123,11 @@ function Text({
                             : undefined
                     }
                 >
-                    <span
-                        className={`pl-1 cursor-pointer text-xs ${textColour}`}
+                    <div
+                        className={`pl-1 cursor-pointer ${textColour}`}
                     >
-                        &#x1F6C8;
-                    </span>
+                        <Icon type='info' size={4} filled='none' />
+                    </div>
                 </Tooltip>
             ) : null}
         </div>
@@ -139,20 +140,7 @@ function ChartIcon({ openChartContainer }: { openChartContainer: () => void }) {
             className="self-end justify-self-end mb-1.5 mr-2"
             onClick={openChartContainer}
         >
-            <svg
-                className="w-4 h-4 text-appTextNormal"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-            >
-                <path
-                    d="M21 21H6.2C5.07989 21 4.51984 21 4.09202 20.782C3.71569 20.5903 3.40973 20.2843 3.21799 19.908C3 19.4802 3 18.9201 3 17.8V3M7 15L12 9L16 13L21 7"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                />
-            </svg>
+            <Icon type='chart' filled='none' size={4} />
         </button>
     )
 }
