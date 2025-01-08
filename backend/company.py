@@ -7,7 +7,7 @@ import datasource
 def get_companies():
     df = datasource.get_kpis_latest_values()
 
-    return_cols = ["TICKER", "NOME", "SEGMENTO", "MARKET_CAP", "PL", "NET_MARGIN"]
+    return_cols = ["TICKER", "NAME", "SEGMENT", "MARKET_CAP", "PRICE_PROFIT", "NET_MARGIN"]
 
     df = utils.get_df_stocks_cleaned(df, return_cols)
     df = df.sort_values(by="marketCap", ascending=False)
@@ -20,7 +20,7 @@ def get_companies_and_segments():
 
     df["MAIN_TICKER"] = df["TICKERS"].apply(lambda x: utils.get_main_ticker(x))
 
-    return_cols = ["MAIN_TICKER", "SEGMENTO"]
+    return_cols = ["MAIN_TICKER", "SEGMENT"]
 
     df = utils.get_df_stocks_cleaned(df, return_cols)
     df = df.sort_values(by=["segment", "ticker"], ascending=True)
@@ -77,12 +77,12 @@ def search_companies(text):
             df_basic_info[col]
             .apply(unidecode)
             .str.contains(decoded_text, case=False, na=False)
-            for col in ["NOME", "TICKERS"]
+            for col in ["NAME", "TICKERS"]
         ]
     )
     df = df_basic_info.loc[mask.any(axis=1)]
 
-    return_cols = ["NOME", "MAIN_TICKER", "SEGMENTO"]
+    return_cols = ["NAME", "MAIN_TICKER", "SEGMENT"]
     df = utils.get_df_stocks_cleaned(df, return_cols)
     df["rating"] = np.random.random(size=df.shape[0]) * 5
 

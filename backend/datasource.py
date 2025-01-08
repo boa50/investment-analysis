@@ -71,15 +71,18 @@ def _get_kpi_fundaments(
         df_kpi = df_kpi[df_kpi["CD_CVM"] == cd_cvm]
 
     df_kpi = df_kpi[df_kpi["KPI"] == kpi]
-    df_kpi = df_kpi[df_kpi["EXERC_YEAR"] >= df_kpi["EXERC_YEAR"].max() - n_years]
+    df_kpi = df_kpi[df_kpi["DT_YEAR"] >= df_kpi["DT_YEAR"].max() - n_years]
 
     value_column = (
-        "VL_CONTA"
-        if df_kpi["VL_CONTA_ROLLING_YEAR"].max() == -1
-        else "VL_CONTA_ROLLING_YEAR"
+        "VALUE"
+        if df_kpi["VALUE_ROLLING_YEAR"].max() == -1
+        else "VALUE_ROLLING_YEAR"
     )
+    
+    if value_column == "VALUE_ROLLING_YEAR":
+        df_kpi = df_kpi.drop("VALUE", axis=1)
 
-    df_kpi = df_kpi.rename(columns={"DT_FIM_EXERC": "DATE", value_column: "VALUE"})
+    df_kpi = df_kpi.rename(columns={"DT_END": "DATE", value_column: "VALUE"})
     if is_from_segment:
         df_kpi = _get_kpi_fundaments_segment(
             df_basic_info=df_basic_info,
@@ -169,43 +172,43 @@ def get_kpis_latest_values(tickers=None):
 
     df_fundaments_tmp = df_fundaments[df_fundaments["CD_CVM"].isin(cds_cvm)]
     last_fundament_date = (
-        df_fundaments_tmp.groupby("CD_CVM")["DT_FIM_EXERC"].max().reset_index()
+        df_fundaments_tmp.groupby("CD_CVM")["DT_END"].max().reset_index()
     )
 
     df_fundaments_tmp = df_fundaments_tmp.merge(
-        last_fundament_date, how="inner", on=["CD_CVM", "DT_FIM_EXERC"]
+        last_fundament_date, how="inner", on=["CD_CVM", "DT_END"]
     )
 
     df_fundaments_tmp_2 = df_fundaments_tmp[
-        df_fundaments_tmp["VL_CONTA_ROLLING_YEAR"] == -1
+        df_fundaments_tmp["VALUE_ROLLING_YEAR"] == -1
     ]
     df_fundaments_tmp = df_fundaments_tmp[
-        df_fundaments_tmp["VL_CONTA_ROLLING_YEAR"] != -1
+        df_fundaments_tmp["VALUE_ROLLING_YEAR"] != -1
     ]
     df_fundaments_tmp = df_fundaments_tmp.pivot(
-        index=["CD_CVM", "DT_FIM_EXERC"], columns="KPI", values="VL_CONTA_ROLLING_YEAR"
+        index=["CD_CVM", "DT_END"], columns="KPI", values="VALUE_ROLLING_YEAR"
     ).reset_index()
     df_fundaments_tmp_2 = (
         df_fundaments_tmp_2.pivot(
-            index=["CD_CVM", "DT_FIM_EXERC"], columns="KPI", values="VL_CONTA"
+            index=["CD_CVM", "DT_END"], columns="KPI", values="VALUE"
         )
         .reset_index()
         .drop("CD_CVM", axis=1)
     )
 
     df_fundaments_tmp = pd.concat([df_fundaments_tmp, df_fundaments_tmp_2], axis=1)
-    df_fundaments_tmp = df_fundaments_tmp.drop("DT_FIM_EXERC", axis=1)
+    df_fundaments_tmp = df_fundaments_tmp.drop("DT_END", axis=1)
 
     df_history_tmp = df_history[df_history["CD_CVM"].isin(cds_cvm)]
-    last_history_date = df_history_tmp.groupby("CD_CVM")["DATE"].max().reset_index()
+    last_history_date = df_history_tmp.groupby("CD_CVM")["DT_EVENT"].max().reset_index()
     df_history_tmp = df_history_tmp.merge(
-        last_history_date, how="inner", on=["CD_CVM", "DATE"]
-    ).drop("DATE", axis=1)
+        last_history_date, how="inner", on=["CD_CVM", "DT_EVENT"]
+    ).drop("DT_EVENT", axis=1)
 
     df_latest_values = (
         df_fundaments_tmp.merge(df_history_tmp, on="CD_CVM")
         .merge(df_right_prices, how="left", on=["CD_CVM", "TICKER"])
-        .merge(df_basic_info[["CD_CVM", "NUM_TOTAL", "NOME", "SEGMENTO"]], on="CD_CVM")
+        .merge(df_basic_info[["CD_CVM", "NUM_TOTAL", "NAME", "SEGMENT"]], on="CD_CVM")
     )
 
     df_latest_values["MARKET_CAP"] = (

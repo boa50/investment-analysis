@@ -12,17 +12,10 @@ def get_historical_values(ticker, kpi, n_years=10):
         kpi_original = kpi
 
     df_kpi = datasource.get_kpi_values(ticker=ticker, kpi=kpi_original, n_years=n_years)
+    
+    df_kpi = utils.columns_rename(df_kpi)
 
-    df_kpi = df_kpi.rename(
-        columns={
-            "DATE": "date",
-            "CD_CVM": "cdCvm",
-            "TICKER": "ticker",
-            "VALUE": "value",
-        }
-    )
-
-    return df_kpi
+    return df_kpi.sort_values(by="date")
 
 
 def get_kpi_rating(
@@ -120,3 +113,15 @@ def get_stock_ratings(ticker: str, verbose: int = 0):
             print(f"{group}: {value}")
 
     return ratings
+
+import os
+
+# DATA_SOURCE=database
+# DB_PROJECT_ID=lazy-investor-db
+# DB_DATASET_ID=app_dataset
+
+os.environ["DATA_SOURCE"] = "database"
+os.environ["DB_PROJECT_ID"] = "lazy-investor-db"
+os.environ["DB_DATASET_ID"] = "app_dataset"
+
+get_stock_ratings(ticker="BBAS3", verbose=3)

@@ -1,27 +1,43 @@
 import pandas as pd
+import pandas_gbq as pdgbq
 import numpy as np
 import math
-from os import path
+from os import path, environ
 import mappings
 
 
-def get_data(file_name):
-    if file_name == "stocks-fundaments":
-        dates_to_parse = ["DT_INI_EXERC", "DT_FIM_EXERC"]
-    elif file_name == "stocks-history":
-        dates_to_parse = ["DATE"]
-    elif file_name == "ipca":
-        dates_to_parse = ["DATE"]
-    else:
-        dates_to_parse = []
+def get_data(table_name):
+    data_source = environ.get("DATA_SOURCE")
+    
+    if data_source == "database":
+        project_id = environ.get("DB_PROJECT_ID")
+        dataset_id = environ.get("DB_DATASET_ID")
 
-    return pd.read_csv(
-        path.join(
-            path.dirname(__file__).replace("/backend", "/"),
-            f"data/processed/{file_name}.csv",
-        ),
-        parse_dates=dates_to_parse,
-    )
+        sql = """
+                SELECT * 
+                FROM `{}.{}.{}`
+            """.format(project_id,dataset_id,table_name)
+            
+        df = pdgbq.read_gbq(sql, project_id=project_id)
+            
+        return df
+    else:
+        if table_name == "stocks-fundaments":
+            dates_to_parse = ["DT_INI_EXERC", "DT_FIM_EXERC"]
+        elif table_name == "stocks-history":
+            dates_to_parse = ["DATE"]
+        elif table_name == "ipca":
+            dates_to_parse = ["DATE"]
+        else:
+            dates_to_parse = []
+
+        return pd.read_csv(
+            path.join(
+                path.dirname(__file__).replace("/backend", "/"),
+                f"data/processed/{table_name}.csv",
+            ),
+            parse_dates=dates_to_parse,
+        )
 
 
 def is_kpi_fundaments(kpi):
@@ -59,13 +75,13 @@ def get_main_ticker(tickers):
 
 
 def columns_rename(df):
-    return df.rename(columns=mappings.kpi_renaming)
+    return df.rename(columns=mappings.column_renaming)
 
 
 def get_kpi_original_name(kpi):
-    kpi_mapping_inverse = {v: k for k, v in mappings.kpi_renaming.items()}
+    column_mapping_inverse = {v: k for k, v in mappings.column_renaming.items()}
 
-    return kpi_mapping_inverse[kpi]
+    return column_mapping_inverse[kpi]
 
 
 def get_df_stocks_cleaned(df, return_cols):

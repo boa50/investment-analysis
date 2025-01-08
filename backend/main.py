@@ -1,8 +1,12 @@
+import os
+from dotenv import load_dotenv
 from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 import json
 import company
 import measure
+
+load_dotenv()
 
 ### Configuring CORS
 origins = [
