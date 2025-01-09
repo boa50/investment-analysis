@@ -2,6 +2,7 @@ import numpy as np
 from unidecode import unidecode
 import utils
 import datasource
+import queries
 
 
 def get_companies():
@@ -16,7 +17,7 @@ def get_companies():
 
 
 def get_companies_and_segments():
-    df = utils.get_data("stocks-basic-info")
+    df = queries.get_basic_info(columns=["TICKERS", "SEGMENT"])
 
     df["MAIN_TICKER"] = df["TICKERS"].apply(lambda x: utils.get_main_ticker(x))
 

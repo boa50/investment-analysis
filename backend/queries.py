@@ -12,6 +12,15 @@ def get_cd_cvm_by_ticker(ticker):
         
     return cd_cvm
 
+def get_basic_info(columns=[]):
+    sql_columns = qu.get_sql_columns(columns)
+    sql = f"""
+            SELECT {sql_columns} 
+            FROM {qu.get_table_full_name('stocks-basic-info')} 
+        """
+        
+    return qu.execute_query(sql)
+
 def get_segment_info_by_ticker(ticker, column):
     sql = f"""
             SELECT {column} 
@@ -19,9 +28,7 @@ def get_segment_info_by_ticker(ticker, column):
             WHERE SEGMENT = (SELECT SEGMENT FROM {qu.get_table_full_name('stocks-basic-info')} WHERE TICKERS LIKE '%{ticker.upper()}%')
         """
         
-    df = qu.execute_query(sql)[column].tolist()
-        
-    return df
+    return qu.execute_query(sql)[column].tolist()
 
 def get_segment_cds_cvm_by_ticker(ticker):
     return get_segment_info_by_ticker(ticker, "CD_CVM")
@@ -38,9 +45,7 @@ def get_all_from_table(table_name):
             FROM {}
         """.format(qu.get_table_full_name(table_name))
         
-    df = qu.execute_query(sql)
-        
-    return df
+    return qu.execute_query(sql)
 
 def get_kpi_fundaments(ticker, kpi, non_value_columns=["DT_END"], n_years=10, is_from_segment=False, group_segment_values=True):
     columns = []
@@ -76,9 +81,7 @@ def get_kpi_fundaments(ticker, kpi, non_value_columns=["DT_END"], n_years=10, is
             ORDER BY DT_END
         """
         
-    df = qu.execute_query(sql)
-    
-    return df
+    return qu.execute_query(sql)
 
 def get_kpi_history(ticker, kpi, non_value_columns=["DATE"], n_years=10, is_from_segment=False, group_segment_values=True):
     columns = []
@@ -112,7 +115,5 @@ def get_kpi_history(ticker, kpi, non_value_columns=["DATE"], n_years=10, is_from
             {group_by_clause}
             ORDER BY DATE
         """
-        
-    df = qu.execute_query(sql)
     
-    return df
+    return qu.execute_query(sql)
