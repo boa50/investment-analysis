@@ -34,3 +34,18 @@ kpi_by_group = {
     "efficiency": ["NET_MARGIN", "ROE"],
     "growth": ["CAGR_5_YEARS_PROFIT", "CAGR_5_YEARS_REVENUE"],
 }
+
+kpi_fundament_value_column = {
+    "EQUITY": "VALUE_ROLLING_YEAR",
+    "NET_REVENUE": "VALUE_ROLLING_YEAR",
+    "PROFIT": "VALUE_ROLLING_YEAR",
+    "EBIT": "VALUE_ROLLING_YEAR",
+    "DEBT": "VALUE_ROLLING_YEAR",
+    "DEBT_NET": "VALUE_ROLLING_YEAR",
+    "NET_MARGIN": "VALUE",
+    "ROE": "VALUE",
+    "NET_DEBT_BY_EBIT": "VALUE_ROLLING_YEAR",
+    "NET_DEBT_BY_EQUITY": "VALUE_ROLLING_YEAR",
+    "CAGR_5_YEARS_PROFIT": "VALUE",
+    "CAGR_5_YEARS_REVENUE": "VALUE",
+}
