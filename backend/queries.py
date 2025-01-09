@@ -34,17 +34,27 @@ def get_all_from_table(table_name):
     return df
 
 def get_kpi_fundaments(ticker, kpi, non_value_columns=[], n_years=10, is_from_segment=False, group_segment_values=True):
+    columns = []
+    
     if not is_from_segment:
         cds_cvm = f"('{get_cd_cvm_by_ticker(ticker)}')"
-        columns = []
     else:
         cds_cvm = "('" + "','".join(get_segment_cds_cvm_by_ticker(ticker)) + "')"
-        columns = ["CD_CVM"]
+        
+        if not group_segment_values:
+            columns.append("CD_CVM")
+    
+    if not group_segment_values:
+        value_column = f"{mappings.kpi_fundament_value_column[kpi]} AS VALUE"
+        group_by_clause = ""
+    else:
+        value_column = f"AVG({mappings.kpi_fundament_value_column[kpi]}) AS VALUE"
+        group_by_clause = f"GROUP BY {qu.get_sql_columns(non_value_columns)}"
         
     table_full_name = qu.get_table_full_name('stocks-fundaments')
     
     columns.extend(non_value_columns)
-    columns.append(mappings.kpi_fundament_value_column[kpi])
+    columns.append(value_column)
     columns_sql = qu.get_sql_columns(columns)
     
     sql = f"""
@@ -53,15 +63,10 @@ def get_kpi_fundaments(ticker, kpi, non_value_columns=[], n_years=10, is_from_se
             WHERE CD_CVM IN {cds_cvm}
                 AND KPI = '{kpi}'
                 AND DT_YEAR >= (SELECT max(DT_YEAR) FROM {table_full_name}) - {n_years}
+            {group_by_clause}
             ORDER BY DT_END
         """
         
-    print(sql)
-        
-    # df = qu.execute_query(sql)
+    df = qu.execute_query(sql)
     
-    # return df
-
-print(get_kpi_fundaments('BBAS3', 'ROE', non_value_columns=['DT_END'], is_from_segment=True))
-
-# print(get_segment_cds_cvm_by_ticker('BBAS3').tolist())
+    return df
