@@ -24,5 +24,3 @@ def get_sql_columns(columns):
         return '*'
     else:
         return ','.join(columns)
-        
-        
