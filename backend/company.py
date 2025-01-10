@@ -1,8 +1,11 @@
+import pandas as pd
 import numpy as np
 from unidecode import unidecode
 import utils
 import datasource
 import queries.general as general
+import queries.history as history
+import queries.fundaments as fundaments
 
 
 def get_companies():
@@ -30,38 +33,56 @@ def get_companies_and_segments():
 
 
 def get_company(ticker):
-    df = datasource.get_kpis_latest_values([ticker])
-    df = df.dropna(axis=1)
+    df_basic = general.get_basic_info(ticker=ticker, columns=["NAME", "SEGMENT", "NUM_TOTAL"])
+    
+    df_history = history.get_latest_values(ticker=ticker)
+    
+    df_fundaments = fundaments.get_latest_values(ticker=ticker)
+    df_fundaments["REAL_VALUE"] = np.where(
+                                    df_fundaments["VALUE_ROLLING_YEAR"] != -1, 
+                                    df_fundaments["VALUE_ROLLING_YEAR"], 
+                                    df_fundaments["VALUE"])
+    df_fundaments = df_fundaments.pivot_table(values="REAL_VALUE", columns="KPI")
+    df_fundaments = df_fundaments.reset_index(drop=True)
+    
+    df = pd.concat([df_basic, df_history, df_fundaments], axis=1)
+    
+    df["MARKET_CAP"] = df["NUM_TOTAL"] * df["PRICE"]
+    df = df.drop("NUM_TOTAL", axis=1)
+    df["TICKER"] = ticker
+    
+    df["BAZIN"] = 0
 
-    return_cols = [
-        "TICKER",
-        "NOME",
-        "SEGMENTO",
-        "MARKET_CAP",
-        "PRICE",
-        "BAZIN",
-        "PL",
-        "PVP",
-        "DIVIDEND_YIELD",
-        "DIVIDEND_PAYOUT",
-        "EQUITY",
-        "NET_REVENUE",
-        "PROFIT",
-        "EBIT",
-        "DEBT",
-        "DEBT_NET",
-        "NET_MARGIN",
-        "ROE",
-        "NET_DEBT_BY_EBIT",
-        "NET_DEBT_BY_EQUITY",
-        "CAGR_5_YEARS_PROFIT",
-        "CAGR_5_YEARS_REVENUE",
-    ]
+    # return_cols = [
+    #     "TICKER",
+    #     "NOME",
+    #     "SEGMENTO",
+    #     "MARKET_CAP",
+    #     "PRICE",
+    #     "BAZIN", ### must query this as well
+    #     "PL",
+    #     "PVP",
+    #     "DIVIDEND_YIELD",
+    #     "DIVIDEND_PAYOUT",
+    #     "EQUITY",
+    #     "NET_REVENUE",
+    #     "PROFIT",
+    #     "EBIT",
+    #     "DEBT",
+    #     "DEBT_NET",
+    #     "NET_MARGIN",
+    #     "ROE",
+    #     "NET_DEBT_BY_EBIT",
+    #     "NET_DEBT_BY_EQUITY",
+    #     "CAGR_5_YEARS_PROFIT",
+    #     "CAGR_5_YEARS_REVENUE",
+    # ]
 
-    df = utils.get_df_stocks_cleaned(df, return_cols)
-    df["rating"] = np.random.random(size=df.shape[0]) * 5
+    df = utils.columns_rename(df)
 
     return df
+    
+print(get_company('BBAS3'))
 
 
 def search_companies(text):

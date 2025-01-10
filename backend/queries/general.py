@@ -1,4 +1,4 @@
-import utils as qu
+import backend.queries.utils as qu
 
 def get_cd_cvm_by_ticker(ticker):
     sql = f"""
@@ -11,11 +11,21 @@ def get_cd_cvm_by_ticker(ticker):
         
     return cd_cvm
 
-def get_basic_info(columns=[]):
+def get_basic_info(cd_cvm='', ticker='', columns=[]):
     sql_columns = qu.get_sql_columns(columns)
+    
+    if len(ticker) > 0 and len(cd_cvm) == 0:
+        cd_cvm = get_cd_cvm_by_ticker(ticker)
+    
+    if len(cd_cvm) > 0:
+        where_clause = f"WHERE CD_CVM = '{cd_cvm}'"
+    else:
+        where_clause = ""
+    
     sql = f"""
             SELECT {sql_columns} 
             FROM {qu.get_table_full_name('stocks-basic-info')} 
+            {where_clause}
         """
         
     return qu.execute_query(sql)

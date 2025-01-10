@@ -1,5 +1,5 @@
-import utils as qu
-import general
+import backend.queries.utils as qu
+import backend.queries.general as general
 
 def get_tickers(ticker, is_from_segment, group_segment_values):
     columns = []
@@ -41,7 +41,7 @@ def get_kpi(ticker, kpi, non_value_columns=["DATE"], n_years=10, is_from_segment
     
     return qu.execute_query(sql)
 
-def get_last_values(ticker, is_from_segment=False, group_segment_values=True):
+def get_latest_values(ticker, is_from_segment=False, group_segment_values=True):
     tickers, columns = get_tickers(ticker, is_from_segment, group_segment_values)
     
     kpis = ["PRICE", "PRICE_PROFIT", "DIVIDEND_YIELD", "DIVIDEND_PAYOUT", "PRICE_EQUITY"]

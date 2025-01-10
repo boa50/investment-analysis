@@ -1,5 +1,5 @@
-import utils as qu
-import general
+import backend.queries.utils as qu
+import backend.queries.general as general
 import backend.mappings as mappings
 
 def get_cds_cvm(ticker, is_from_segment, group_segment_values):
@@ -44,7 +44,7 @@ def get_kpi(ticker, kpi, non_value_columns=["DT_END"], n_years=10, is_from_segme
         
     return qu.execute_query(sql)
 
-def get_last_values(ticker, is_from_segment=False, group_segment_values=True):
+def get_latest_values(ticker, is_from_segment=False, group_segment_values=True):
     cds_cvm, columns = get_cds_cvm(ticker, is_from_segment, group_segment_values)
     columns.append("KPI")
             
