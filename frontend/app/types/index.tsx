@@ -2,8 +2,8 @@ export enum Kpi {
     MarketCap = 'marketCap',
     Price = 'price',
     BazinPrice = 'bazinPrice',
-    Pl = 'pl',
-    Pvp = 'pvp',
+    PriceProfit = 'priceProfit',
+    PriceEquity = 'priceEquity',
     DividendYield = 'dividendYield',
     DividendPayout = 'dividendPayout',
     Equity = 'equity',
@@ -57,8 +57,8 @@ export type Company = {
     marketCap: number
     price: number
     bazinPrice?: number
-    pl: number
-    pvp: number
+    priceProfit: number
+    priceEquity: number
     dividendYield: number
     dividendPayout: number
     equity: number
@@ -98,8 +98,8 @@ export type TableRow = {
     marketCap?: number
     price?: number
     bazinPrice?: number
-    pl?: number
-    pvp?: number
+    priceProfit?: number
+    priceEquity?: number
     dividendYield?: number
     dividendPayout?: number
     equity?: number

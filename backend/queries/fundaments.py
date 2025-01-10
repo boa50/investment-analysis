@@ -1,6 +1,6 @@
-import backend.queries.utils as qu
-import backend.queries.general as general
-import backend.mappings as mappings
+import queries.utils as qu
+import queries.general as general
+import mappings as mappings
 
 def get_cds_cvm(ticker, is_from_segment, group_segment_values):
     columns = []

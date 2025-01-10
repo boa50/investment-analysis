@@ -3,7 +3,8 @@ import { RatingStars } from './ui'
 import PageHeaderContainer from './PageHeaderContainer'
 import StockImg from './StockImg'
 
-import type { Company, Kpi } from '../types'
+import { Kpi } from '../types'
+import type { Company } from '../types'
 
 interface Props {
     ticker: string | undefined
@@ -18,10 +19,10 @@ export default function StockHeader({
 }: Props) {
     const Kpis = () => {
         return (
-            <div className="grid grid-cols-3 gap-4 flex items-center">
-                <StockHeaderKpi kpi="price" tickerData={tickerData} />
-                <StockHeaderKpi kpi="pl" tickerData={tickerData} />
-                <StockHeaderKpi kpi="dividendYield" tickerData={tickerData} />
+            <div className="grid grid-cols-3 gap-4 items-center">
+                <StockHeaderKpi kpi={Kpi.Price} tickerData={tickerData} />
+                <StockHeaderKpi kpi={Kpi.PriceProfit} tickerData={tickerData} />
+                <StockHeaderKpi kpi={Kpi.DividendYield} tickerData={tickerData} />
             </div>
         )
     }

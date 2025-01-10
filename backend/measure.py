@@ -113,15 +113,3 @@ def get_stock_ratings(ticker: str, verbose: int = 0):
             print(f"{group}: {value}")
 
     return ratings
-
-import os
-
-# DATA_SOURCE=database
-# DB_PROJECT_ID=lazy-investor-db
-# DB_DATASET_ID=app_dataset
-
-os.environ["DATA_SOURCE"] = "database"
-os.environ["DB_PROJECT_ID"] = "lazy-investor-db"
-os.environ["DB_DATASET_ID"] = "app_dataset"
-
-get_stock_ratings(ticker="BBAS3", verbose=3)

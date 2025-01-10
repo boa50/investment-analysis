@@ -35,7 +35,7 @@ export const getKpiInfo = (kpi: Kpi): ReturnProps => {
                 calculation:
                     '(Dividendos dos últimos 3 anos / 3 anos) / 6% (Dividend Yield desejado)',
             }
-        case Kpi.Pl:
+        case Kpi.PriceProfit:
             return {
                 title: 'P/L',
                 valueFormat: (value) => formatNum(value, 'decimal'),
@@ -44,7 +44,7 @@ export const getKpiInfo = (kpi: Kpi): ReturnProps => {
                     'Indicador utilizado para avaliar se uma ação está cara ou barata em relação ao lucro que a empresa gera. Representa o número de anos que levaria para recuperar o investimento em uma ação, assumindo que o lucro por ação permaneça constante e seja distribuído integralmente como dividendos',
                 calculation: 'Preço da Ação / Lucro por Ação (LPA)',
             }
-        case Kpi.Pvp:
+        case Kpi.PriceEquity:
             return {
                 title: 'P/VP',
                 valueFormat: (value) => formatNum(value, 'decimal'),

@@ -1,4 +1,4 @@
-import backend.queries.utils as qu
+import queries.utils as qu
 
 def get_cd_cvm_by_ticker(ticker):
     sql = f"""
@@ -30,6 +30,22 @@ def get_basic_info(cd_cvm='', ticker='', columns=[]):
         
     return qu.execute_query(sql)
 
+def get_right_prices(ticker=''):
+    sql_columns = qu.get_sql_columns(["BAZIN"])
+    
+    if len(ticker) > 0:
+        where_clause = f"WHERE TICKER = '{ticker}'"
+    else:
+        where_clause = ""
+    
+    sql = f"""
+            SELECT {sql_columns} 
+            FROM {qu.get_table_full_name('stocks-right-prices')} 
+            {where_clause}
+        """
+        
+    return qu.execute_query(sql)
+
 def get_segment_info_by_ticker(ticker, column):
     sql = f"""
             SELECT {column} 
@@ -48,10 +64,10 @@ def get_segment_tickers_by_ticker(ticker):
     
     return tickers
 
-def get_all_from_table(table_name):
-    sql = """
-            SELECT * 
-            FROM {}
-        """.format(qu.get_table_full_name(table_name))
+# def get_all_from_table(table_name):
+#     sql = """
+#             SELECT * 
+#             FROM {}
+#         """.format(qu.get_table_full_name(table_name))
         
-    return qu.execute_query(sql)
+#     return qu.execute_query(sql)

@@ -8,8 +8,8 @@ type KpiGroups = {
 
 const kpiGroups: KpiGroups = {
     [KpiGroup.Value]: [
-        Kpi.Pl,
-        Kpi.Pvp,
+        Kpi.PriceProfit,
+        Kpi.PriceEquity,
         Kpi.DividendYield,
         Kpi.DividendPayout,
         Kpi.MarketCap,

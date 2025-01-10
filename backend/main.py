@@ -41,7 +41,7 @@ def get_companies_and_segments():
     df = company.get_companies_and_segments()
     return Response(df.to_json(orient="records"), media_type="application/json")
 
-
+# OK
 @app.get("/api/company")
 def get_company(ticker: str):
     df = company.get_company(ticker=ticker)

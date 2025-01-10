@@ -1,5 +1,5 @@
-import backend.queries.utils as qu
-import backend.queries.general as general
+import queries.utils as qu
+import queries.general as general
 
 def get_tickers(ticker, is_from_segment, group_segment_values):
     columns = []

@@ -45,45 +45,17 @@ def get_company(ticker):
     df_fundaments = df_fundaments.pivot_table(values="REAL_VALUE", columns="KPI")
     df_fundaments = df_fundaments.reset_index(drop=True)
     
-    df = pd.concat([df_basic, df_history, df_fundaments], axis=1)
+    df_right_prices = general.get_right_prices(ticker=ticker)
+    
+    df = pd.concat([df_basic, df_history, df_fundaments, df_right_prices], axis=1)
     
     df["MARKET_CAP"] = df["NUM_TOTAL"] * df["PRICE"]
     df = df.drop("NUM_TOTAL", axis=1)
     df["TICKER"] = ticker
-    
-    df["BAZIN"] = 0
-
-    # return_cols = [
-    #     "TICKER",
-    #     "NOME",
-    #     "SEGMENTO",
-    #     "MARKET_CAP",
-    #     "PRICE",
-    #     "BAZIN", ### must query this as well
-    #     "PL",
-    #     "PVP",
-    #     "DIVIDEND_YIELD",
-    #     "DIVIDEND_PAYOUT",
-    #     "EQUITY",
-    #     "NET_REVENUE",
-    #     "PROFIT",
-    #     "EBIT",
-    #     "DEBT",
-    #     "DEBT_NET",
-    #     "NET_MARGIN",
-    #     "ROE",
-    #     "NET_DEBT_BY_EBIT",
-    #     "NET_DEBT_BY_EQUITY",
-    #     "CAGR_5_YEARS_PROFIT",
-    #     "CAGR_5_YEARS_REVENUE",
-    # ]
 
     df = utils.columns_rename(df)
 
     return df
-    
-print(get_company('BBAS3'))
-
 
 def search_companies(text):
     df_basic_info = utils.get_data("stocks-basic-info")

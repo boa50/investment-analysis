@@ -2,9 +2,9 @@ import pandas_gbq as pdgbq
 import os
 
 ### For testing purposes
-os.environ["DATA_SOURCE"] = "database"
-os.environ["DB_PROJECT_ID"] = "lazy-investor-db"
-os.environ["DB_DATASET_ID"] = "app_dataset"
+# os.environ["DATA_SOURCE"] = "database"
+# os.environ["DB_PROJECT_ID"] = "lazy-investor-db"
+# os.environ["DB_DATASET_ID"] = "app_dataset"
 
 project_id = os.environ.get("DB_PROJECT_ID")
 dataset_id = os.environ.get("DB_DATASET_ID")
