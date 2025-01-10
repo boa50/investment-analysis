@@ -16,7 +16,7 @@ def get_cds_cvm(ticker, is_from_segment, group_segment_values):
     return cds_cvm, columns
     
 
-def get_kpi_fundaments(ticker, kpi, non_value_columns=["DT_END"], n_years=10, is_from_segment=False, group_segment_values=True):
+def get_kpi(ticker, kpi, non_value_columns=["DT_END"], n_years=10, is_from_segment=False, group_segment_values=True):
     cds_cvm, columns = get_cds_cvm(ticker, is_from_segment, group_segment_values)
             
     if is_from_segment and group_segment_values:
@@ -44,7 +44,7 @@ def get_kpi_fundaments(ticker, kpi, non_value_columns=["DT_END"], n_years=10, is
         
     return qu.execute_query(sql)
 
-def get_last_value_fundaments(ticker, is_from_segment=False, group_segment_values=True):
+def get_last_values(ticker, is_from_segment=False, group_segment_values=True):
     cds_cvm, columns = get_cds_cvm(ticker, is_from_segment, group_segment_values)
     columns.append("KPI")
             
