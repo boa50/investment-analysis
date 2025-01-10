@@ -3,6 +3,9 @@ import queries.general as general
 import mappings as mappings
 
 def get_cds_cvm(ticker, is_from_segment, group_segment_values):
+    if len(ticker) == 0:
+        return [], ["CD_CVM"]
+    
     columns = []
     
     if not is_from_segment:
@@ -14,10 +17,17 @@ def get_cds_cvm(ticker, is_from_segment, group_segment_values):
             columns.append("CD_CVM")
             
     return cds_cvm, columns
-    
 
-def get_kpi(ticker, kpi, non_value_columns=["DT_END"], n_years=10, is_from_segment=False, group_segment_values=True):
+def get_cds_cvm_filter(cds_cvm):
+    if len(cds_cvm) > 0:
+        return f"AND CD_CVM IN {cds_cvm}"
+    else:
+        return ""
+
+def get_kpi(kpi, ticker="", non_value_columns=["DT_END"], n_years=10, is_from_segment=False, group_segment_values=True):
     cds_cvm, columns = get_cds_cvm(ticker, is_from_segment, group_segment_values)
+    
+    cds_cvm_filter = get_cds_cvm_filter(cds_cvm)
             
     if is_from_segment and group_segment_values:
         value_column = f"AVG({mappings.kpi_fundament_value_column[kpi]}) AS VALUE"
@@ -35,18 +45,25 @@ def get_kpi(ticker, kpi, non_value_columns=["DT_END"], n_years=10, is_from_segme
     sql = f"""
             SELECT {columns_sql} 
             FROM {table_full_name}
-            WHERE CD_CVM IN {cds_cvm}
+            WHERE DT_YEAR >= (SELECT max(DT_YEAR) FROM {table_full_name}) - {n_years}
                 AND KPI = '{kpi}'
-                AND DT_YEAR >= (SELECT max(DT_YEAR) FROM {table_full_name}) - {n_years}
+                {cds_cvm_filter}
             {group_by_clause}
             ORDER BY DT_END
         """
         
     return qu.execute_query(sql)
 
-def get_latest_values(ticker, is_from_segment=False, group_segment_values=True):
+def get_latest_values(ticker="", kpis=[], is_from_segment=False, group_segment_values=True):
     cds_cvm, columns = get_cds_cvm(ticker, is_from_segment, group_segment_values)
     columns.append("KPI")
+    
+    cds_cvm_filter = get_cds_cvm_filter(cds_cvm)
+    
+    if len(kpis) > 0:
+        kpis_filter = "AND KPI IN ('" + "','".join(kpis) + "')"
+    else:
+        kpis_filter = ""
             
     if is_from_segment and group_segment_values:
         columns.append("AVG(VALUE) AS VALUE")
@@ -64,8 +81,9 @@ def get_latest_values(ticker, is_from_segment=False, group_segment_values=True):
     sql = f"""
             SELECT {columns_sql} 
             FROM {table_full_name}
-            WHERE CD_CVM IN {cds_cvm}
-                AND DT_END >= (SELECT max(DT_END) FROM {table_full_name})
+            WHERE DT_END >= (SELECT max(DT_END) FROM {table_full_name})
+                {kpis_filter}
+                {cds_cvm_filter}
             {group_by_clause}
         """
         

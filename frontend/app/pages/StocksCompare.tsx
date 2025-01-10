@@ -13,7 +13,7 @@ import Table from '../components/Table'
 import { getGroupTitle } from '../data/group'
 
 import { Kpi, KpiGroup } from '../types'
-import { nonKpi } from '../components/Table/types'
+import { NonKpi } from '../components/Table/types'
 import type { TableRow } from '../types'
 import type { Cell } from '@tanstack/react-table'
 
@@ -219,10 +219,10 @@ export default function StocksCompare() {
                             <Table
                                 data={companiesData}
                                 columns={[
-                                    nonKpi.Ticker,
+                                    NonKpi.Ticker,
                                     Kpi.OverallRating,
-                                    Kpi.Pl,
-                                    Kpi.Pvp,
+                                    Kpi.PriceProfit,
+                                    Kpi.PriceEquity,
                                     Kpi.DividendYield,
                                     Kpi.DividendPayout,
                                     Kpi.MarketCap,

@@ -1,10 +1,10 @@
 import type { Kpi } from '../../types'
 
-export enum nonKpi {
+export enum NonKpi {
     Ticker = 'ticker',
     Name = 'name',
     Segment = 'segment',
     // OverallRating = 'overallRating'
 }
 
-export type Column = nonKpi | Kpi
+export type Column = NonKpi | Kpi

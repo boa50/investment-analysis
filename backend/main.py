@@ -29,11 +29,11 @@ app.add_middleware(
 def livetest():
     return {"message": "Server Running!"}
 
-
-# @app.get("/api/companies")
-# def get_companies():
-#     df = company.get_companies()
-#     return Response(df.to_json(orient="records"), media_type="application/json")
+# OK
+@app.get("/api/companies")
+def get_companies():
+    df = company.get_companies()
+    return Response(df.to_json(orient="records"), media_type="application/json")
 
 # OK
 @app.get("/api/companiesAndSegments")

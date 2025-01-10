@@ -4,6 +4,7 @@ import PageHeaderContainer from '../components/PageHeaderContainer'
 import Table from '../components/Table'
 
 import { Kpi } from '../types'
+import { NonKpi } from '../components/Table/types'
 
 export default function StocksTable() {
     const query = useQuery({ queryKey: ['stocks'], queryFn: getStocks })
@@ -32,15 +33,15 @@ export default function StocksTable() {
                     <Table
                         data={query.data}
                         columns={[
-                            'ticker',
-                            'name',
-                            'segment',
+                            NonKpi.Ticker,
+                            NonKpi.Name,
+                            NonKpi.Segment,
                             Kpi.MarketCap,
-                            Kpi.Pl,
+                            Kpi.PriceProfit,
                             Kpi.NetMargin,
                         ]}
                         isTickerLink={true}
-                        lowVisibilityCols={['segment']}
+                        lowVisibilityCols={[NonKpi.Segment]}
                     />
                 </div>
             </div>

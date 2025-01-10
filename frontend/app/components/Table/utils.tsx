@@ -10,7 +10,7 @@ import type {
     ColumnDef,
 } from '@tanstack/react-table'
 import { Kpi, TableRow, KpiGroup } from '../../types'
-import { nonKpi } from './types'
+import { NonKpi } from './types'
 import type { Column } from './types'
 
 export const getColumns = (
@@ -136,13 +136,13 @@ const getColumnsByGroup = (
     return columns
 }
 
-const getNonKpiColumnMapping = (column: nonKpi) => {
+const getNonKpiColumnMapping = (column: NonKpi) => {
     switch (column) {
-        case nonKpi.Ticker:
+        case NonKpi.Ticker:
             return 'Ticker'
-        case nonKpi.Name:
+        case NonKpi.Name:
             return 'Nome'
-        case nonKpi.Segment:
+        case NonKpi.Segment:
             return 'Segmento'
         default:
             return column
