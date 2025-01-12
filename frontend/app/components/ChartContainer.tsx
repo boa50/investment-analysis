@@ -59,8 +59,8 @@ export default function ChartContainer({
 
 const fullDateKpis: Kpi[] = [
     Kpi.Price,
-    Kpi.Pl,
-    Kpi.Pvp,
+    Kpi.PriceProfit,
+    Kpi.PriceEquity,
     Kpi.DividendYield,
     Kpi.DividendPayout,
 ]

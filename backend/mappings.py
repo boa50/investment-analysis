@@ -1,5 +1,6 @@
 column_renaming = {
     "DATE": "date",
+    "DT_END": "date",
     "CD_CVM": "cdCvm",
     "VALUE": "value",
     "TICKER": "ticker",
@@ -36,7 +37,7 @@ kpi_by_group = {
 }
 
 kpi_fundament_value_column = {
-    "EQUITY": "VALUE_ROLLING_YEAR",
+    "EQUITY": "VALUE",
     "NET_REVENUE": "VALUE_ROLLING_YEAR",
     "PROFIT": "VALUE_ROLLING_YEAR",
     "EBIT": "VALUE_ROLLING_YEAR",
@@ -48,4 +49,24 @@ kpi_fundament_value_column = {
     "NET_DEBT_BY_EQUITY": "VALUE_ROLLING_YEAR",
     "CAGR_5_YEARS_PROFIT": "VALUE",
     "CAGR_5_YEARS_REVENUE": "VALUE",
+}
+
+kpi_table_origin = {
+    "PRICE":"history",
+    "PRICE_PROFIT":"history",
+    "PRICE_EQUITY":"history",
+    "DIVIDEND_YIELD":"history",
+    "DIVIDEND_PAYOUT":"history",
+    "EQUITY": "fundaments",
+    "NET_REVENUE": "fundaments",
+    "PROFIT": "fundaments",
+    "EBIT": "fundaments",
+    "DEBT": "fundaments",
+    "DEBT_NET": "fundaments",
+    "NET_MARGIN": "fundaments",
+    "ROE": "fundaments",
+    "NET_DEBT_BY_EBIT": "fundaments",
+    "NET_DEBT_BY_EQUITY": "fundaments",
+    "CAGR_5_YEARS_PROFIT": "fundaments",
+    "CAGR_5_YEARS_REVENUE": "fundaments",
 }

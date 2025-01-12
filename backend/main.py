@@ -47,17 +47,17 @@ def get_company(ticker: str):
     df = company.get_company(ticker=ticker)
     return Response(df.to_json(orient="records"), media_type="application/json")
 
-
+# OK
 @app.get("/api/searchCompanies")
 def search_companies(text: str):
     df = company.search_companies(text=text)
     return Response(df.to_json(orient="records"), media_type="application/json")
 
-
-# @app.get("/api/historicalValues")
-# def get_historical_values(ticker: str, kpi: str):
-#     df = measure.get_historical_values(ticker=ticker, kpi=kpi)
-#     return Response(df.to_json(orient="records"), media_type="application/json")
+# OK
+@app.get("/api/historicalValues")
+def get_historical_values(ticker: str, kpi: str):
+    df = measure.get_historical_values(ticker=ticker, kpi=kpi)
+    return Response(df.to_json(orient="records"), media_type="application/json")
 
 
 # @app.get("/api/stockRatings")

@@ -3,6 +3,8 @@ import utils
 import datasource
 import calculations
 import mappings
+import queries.history as history
+import queries.fundaments as fundaments
 
 
 def get_historical_values(ticker, kpi, n_years=10):
@@ -10,12 +12,19 @@ def get_historical_values(ticker, kpi, n_years=10):
         kpi_original = utils.get_kpi_original_name(kpi)
     except Exception:
         kpi_original = kpi
-
-    df_kpi = datasource.get_kpi_values(ticker=ticker, kpi=kpi_original, n_years=n_years)
+        
+    table_origin = mappings.kpi_table_origin[kpi_original]
+        
+    if table_origin == "fundaments":
+        df = fundaments.get_kpi(kpi=kpi_original, ticker=ticker, n_years=n_years)
+    elif table_origin == "history":
+        df = history.get_kpi(kpi=kpi_original, ticker=ticker, n_years=n_years)
+    else: 
+        return
     
-    df_kpi = utils.columns_rename(df_kpi)
+    df = utils.columns_rename(df)
 
-    return df_kpi.sort_values(by="date")
+    return df
 
 
 def get_kpi_rating(
