@@ -48,10 +48,10 @@ def get_company(ticker: str):
     return Response(df.to_json(orient="records"), media_type="application/json")
 
 
-# @app.get("/api/searchCompanies")
-# def search_companies(text: str):
-#     df = company.search_companies(text=text)
-#     return Response(df.to_json(orient="records"), media_type="application/json")
+@app.get("/api/searchCompanies")
+def search_companies(text: str):
+    df = company.search_companies(text=text)
+    return Response(df.to_json(orient="records"), media_type="application/json")
 
 
 # @app.get("/api/historicalValues")

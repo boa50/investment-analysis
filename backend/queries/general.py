@@ -64,10 +64,13 @@ def get_segment_tickers_by_ticker(ticker):
     
     return tickers
 
-# def get_all_from_table(table_name):
-#     sql = """
-#             SELECT * 
-#             FROM {}
-#         """.format(qu.get_table_full_name(table_name))
+def get_companies_by_text(text):
+    sql = f"""
+            SELECT NAME, TICKERS, SEGMENT 
+            FROM {qu.get_table_full_name('stocks-basic-info')}
+            WHERE TICKERS LIKE UPPER('%{text}%')
+                OR UPPER(REGEXP_REPLACE(NORMALIZE(NAME, NFD), r"\pM", '')) LIKE UPPER('%{text}%')
+    
+        """
         
-#     return qu.execute_query(sql)
+    return qu.execute_query(sql)

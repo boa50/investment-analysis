@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 from unidecode import unidecode
 import utils
-# import datasource
 import queries.general as general
 import queries.history as history
 import queries.fundaments as fundaments
@@ -79,26 +78,16 @@ def get_company(ticker):
     return df
 
 def search_companies(text):
-    df_basic_info = utils.get_data("stocks-basic-info")
-
-    df_basic_info["MAIN_TICKER"] = df_basic_info["TICKERS"].apply(
+    decoded_text = unidecode(text)
+    
+    df = general.get_companies_by_text(decoded_text)
+    
+    df["MAIN_TICKER"] = df["TICKERS"].apply(
         lambda x: utils.get_main_ticker(x)
     )
-
-    decoded_text = unidecode(text)
-
-    mask = np.column_stack(
-        [
-            df_basic_info[col]
-            .apply(unidecode)
-            .str.contains(decoded_text, case=False, na=False)
-            for col in ["NAME", "TICKERS"]
-        ]
-    )
-    df = df_basic_info.loc[mask.any(axis=1)]
-
-    return_cols = ["NAME", "MAIN_TICKER", "SEGMENT"]
-    df = utils.get_df_stocks_cleaned(df, return_cols)
-    df["rating"] = np.random.random(size=df.shape[0]) * 5
+    
+    df = df.drop("TICKERS", axis=1)
+    
+    df = utils.columns_rename(df)
 
     return df
