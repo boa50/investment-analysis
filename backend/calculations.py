@@ -59,7 +59,7 @@ def calculate_kpi_pain_index(
 
 
 def calculate_trend(x, y, sample_weight=None):
-    x_train = x.values.astype(float).reshape(-1, 1)
+    x_train = pd.to_datetime(x).values.astype(float).reshape(-1, 1)
     y_train = y.values.reshape(-1, 1)
 
     model = linear_model.LinearRegression()
@@ -79,8 +79,9 @@ def calculate_drawdowns(
     risk_values = np.minimum(
         risk_calculation_values * drawdown_kpi_multiplier,
         threshold * drawdown_kpi_multiplier,
-    )
-    running_max = np.maximum.accumulate(risk_values)
+    ).astype(float)
+    running_max = np.maximum.accumulate(risk_values).astype(float)
+
     drawdowns = ((risk_values - running_max) / running_max) * drawdown_kpi_multiplier
 
     return drawdowns.fillna(0)
@@ -109,13 +110,16 @@ def calculate_kpi_rating(
 
     slope *= math.pow(10, utils.get_number_length(slope))
 
+    group_column = "TICKER" if "TICKER" in df_segment_ungrouped.columns else "CD_CVM"
+
     df_segment_last_dates = (
-        df_segment_ungrouped.groupby("TICKER")["DATE"].max().reset_index()
+        df_segment_ungrouped.groupby(group_column)["DATE"].max().reset_index()
     )
+
     df_segment_last_dates = df_segment_last_dates.merge(
-        df_segment_ungrouped, on=["TICKER", "DATE"]
+        df_segment_ungrouped, on=[group_column, "DATE"]
     )
-    kpi_values = df_segment_last_dates["VALUE"].values
+    kpi_values = df_segment_last_dates["VALUE"].values.astype(float)
 
     kpi_min = kpi_values.min()
     kpi_min = (

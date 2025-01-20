@@ -70,7 +70,14 @@ def get_companies_by_text(text):
             FROM {qu.get_table_full_name('stocks-basic-info')}
             WHERE TICKERS LIKE UPPER('%{text}%')
                 OR UPPER(REGEXP_REPLACE(NORMALIZE(NAME, NFD), r"\pM", '')) LIKE UPPER('%{text}%')
-    
+        """
+        
+    return qu.execute_query(sql)
+
+def get_ipca():
+    sql = f"""
+            SELECT 
+            FROM {qu.get_table_full_name('ipca')}
         """
         
     return qu.execute_query(sql)

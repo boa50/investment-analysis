@@ -1,10 +1,35 @@
 import numpy as np
+import pandas as pd
 import utils
-import datasource
 import calculations
 import mappings
 import queries.history as history
 import queries.fundaments as fundaments
+
+
+def get_kpi_values(
+    ticker, kpi, n_years=10, is_from_segment=False, group_segment_values=True
+):
+    table_origin = mappings.kpi_table_origin[kpi]
+
+    if table_origin == "fundaments":
+        return fundaments.get_kpi(
+            kpi=kpi,
+            ticker=ticker,
+            n_years=n_years,
+            is_from_segment=is_from_segment,
+            group_segment_values=group_segment_values,
+        )
+    elif table_origin == "history":
+        return history.get_kpi(
+            kpi=kpi,
+            ticker=ticker,
+            n_years=n_years,
+            is_from_segment=is_from_segment,
+            group_segment_values=group_segment_values,
+        )
+    else:
+        return pd.DataFrame()
 
 
 def get_historical_values(ticker, kpi, n_years=10):
@@ -12,19 +37,44 @@ def get_historical_values(ticker, kpi, n_years=10):
         kpi_original = utils.get_kpi_original_name(kpi)
     except Exception:
         kpi_original = kpi
-        
-    table_origin = mappings.kpi_table_origin[kpi_original]
-        
-    if table_origin == "fundaments":
-        df = fundaments.get_kpi(kpi=kpi_original, ticker=ticker, n_years=n_years)
-    elif table_origin == "history":
-        df = history.get_kpi(kpi=kpi_original, ticker=ticker, n_years=n_years)
-    else: 
-        return
-    
+
+    df = get_kpi_values(ticker=ticker, kpi=kpi_original, n_years=n_years)
+
     df = utils.columns_rename(df)
 
     return df
+
+
+def get_stock_ratings(ticker: str, verbose: int = 0):
+    def try_get_kpi_rating(ticker, kpi):
+        kpi_rating = get_kpi_rating(ticker=ticker, kpi=kpi, verbose=verbose - 2)
+
+        if verbose > 1:
+            print(kpi + ": " + str(kpi_rating))
+
+        return kpi_rating
+
+    ratings = {}
+    for kpi_group in mappings.kpi_by_group.keys():
+        ratings[kpi_group] = 0
+
+    for kpi_group, kpis in mappings.kpi_by_group.items():
+        for kpi in kpis:
+            ratings[kpi_group] += try_get_kpi_rating(ticker=ticker, kpi=kpi)
+
+        ratings[kpi_group] = ratings[kpi_group] * 100 / len(kpis)
+
+    weights = [0.3, 0.3, 0.2, 0.1] if ratings["debt"] > 0 else [0.4, 0, 0.35, 0.25]
+
+    ratings["overall"] = (np.array(list(ratings.values())) * np.array(weights)).sum()
+
+    if verbose > 0:
+        print()
+        print(f"{ticker} RATINGS")
+        for group, value in ratings.items():
+            print(f"{group}: {value}")
+
+    return ratings
 
 
 def get_kpi_rating(
@@ -34,11 +84,18 @@ def get_kpi_rating(
     is_inflation_weighted: bool = True,
     verbose: int = -1,
 ):
-    df = datasource.get_kpi_values(ticker=ticker, kpi=kpi)
-    df_segment_ungrouped = datasource.get_kpi_values(
+    df = get_kpi_values(ticker=ticker, kpi=kpi)
+
+    if df.size == 0:
+        return 0
+
+    df_segment_ungrouped = get_kpi_values(
         ticker=ticker, kpi=kpi, is_from_segment=True, group_segment_values=False
     )
-    df_segment = df_segment_ungrouped.groupby("DATE")["VALUE"].mean().reset_index()
+
+    df_segment = get_kpi_values(
+        ticker=ticker, kpi=kpi, is_from_segment=True, group_segment_values=False
+    )
 
     weights = utils.get_date_weights(dates=df["DATE"]) if is_time_weighted else None
 
@@ -68,7 +125,7 @@ def get_kpi_rating(
         x=df["DATE"], y=df["VALUE"], sample_weight=weights
     )
 
-    last_value = df.iat[-1, -1]
+    last_value = float(df.iat[-1, -1])
 
     if verbose > 0:
         print()
@@ -87,38 +144,3 @@ def get_kpi_rating(
     )
 
     return rating
-
-
-def get_stock_ratings(ticker: str, verbose: int = 0):
-    def try_get_kpi_rating(ticker, kpi):
-        try:
-            kpi_rating = get_kpi_rating(ticker=ticker, kpi=kpi, verbose=verbose - 2)
-
-            if verbose > 1:
-                print(kpi + ": " + str(kpi_rating))
-
-            return kpi_rating
-        except Exception:
-            return 0
-
-    ratings = {}
-    for kpi_group in mappings.kpi_by_group.keys():
-        ratings[kpi_group] = 0
-
-    for kpi_group, kpis in mappings.kpi_by_group.items():
-        for kpi in kpis:
-            ratings[kpi_group] += try_get_kpi_rating(ticker=ticker, kpi=kpi)
-
-        ratings[kpi_group] = ratings[kpi_group] * 100 / len(kpis)
-
-    weights = [0.3, 0.3, 0.2, 0.1] if ratings["debt"] > 0 else [0.4, 0, 0.35, 0.25]
-
-    ratings["overall"] = (np.array(list(ratings.values())) * np.array(weights)).sum()
-
-    if verbose > 0:
-        print()
-        print(f"{ticker} RATINGS")
-        for group, value in ratings.items():
-            print(f"{group}: {value}")
-
-    return ratings

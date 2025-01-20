@@ -1,43 +1,8 @@
 import pandas as pd
-import pandas_gbq as pdgbq
 import numpy as np
 import math
-from os import path, environ
 import mappings
-
-
-def get_data(table_name):
-    data_source = environ.get("DATA_SOURCE")
-    
-    if data_source == "database":
-        project_id = environ.get("DB_PROJECT_ID")
-        dataset_id = environ.get("DB_DATASET_ID")
-
-        sql = """
-                SELECT * 
-                FROM `{}.{}.{}`
-            """.format(project_id,dataset_id,table_name)
-            
-        df = pdgbq.read_gbq(sql, project_id=project_id)
-            
-        return df
-    else:
-        if table_name == "stocks-fundaments":
-            dates_to_parse = ["DT_INI_EXERC", "DT_FIM_EXERC"]
-        elif table_name == "stocks-history":
-            dates_to_parse = ["DATE"]
-        elif table_name == "ipca":
-            dates_to_parse = ["DATE"]
-        else:
-            dates_to_parse = []
-
-        return pd.read_csv(
-            path.join(
-                path.dirname(__file__).replace("/backend", "/"),
-                f"data/processed/{table_name}.csv",
-            ),
-            parse_dates=dates_to_parse,
-        )
+import queries.general as general
 
 
 def is_kpi_fundaments(kpi):
@@ -116,7 +81,7 @@ def get_companies_by_segment(df_basic_info, segment):
 
 
 def get_ipca_weights(dates):
-    df_ipca = get_data("ipca")
+    df_ipca = general.get_ipca()
 
     df_ipca["DATE"] = df_ipca["DATE"].dt.to_period("M")
 
@@ -133,7 +98,7 @@ def get_ipca_weights(dates):
 
 def get_date_weights(dates):
     days_diff = (dates.max() - dates.min()).days
-    weights = (days_diff - (dates.max() - dates).dt.days) / days_diff
+    weights = (days_diff - pd.Series(dates.max() - np.array(dates)).dt.days) / days_diff
 
     return np.exp(weights.reset_index(drop=True).values)
 
