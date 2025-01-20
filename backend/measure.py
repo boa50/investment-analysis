@@ -86,8 +86,10 @@ def get_kpi_rating(
 ):
     df = get_kpi_values(ticker=ticker, kpi=kpi)
 
-    if df.size == 0:
+    if (df.size == 0) or (np.sum(df["VALUE"] != 0) == 0):
         return 0
+
+    df = df.dropna(axis=0)
 
     df_segment_ungrouped = get_kpi_values(
         ticker=ticker, kpi=kpi, is_from_segment=True, group_segment_values=False
