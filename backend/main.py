@@ -1,11 +1,16 @@
 from dotenv import load_dotenv
 from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
+import google.auth
 import json
 import company
 import measure
 
 load_dotenv()
+
+credentials = google.auth.default(
+    scopes=["https://www.googleapis.com/auth/cloud-platform"],
+)
 
 ### Configuring CORS
 origins = [

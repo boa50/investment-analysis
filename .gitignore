@@ -11,5 +11,6 @@ data/etl/driver/*
 !data/etl/driver/README.md
 
 backend/.env
+backend/service-account.json
 
 __pycache__
