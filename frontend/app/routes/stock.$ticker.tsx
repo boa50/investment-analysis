@@ -23,13 +23,13 @@ export const meta: MetaFunction = () => {
 
 export async function loader({ params }: LoaderFunctionArgs) {
     let ticker = params.ticker?.toUpperCase()
-    ticker = ticker?.includes('TRPL') ? ('ISAE' + ticker.substring(4)) : ticker
+    ticker = ticker?.includes('TRPL') ? 'ISAE' + ticker.substring(4) : ticker
     const queryClient = new QueryClient()
 
     try {
         const data = await queryClient.fetchQuery({
             queryKey: ['company', { ticker }],
-            queryFn: () => getCompany(ticker ?? ''),
+            queryFn: () => getCompany(ticker ?? '', process.env.DATABASE_URL),
         })
 
         if (!data[0])

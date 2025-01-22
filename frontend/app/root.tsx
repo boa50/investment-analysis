@@ -1,4 +1,5 @@
 import React from 'react'
+import { json } from '@remix-run/node'
 import {
     Links,
     Meta,
@@ -7,6 +8,7 @@ import {
     ScrollRestoration,
     isRouteErrorResponse,
     useRouteError,
+    useLoaderData,
     Link,
 } from '@remix-run/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -29,7 +31,23 @@ export const links: LinksFunction = () => [
     },
 ]
 
+export async function loader() {
+    return json({
+        ENV: {
+            DATABASE_URL: process.env.DATABASE_URL,
+        },
+    })
+}
+
+declare global {
+    interface Window {
+        ENV: { DATABASE_URL: string }
+    }
+}
+
 export function Layout({ children }: { children: React.ReactNode }) {
+    const data = useLoaderData<typeof loader>()
+
     return (
         <html lang="en">
             <head>
@@ -42,6 +60,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 <Links />
             </head>
             <body>
+                <script
+                    dangerouslySetInnerHTML={{
+                        __html: `window.ENV = ${JSON.stringify(data.ENV)}`,
+                    }}
+                />
                 {children}
                 <ScrollRestoration />
                 <Scripts />
