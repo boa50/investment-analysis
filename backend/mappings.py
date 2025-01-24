@@ -26,13 +26,9 @@ column_renaming = {
     "NET_DEBT_BY_EQUITY": "netDebtByEquity",
     "CAGR_5_YEARS_PROFIT": "cagr5YearsProfit",
     "CAGR_5_YEARS_REVENUE": "cagr5YearsRevenue",
-}
-
-kpi_by_group = {
-    "value": ["PRICE_PROFIT", "PRICE_EQUITY", "DIVIDEND_YIELD", "DIVIDEND_PAYOUT"],
-    "debt": ["NET_DEBT_BY_EBIT", "NET_DEBT_BY_EQUITY"],
-    "efficiency": ["NET_MARGIN", "ROE"],
-    "growth": ["CAGR_5_YEARS_PROFIT", "CAGR_5_YEARS_REVENUE"],
+    "EFFICIENCY": "efficiency",
+    "GROWTH": "growth",
+    "OVERALL": "overall",
 }
 
 kpi_fundament_value_column = {

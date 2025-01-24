@@ -61,8 +61,20 @@ def get_historical_values(ticker: str, kpi: str):
 
 @app.get("/api/stockRatings")
 def get_stock_ratings(ticker: str):
-    resp = measure.get_stock_ratings(ticker=ticker)
-    return Response(json.dumps(resp), media_type="application/json")
+    df = measure.get_stock_ratings(ticker=ticker)
+    df = df.astype(
+        {
+            "value": float,
+            "debt": float,
+            "efficiency": float,
+            "growth": float,
+            "overall": float,
+        }
+    )
+
+    return Response(
+        json.dumps(df.to_dict(orient="records")[0]), media_type="application/json"
+    )
 
 
 if __name__ == "__main__":

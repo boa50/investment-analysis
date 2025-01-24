@@ -63,6 +63,7 @@ export default function StockData({ ticker }: Props) {
 
     if (queryRatings.data !== undefined) {
         stockRatings = { ...queryRatings.data }
+        delete stockRatings['ticker']
         delete stockRatings['overall']
     }
 

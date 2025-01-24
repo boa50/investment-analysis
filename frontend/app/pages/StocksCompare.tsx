@@ -92,19 +92,27 @@ export default function StocksCompare() {
                 const ratingsTmp: {
                     [variable: string]: number
                 } = { ...d.data }
+                delete ratingsTmp['ticker']
                 delete ratingsTmp['overall']
                 return ratingsTmp
             })
     }
 
     const companiesData: TableRow[] = useMemo(() => {
-        const data = queriesCompanies.filter((d) => d.isSuccess).map((d) => d.data[0]) as TableRow[]
-        queriesRatings.filter(d => d.isSuccess).forEach((d, i) => {
-          data[i]['overallRating'] = (d.data.overall / 20)})
+        const data = queriesCompanies
+            .filter((d) => d.isSuccess)
+            .map((d) => d.data[0]) as TableRow[]
+
+        const ratingsData = queriesRatings.filter((d) => d.isSuccess)
+
+        if (data.length === ratingsData.length) {
+            ratingsData.forEach((d, i) => {
+                data[i]['overallRating'] = d.data.overall / 20
+            })
+        }
 
         return data
     }, [queriesCompanies, queriesRatings])
-    
 
     const stocksAndSegmentsData = useMemo(() => query.data ?? [], [query.data])
     const selectStocks = stocksAndSegmentsData
