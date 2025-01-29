@@ -182,7 +182,9 @@ export default function StocksCompare() {
 
     const isHideBlurredElement = [...activeStocks].length > 0
     const isDisableRemoveAllButton = companiesData.length === 0
-    const isShowLoadingDots = isHideBlurredElement && isDisableRemoveAllButton
+    const isShowLoadingDots =
+        isHideBlurredElement &&
+        [...activeStocks].length !== companiesData.length
 
     return (
         <div className="w-screen pb-4">
