@@ -6,11 +6,18 @@ import {
     getCompany,
 } from '../api/stocks'
 import PageHeaderContainer from '../components/PageHeaderContainer'
-import { Select, ToggleButton, Icon, BlurredElement } from '../components/ui'
+import {
+    Select,
+    ToggleButton,
+    Icon,
+    BlurredElement,
+    LoaderAnimation,
+} from '../components/ui'
 import RadarChart from '../charts/RadarChart'
 import { useDimensions } from '../charts/utils'
 import Table from '../components/Table'
 import { getGroupTitle } from '../data/group'
+import CenteredInfo from '../components/CenteredInfo'
 
 import { Kpi, KpiGroup } from '../types'
 import { NonKpi } from '../components/Table/types'
@@ -124,7 +131,9 @@ export default function StocksCompare() {
 
     if (query.isPending)
         return (
-            <div className="font-normal text-appTextWeak">Loading Data...</div>
+            <CenteredInfo>
+                <LoaderAnimation />
+            </CenteredInfo>
         )
 
     if (query.error)
@@ -171,6 +180,10 @@ export default function StocksCompare() {
         />
     )
 
+    const isHideBlurredElement = [...activeStocks].length > 0
+    const isDisableRemoveAllButton = companiesData.length === 0
+    const isShowLoadingDots = isHideBlurredElement && isDisableRemoveAllButton
+
     return (
         <div className="w-screen pb-4">
             <PageHeaderContainer>
@@ -198,7 +211,7 @@ export default function StocksCompare() {
                 <div className="grid grid-cols-2">
                     <div>
                         <button
-                            disabled={[...activeStocks].length === 0}
+                            disabled={isDisableRemoveAllButton}
                             className="flex items-center disabled:opacity-50"
                             onClick={handleAllStocksRemoval}
                         >
@@ -222,61 +235,65 @@ export default function StocksCompare() {
                     >
                         <BlurredElement
                             message="Escolha pelo menos 1 ação para analisar"
-                            hideCondition={companiesData.length > 0}
+                            hideCondition={isHideBlurredElement}
                         >
-                            <Table
-                                data={companiesData}
-                                columns={[
-                                    NonKpi.Ticker,
-                                    Kpi.OverallRating,
-                                    Kpi.PriceProfit,
-                                    Kpi.PriceEquity,
-                                    Kpi.DividendYield,
-                                    Kpi.DividendPayout,
-                                    Kpi.MarketCap,
-                                    Kpi.NetDebtByEbit,
-                                    Kpi.NetDebtByEquity,
-                                    Kpi.NetMargin,
-                                    Kpi.Roe,
-                                    Kpi.Cagr5YearsProfit,
-                                    Kpi.Cagr5YearsRevenue,
-                                    Kpi.Equity,
-                                    Kpi.NetRevenue,
-                                    Kpi.Profit,
-                                    Kpi.Ebit,
-                                    Kpi.Debt,
-                                    Kpi.NetDebt,
-                                ]}
-                                isTickerSticky={true}
-                                isHeaderGrouped={true}
-                                handleRowRemoval={handleStockRemoval}
-                                handleRowHovered={handleRowHovered}
-                                handleRowUnhovered={handleRowUnhovered}
-                            />
+                            {isShowLoadingDots ? (
+                                <CenteredInfo isIncludeFullHeight={true}>
+                                    <LoaderAnimation />
+                                </CenteredInfo>
+                            ) : (
+                                <Table
+                                    data={companiesData}
+                                    columns={[
+                                        NonKpi.Ticker,
+                                        Kpi.OverallRating,
+                                        Kpi.PriceProfit,
+                                        Kpi.PriceEquity,
+                                        Kpi.DividendYield,
+                                        Kpi.DividendPayout,
+                                        Kpi.MarketCap,
+                                        Kpi.NetDebtByEbit,
+                                        Kpi.NetDebtByEquity,
+                                        Kpi.NetMargin,
+                                        Kpi.Roe,
+                                        Kpi.Cagr5YearsProfit,
+                                        Kpi.Cagr5YearsRevenue,
+                                        Kpi.Equity,
+                                        Kpi.NetRevenue,
+                                        Kpi.Profit,
+                                        Kpi.Ebit,
+                                        Kpi.Debt,
+                                        Kpi.NetDebt,
+                                    ]}
+                                    isTickerSticky={true}
+                                    isHeaderGrouped={true}
+                                    handleRowRemoval={handleStockRemoval}
+                                    handleRowHovered={handleRowHovered}
+                                    handleRowUnhovered={handleRowUnhovered}
+                                />
+                            )}
                         </BlurredElement>
                     </div>
                     {isChartShown ? (
                         <div className="flex flex-col h-96 w-full rounded-2xl bg-white shadow shadow-grey-950/5">
                             <BlurredElement
                                 message="Escolha pelo menos 1 ação para analisar"
-                                hideCondition={companiesData.length > 0}
+                                hideCondition={isHideBlurredElement}
                             >
-                                <BlurredElement
-                                    message="Obtendo dados..."
-                                    hideCondition={
-                                        queriesRatings.filter(
-                                            (d) => d.isPending
-                                        ).length === 0
-                                    }
-                                    blurStrength="strong"
-                                >
+                                {isShowLoadingDots ||
+                                queriesRatings.filter((d) => d.isPending)
+                                    .length > 0 ? (
+                                    <CenteredInfo isIncludeFullHeight={true}>
+                                        <LoaderAnimation />
+                                    </CenteredInfo>
+                                ) : (
                                     <div
                                         ref={onRefChange}
                                         className="flex h-full w-full items-center justify-center"
                                     >
                                         {radarChart}
                                     </div>
-                                </BlurredElement>
+                                )}
                             </BlurredElement>
                         </div>
                     ) : null}
