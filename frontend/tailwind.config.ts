@@ -40,6 +40,25 @@ export default {
                     'Noto Color Emoji',
                 ],
             },
+            keyframes: {
+                bouncingLoader: {
+                    '0%': {
+                        opacity: '0.75',
+                        transform: 'translateY(-50%)',
+                        animationTimingFunction: 'cubic-bezier(0.8, 0, 1, 1)',
+                    },
+                    '50%': {
+                        opacity: '1',
+                        transform: 'none',
+                        animationTimingFunction: 'cubic-bezier(0, 0, 0.2, 1)',
+                    },
+                    '100%': {
+                        opacity: '0.75',
+                        transform: 'translateY(-50%)',
+                        animationTimingFunction: 'cubic-bezier(0.8, 0, 1, 1)',
+                    },
+                },
+            },
         },
     },
     plugins: [],

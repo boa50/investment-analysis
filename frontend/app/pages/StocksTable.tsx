@@ -2,6 +2,8 @@ import { useQuery } from '@tanstack/react-query'
 import { getStocks } from '../api/stocks'
 import PageHeaderContainer from '../components/PageHeaderContainer'
 import Table from '../components/Table'
+import CenteredInfo from '../components/CenteredInfo'
+import { LoaderAnimation } from '../components/ui'
 
 import { Kpi } from '../types'
 import { NonKpi } from '../components/Table/types'
@@ -11,7 +13,9 @@ export default function StocksTable() {
 
     if (query.isPending)
         return (
-            <div className="font-normal text-appTextWeak">Loading Data...</div>
+            <CenteredInfo>
+                <LoaderAnimation />
+            </CenteredInfo>
         )
 
     if (query.error)
