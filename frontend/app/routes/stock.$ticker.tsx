@@ -9,7 +9,7 @@ import {
     isRouteErrorResponse,
     useRouteError,
 } from '@remix-run/react'
-import { getCompany } from '../api/stocks'
+import { hasStockData } from '../api/stocks'
 import StockData from '../pages/StockData'
 import CenteredInfo from '../components/CenteredInfo'
 import type { MetaFunction, LoaderFunctionArgs } from '@remix-run/node'
@@ -28,11 +28,11 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
     try {
         const data = await queryClient.fetchQuery({
-            queryKey: ['company', { ticker }],
-            queryFn: () => getCompany(ticker ?? '', process.env.DATABASE_URL),
+            queryKey: ['hasStockData', { ticker }],
+            queryFn: () => hasStockData(ticker ?? '', process.env.DATABASE_URL),
         })
 
-        if (!data[0])
+        if (data.result === false)
             throw new Error(
                 `Não foram encontrados dados para o ticker ${ticker}. Tente outro valor`
             )

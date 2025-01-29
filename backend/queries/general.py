@@ -99,3 +99,12 @@ def get_ipca():
         """
 
     return qu.execute_query(sql)
+
+
+def get_available_tickers():
+    sql = f"""
+            SELECT distinct TICKER
+            FROM {qu.get_table_full_name("stocks-history")}
+        """
+
+    return qu.execute_query(sql)

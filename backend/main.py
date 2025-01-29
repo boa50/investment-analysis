@@ -77,6 +77,12 @@ def get_stock_ratings(ticker: str):
     )
 
 
+@app.get("/api/hasStockData")
+def has_stock_data(ticker: str):
+    res = company.has_stock_data(ticker=ticker)
+    return Response(json.dumps(res), media_type="application/json")
+
+
 if __name__ == "__main__":
     import uvicorn
 

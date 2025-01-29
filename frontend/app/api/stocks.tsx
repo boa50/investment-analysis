@@ -35,6 +35,16 @@ export const getStockRatings = async (
     return await response.json()
 }
 
+export const hasStockData = async (
+    ticker: string,
+    databaseUrl?: string | unknown
+): Promise<{ result: boolean }> => {
+    const response = await fetch(
+        `${getApiUrl(databaseUrl)}/hasStockData?${getSearchParams({ ticker: ticker })}`
+    )
+    return await response.json()
+}
+
 export const getCompany = async (
     ticker: string,
     databaseUrl?: string | unknown

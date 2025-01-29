@@ -7,6 +7,8 @@ import DataContainer from '../components/DataContainer'
 import ChartContainer from '../components/ChartContainer'
 import RadarChart from '../charts/RadarChart'
 import { getKpisByGroup, getGroupTitle } from '../data/group'
+import CenteredInfo from '../components/CenteredInfo'
+import { LoaderAnimation } from '../components/ui'
 
 import { Kpi, KpiGroup as KpiGroupType } from '../types'
 import type { Company } from '../types'
@@ -41,9 +43,9 @@ export default function StockData({ ticker }: Props) {
 
     if (query.isPending)
         return (
-            <div className="font-normal text-appTextNormal">
-                Loading Data...
-            </div>
+            <CenteredInfo>
+                <LoaderAnimation />
+            </CenteredInfo>
         )
 
     if (query.error)
