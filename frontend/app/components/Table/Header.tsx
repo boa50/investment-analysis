@@ -36,34 +36,50 @@ const TableHeader = ({
                                       i < headerGroup.headers.length - 1
                                         ? 'after:border after:border-gray-300 after:absolute after:right-0 after:top-0 after:h-[6rem] after:z-10'
                                         : ''
+                                    : ''
+                            }
+                                ${
+                                    header.column.getCanSort()
+                                        ? 'cursor-pointer select-none'
                                         : ''
-                            } 
-                                ${header.column.getCanSort()
-                                    ? 'cursor-pointer select-none'
-                                    : ''}
+                                }
                                 ${getColumnStickyClass(isTickerSticky, header.id, 'header', allowRowRemoval)}`}
                             style={getColumnStickyStyle(
                                 isTickerSticky,
                                 header.id
                             )}
                         >
-                            {header.isPlaceholder
-                                ? null
-                                : <div className={`flex items-center
-                                    ${isHeaderGroup(header)? 'justify-center' : 
-                                        isTextCol(header)
-                                        ? 'text-left justify-start'
-                                        : 'text-right justify-start flex-row-reverse'}`
-                                        }>
+                            {header.isPlaceholder ? null : (
+                                <div
+                                    className={`flex items-center
+                                    ${
+                                        isHeaderGroup(header)
+                                            ? 'justify-center'
+                                            : isTextCol(header)
+                                              ? 'text-left justify-start'
+                                              : 'text-right justify-start flex-row-reverse'
+                                    }`}
+                                >
                                     {flexRender(
                                         header.column.columnDef.header,
                                         header.getContext()
                                     )}
                                     {{
-                                        asc: <span className='rotate-180'><Icon type='arrowDown'/></span>,
-                                        desc: <span><Icon type='arrowDown'/></span>,
-                                    }[header.column.getIsSorted() as string] ?? <span className='w-5 h-5'></span>}
-                                </div>}
+                                        asc: (
+                                            <span className="rotate-180">
+                                                <Icon type="arrowDown" />
+                                            </span>
+                                        ),
+                                        desc: (
+                                            <span>
+                                                <Icon type="arrowDown" />
+                                            </span>
+                                        ),
+                                    }[
+                                        header.column.getIsSorted() as string
+                                    ] ?? <span className="w-5 h-5"></span>}
+                                </div>
+                            )}
                         </th>
                     ))}
                 </tr>

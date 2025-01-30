@@ -1,5 +1,10 @@
 import { useState } from 'react'
-import { getCoreRowModel, useReactTable, SortingState, getSortedRowModel } from '@tanstack/react-table'
+import {
+    getCoreRowModel,
+    useReactTable,
+    SortingState,
+    getSortedRowModel,
+} from '@tanstack/react-table'
 import { getColumns } from './utils'
 import TableHeader from './Header'
 import TableBody from './Body'
@@ -42,7 +47,7 @@ const Table = ({
         onSortingChange: setSorting,
         state: {
             sorting,
-          },
+        },
     })
 
     const cssDivide = 'divide-y divide-appRowDivider relative'
