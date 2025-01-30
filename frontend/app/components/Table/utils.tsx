@@ -87,7 +87,10 @@ export const getColumns = (
                 columns.push(
                     columnHelper.group({
                         id: group,
-                        header: group !== KpiGroup.General ? getGroupTitle(group) : '',
+                        header:
+                            group !== KpiGroup.General
+                                ? getGroupTitle(group)
+                                : '',
                         columns: groupKpis,
                     })
                 )
@@ -168,7 +171,7 @@ export const getColumnStickyClass = (
         }
 
         if (columnId === 'ticker' || columnId.includes('nonKpiHeaderGroup')) {
-            const leftPosition = allowRowRemoval ? ' left-8' : ' left-0'
+            const leftPosition = allowRowRemoval ? ' left-14' : ' left-0'
             return returnClasses(type, leftPosition)
         } else if (
             columnId === 'excludeTicker' ||
@@ -208,6 +211,5 @@ const isKpi = (columnName: string): columnName is Kpi =>
 export const isTextCol = (
     cell: Cell<TableRow, unknown> | Header<TableRow, unknown>
 ): boolean => !isKpi(cell.column.id)
-export const isHeaderGroup = (
-    header: Header<TableRow, unknown>
-): boolean => header.getLeafHeaders().length > 1
+export const isHeaderGroup = (header: Header<TableRow, unknown>): boolean =>
+    header.getLeafHeaders().length > 1

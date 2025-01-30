@@ -28,7 +28,7 @@ const TableCell = ({
 }: TableCellProps) => {
     const isCellLink = isTickerLink && cell.column.id === 'ticker'
     const isCellTickerRemove = cell.column.id === 'excludeTicker'
-    const className = `${!isCellTickerRemove ? 'px-4 py-3' : 'w-8'} text-sm font-medium group-hover:bg-gray-100 
+    const className = `${!isCellTickerRemove ? 'px-4 py-3' : 'w-14'} text-sm font-medium group-hover:bg-gray-100 
         ${
             isLowerVisibilityCol(cell, lowVisibilityCols)
                 ? 'text-appTextWeak'
