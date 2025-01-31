@@ -35,13 +35,14 @@ export async function loader() {
     return json({
         ENV: {
             DATABASE_URL: process.env.DATABASE_URL,
+            IMAGE_SERVER_URL: process.env.IMAGE_SERVER_URL,
         },
     })
 }
 
 declare global {
     interface Window {
-        ENV: { DATABASE_URL: string }
+        ENV: { DATABASE_URL: string; IMAGE_SERVER_URL: string }
     }
 }
 

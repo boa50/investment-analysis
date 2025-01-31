@@ -118,7 +118,7 @@ function StockBasicInfo({
         >
             <div className="flex flex-row space-x-4">
                 <div className="flex items-center">
-                    <StockImg size="small" />
+                    <StockImg ticker={ticker} size="small" />
                 </div>
                 <div className="flex flex-col w-64">
                     <div className="flex flex-row space-x-1 items-center">

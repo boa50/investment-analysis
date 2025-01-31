@@ -92,7 +92,7 @@ export default function StockData({ ticker }: Props) {
     return (
         <div className="w-screen pb-4">
             <StockHeader
-                ticker={ticker}
+                ticker={ticker ?? ''}
                 tickerData={tickerData}
                 overallStockRating={queryRatings.data?.overall}
             />
