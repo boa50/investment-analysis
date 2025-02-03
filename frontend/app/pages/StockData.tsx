@@ -98,9 +98,9 @@ export default function StockData({ ticker }: Props) {
             />
             <div className="container space-y-4">
                 <DataContainer title="Visão Geral" childrenHeight="20">
-                    <div className="flex w-full gap-4">
-                        <div className="w-96">{ratingsChart}</div>
-                        <div className="flex flex-col gap-4">
+                    <div className="grid grid-cols-7 w-full gap-4">
+                        <div className="col-span-3">{ratingsChart}</div>
+                        <div className="flex flex-col gap-4 w-full col-span-4">
                             <div className="flex gap-8">
                                 <KpiCard
                                     kpi={Kpi.Foundation}
@@ -115,6 +115,19 @@ export default function StockData({ ticker }: Props) {
                                 />
                             </div>
                             <div>More info about the company history</div>
+                            <div className="grow"></div>
+                            {tickerData.webPage ? (
+                                <div className="flex w-full justify-end">
+                                    <a
+                                        className="text-sm text-appAccent"
+                                        href={tickerData.webPage}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                    >
+                                        Página de Relação com Investidores
+                                    </a>
+                                </div>
+                            ) : null}
                         </div>
                     </div>
                 </DataContainer>

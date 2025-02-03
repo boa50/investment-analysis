@@ -78,6 +78,7 @@ export type Company = {
     overallRating?: number
     freeFloat: number
     foundation: number
+    webPage?: string
 }
 
 export type HistoricalValue = {
