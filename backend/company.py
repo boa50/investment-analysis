@@ -66,7 +66,7 @@ def get_companies_and_segments():
 
 def get_company(ticker):
     df_basic = general.get_basic_info(
-        ticker=ticker, columns=["NAME", "SEGMENT", "NUM_TOTAL"]
+        ticker=ticker, columns=["NAME", "SEGMENT", "NUM_TOTAL", "AVAILABLE_TOTAL"]
     )
 
     df_history = history.get_latest_values(ticker=ticker)
@@ -79,7 +79,8 @@ def get_company(ticker):
     df = pd.concat([df_basic, df_history, df_fundaments, df_right_prices], axis=1)
 
     df["MARKET_CAP"] = df["NUM_TOTAL"] * df["PRICE"]
-    df = df.drop("NUM_TOTAL", axis=1)
+    df["FREE_FLOAT"] = df["AVAILABLE_TOTAL"] / df["NUM_TOTAL"]
+    df = df.drop(["NUM_TOTAL", "AVAILABLE_TOTAL"], axis=1)
     df["TICKER"] = ticker
 
     df = utils.columns_rename(df)
