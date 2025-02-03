@@ -188,6 +188,12 @@ export const getKpiInfo = (kpi: Kpi): ReturnProps => {
                     'Refere-se à parcela das ações de uma empresa que está disponível para negociação livre no mercado, ou seja, que não está retida por controladores, acionistas majoritários, ou sob restrições que impedem sua venda',
                 calculation: 'Ações em Circulação / Ações Emitidas',
             }
+        case Kpi.Foundation:
+            return {
+                title: 'Ano de Fundação',
+                valueFormat: (value) =>
+                    `${value} (${new Date().getFullYear() - (value ?? 0)} anos)`,
+            }
         default:
             return {
                 title: '-',

@@ -20,6 +20,7 @@ export enum Kpi {
     Cagr5YearsRevenue = 'cagr5YearsRevenue',
     OverallRating = 'overallRating',
     FreeFloat = 'freeFloat',
+    Foundation = 'foundation',
 }
 
 export enum KpiGroup {
@@ -76,6 +77,7 @@ export type Company = {
     cagr5YearsRevenue: number
     overallRating?: number
     freeFloat: number
+    foundation: number
 }
 
 export type HistoricalValue = {
