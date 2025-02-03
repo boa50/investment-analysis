@@ -30,6 +30,7 @@ column_renaming = {
     "GROWTH": "growth",
     "OVERALL": "overall",
     "FREE_FLOAT": "freeFloat",
+    "FOUNDATION": "foundation",
 }
 
 kpi_fundament_value_column = {
