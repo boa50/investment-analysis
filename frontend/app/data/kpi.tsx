@@ -174,11 +174,20 @@ export const getKpiInfo = (kpi: Kpi): ReturnProps => {
                 calculation:
                     '(Receita Final / Receita Inicial) ^ (1 / número_de_anos) - 1',
             }
-            case Kpi.OverallRating:
-                return {
-                    title: 'Score',
-                    valueFormat: (value) => formatNum(value, 'decimal')
-                }
+        case Kpi.OverallRating:
+            return {
+                title: 'Score',
+                valueFormat: (value) => formatNum(value, 'decimal'),
+            }
+        case Kpi.FreeFloat:
+            return {
+                title: 'Free Float',
+                valueFormat: (value) => formatNum(value, 'percent'),
+                titleExplained: 'Taxa de Ações em Circulação no Mercado',
+                description:
+                    'Refere-se à parcela das ações de uma empresa que está disponível para negociação livre no mercado, ou seja, que não está retida por controladores, acionistas majoritários, ou sob restrições que impedem sua venda',
+                calculation: 'Ações em Circulação / Ações Emitidas',
+            }
         default:
             return {
                 title: '-',

@@ -18,7 +18,8 @@ export enum Kpi {
     NetDebtByEquity = 'netDebtByEquity',
     Cagr5YearsProfit = 'cagr5YearsProfit',
     Cagr5YearsRevenue = 'cagr5YearsRevenue',
-    OverallRating = 'overallRating'
+    OverallRating = 'overallRating',
+    FreeFloat = 'freeFloat',
 }
 
 export enum KpiGroup {
@@ -27,7 +28,7 @@ export enum KpiGroup {
     Efficiency = 'efficiency',
     Growth = 'growth',
     Results = 'results',
-    General = 'general'
+    General = 'general',
 }
 
 export type CompanySearch = {
@@ -74,6 +75,7 @@ export type Company = {
     cagr5YearsProfit: number
     cagr5YearsRevenue: number
     overallRating?: number
+    freeFloat: number
 }
 
 export type HistoricalValue = {

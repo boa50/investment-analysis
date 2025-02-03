@@ -100,8 +100,13 @@ export default function StockData({ ticker }: Props) {
                 <DataContainer title="Visão Geral" childrenHeight="20">
                     <div className="flex w-full">
                         <div className="w-96">{ratingsChart}</div>
-                        <div className="flex">
-                            More info about the company history
+                        <div className="flex flex-col gap-4">
+                            <KpiCard
+                                kpi={Kpi.FreeFloat}
+                                tickerData={tickerData}
+                                showChartIcon={false}
+                            />
+                            <div>More info about the company history</div>
                         </div>
                     </div>
                 </DataContainer>
