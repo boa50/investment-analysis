@@ -67,7 +67,14 @@ def get_companies_and_segments():
 def get_company(ticker):
     df_basic = general.get_basic_info(
         ticker=ticker,
-        columns=["NAME", "SEGMENT", "NUM_TOTAL", "AVAILABLE_TOTAL", "FOUNDATION"],
+        columns=[
+            "NAME",
+            "SEGMENT",
+            "NUM_TOTAL",
+            "AVAILABLE_TOTAL",
+            "FOUNDATION",
+            "WEB_PAGE",
+        ],
     )
 
     df_history = history.get_latest_values(ticker=ticker)

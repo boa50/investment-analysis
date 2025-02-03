@@ -31,6 +31,7 @@ column_renaming = {
     "OVERALL": "overall",
     "FREE_FLOAT": "freeFloat",
     "FOUNDATION": "foundation",
+    "WEB_PAGE": "webPage",
 }
 
 kpi_fundament_value_column = {
